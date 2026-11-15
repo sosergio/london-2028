@@ -15,8 +15,8 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
 
 ## 2. What exists today
 
-- `index.html` is a **working prototype** built with Leaflet. Open it through a local server to see it working, for example `python3 -m http.server` and then http://localhost:8000. Treat it as the functional spec: keep every feature it has unless this brief says otherwise.
-- The prototype uses a CARTO / OpenStreetMap basemap. The owner wants **Google Maps** instead (see section 4).
+- `index.html` was first a prototype built with Leaflet; its features below are the functional spec. Open the site through a local server, for example `python3 -m http.server` and then http://localhost:8000.
+- The prototype used a CARTO / OpenStreetMap basemap, which now needs an API key. The site uses **MapLibre GL + OpenFreeMap** instead (see section 4). The Leaflet prototype is in the git history.
 - All data is in `data/` (see section 3). The prototype loads it at runtime with `fetch` and PapaParse.
 
 ### Features to keep (all present in the prototype)
@@ -107,46 +107,44 @@ Watch the coordinate order: `wards.json` and `stations.json` are lat, lon, but t
 - **Ward outlines:** ONS boundaries, December 2025 (`WD_DEC_2025_UK_BGC` on the ONS ArcGIS service).
 - **Rents and journey times:** estimates.
 
-## 4. Switch the map to Google Maps
+## 4. Map library: MapLibre GL + OpenFreeMap
 
-Use the **Maps JavaScript API**, loaded with the official dynamic loader (`importLibrary`). Plan:
+The prototype's CARTO basemap now needs an API key (every tile returns "API KEY REQUIRED"), and Google Maps needs a billed Cloud project. The site therefore uses:
 
-1. **API key:**
-   - The owner creates a Google Cloud project, enables *Maps JavaScript API* and creates an API key.
-   - Restrict the key to HTTP referrers `https://sosergio.github.io/*` and `http://localhost:*/*`, and to the Maps JavaScript API only.
-   - The key will be visible in the page source. That is normal for browser keys; the restrictions are what protect it.
-   - Put the key in one place, for example `config.js`.
-   - Usage for one family stays within Google's free monthly allowance, but billing must be enabled on the project.
-2. **Map ID:** create one in Google Cloud (Map Management) for vector maps. It is needed for `AdvancedMarkerElement` and for cloud styling. Use a calm, muted style so school colours stand out. Support dark mode, either with a second map ID or `colorScheme`.
-3. **Replace each Leaflet piece with its Google equivalent:**
+- **MapLibre GL JS** 5.24.0 from cdnjs (`maplibregl` global), open source, no key.
+- **OpenFreeMap** vector tiles and styles (`https://tiles.openfreemap.org/styles/positron` for light, `.../styles/dark` for dark). Free, no key, no usage limit. Attribution comes from the style.
 
-| Leaflet piece (prototype) | Google Maps equivalent |
+Why it fits: the basemap is vector, so street names stay sharp at every zoom, and our area, catchment, borough and Tube layers are inserted **below the basemap's label layers** (`beforeId` = first `symbol` layer). Street names stay readable on top of shaded areas. Schools, shops and our own labels sit above everything.
+
+| Prototype (Leaflet) | MapLibre |
 |---|---|
-| `L.circleMarker` for schools | `AdvancedMarkerElement` with a small HTML/SVG circle as `content` (keeps ring / dot / double-ring styles), or `google.maps.Circle` with pixel radius emulation. Advanced markers are preferred. |
-| permanent tooltips (school labels) | label inside the marker content, hidden below the zoom threshold with a `zoom_changed` listener |
-| `bindPopup` | one shared `InfoWindow` |
-| `L.circle` catchment (metres) | `google.maps.Circle` with `radius` in metres (miles × 1609.344) |
-| `L.polygon` ward outlines | `google.maps.Polygon` (dashed strokes need `icons` on a `Polyline`: draw a dashed polyline over an unstroked polygon) |
-| area labels | `AdvancedMarkerElement` with text content |
-| `L.geoJSON` borough borders and tube lines | `map.data.addGeoJson()` with a style function, or skip the borough borders, because Google's basemap already shows them |
-| shop diamonds | `AdvancedMarkerElement` with a rotated square. There are ~380, which is fine; add `@googlemaps/markerclusterer` only if it gets slow |
-| `flyToBounds` | `map.fitBounds(bounds, padding)` |
-| stations | probably drop them, because Google shows transit. Keep Moorgate as a highlighted marker. Consider the `TransitLayer` toggle |
+| CARTO tiles | OpenFreeMap style; `setStyle` on theme change, then all sources and layers are added again on `style.load` |
+| `L.circleMarker` schools | `circle` layer; radius `4 + √pupils / 3.2` px in feature properties; ring / dot / double ring via opacity, stroke and a second ring layer |
+| permanent school labels | `symbol` layer with `minzoom: 11.5` |
+| `bindPopup` | one shared `maplibregl.Popup` |
+| `L.circle` catchments | 64-point polygon in metres (`catchment_miles` × 1609.344): `fill` + dashed `line` |
+| `L.polygon` wards | `fill` + two `line` layers (solid for the selected area, dashed for others) |
+| area and ward labels | `symbol` layers on point features |
+| `L.geoJSON` boroughs and Tube | GeoJSON sources with `line` layers |
+| shop diamonds | `symbol` layer with one canvas-drawn diamond image per group (`addImage`) |
+| `flyToBounds` / `setView` | `fitBounds(bounds, { padding })` / `flyTo` |
 
-4. **Keep the data files and the side panel logic unchanged.** Only the map layer should change. A good structure:
-   - `js/data.js`: loads and parses the files.
-   - `js/map-google.js`: everything map-specific.
-   - `js/panel.js`: filters, area cards and the list.
-   - Keep the shared state object.
-5. **Nice extras Google makes easy (optional):**
-   - Street View pegman.
-   - A "commute from here" link: a Google Maps directions URL from the area centre to Moorgate station by transit.
+Code layout (ES modules, no build):
+
+- `js/data.js`: loads and parses the files.
+- `js/state.js`: the shared state object and `localStorage`.
+- `js/format.js`: number formatting, links and popup HTML.
+- `js/map.js`: everything map-specific.
+- `js/panel.js`: filters, area cards and the school list.
+- `js/main.js`: wires them together.
+
+Extras added: a scale bar in miles and a "Commute from here" Google Maps transit link from each area centre to Moorgate.
 
 ## 5. Privacy rules (the repository is public)
 
 - Do not add personal details: no names of family members, no home address or postcode, no employer, no income, no health information.
 - Area texts must stay neutral, for example "good for a family with a primary and a secondary child".
-- Do not commit API keys other than the referrer-restricted Maps browser key.
+- Do not commit API keys. The map needs none.
 
 ## 6. Deploy
 
@@ -156,7 +154,7 @@ Use the **Maps JavaScript API**, loaded with the official dynamic loader (`impor
 
 ## 7. Done when
 
-- The site loads at https://sosergio.github.io/london-2028/ on a Google basemap, with no console errors.
+- The site loads at https://sosergio.github.io/london-2028/ on the OpenFreeMap basemap, with no console errors.
 - Every feature in section 2 works on desktop and on a phone-width screen.
 - Editing a row in `data/schools.csv` and pushing changes the map, with no other step.
-- `README.md` explains how to edit the data and how to set the API key.
+- `README.md` explains how to edit the data.

@@ -18,8 +18,16 @@ The `area_id` in schools.csv and shops.csv must match an `id` in areas.csv, and 
 
 ## Sources
 
-Get Information about Schools (DfE), Ofsted, Census 2021 via Nomis (TS006 density, TS021 ethnicity), police.uk, OpenStreetMap, ONS boundaries. Basemap: OpenStreetMap and CARTO. Rents and journey times are estimates.
+Get Information about Schools (DfE), Ofsted, Census 2021 via Nomis (TS006 density, TS021 ethnicity), police.uk, OpenStreetMap, ONS boundaries. Basemap: OpenFreeMap (OpenMapTiles, OpenStreetMap data), drawn with MapLibre GL. No API key is needed. Rents and journey times are estimates.
 
-## Next step
+## Running it locally
 
-See `INSTRUCTIONS.md` for the plan to move the map from Leaflet to Google Maps.
+```
+python3 -m http.server
+```
+
+Then open http://localhost:8000. Opening `index.html` straight from disk does not work, because the page loads the data with `fetch`.
+
+## Code
+
+`index.html` holds the markup and CSS. The scripts in `js/` are ES modules: `data.js` loads the files, `map.js` draws the MapLibre map, `panel.js` builds the filters, area cards and school list. See `INSTRUCTIONS.md` for the full brief.
