@@ -27,6 +27,9 @@ export async function loadData() {
       eth, crimeTotal: r.crime_total, crime,
       price: { flat: r.price_flat, terraced: r.price_terraced, semi: r.price_semi }, priceLevel: r.price_level,
       priceSales: r.price_sales, pricePeriod: r.price_period || '',
+      // Per 1,000 residents a year, over all of the area's neighbourhoods (police.uk street-level crime).
+      crimeRate: { all: r.crime_rate, violent: r.crime_rate_violent, burglary: r.crime_rate_burglary, asb: r.crime_rate_asb },
+      crimePeriod: r.crime_rate_period || '',
     };
   });
 
@@ -46,8 +49,11 @@ export async function loadData() {
     await Promise.all(Object.entries(idx.guides || {}).map(async ([id, path]) => { guides[id] = await getJSON(path); }));
   } catch (e) { console.warn('No area guides loaded', e); }
 
+  let crimeSubs = null;
+  try { crimeSubs = await loadCrimeSubs(); } catch (e) { console.warn('No crime by neighbourhood loaded', e); }
+
   return {
-    areas, schools, shops, guides, excluded: extra.excluded,
+    areas, schools, shops, guides, crimeSubs, excluded: extra.excluded,
     areaById: Object.fromEntries(areas.map(a => [a.id, a])),
     geo: { boroughs, tubeLines, stations, wards },
   };
@@ -83,4 +89,43 @@ export async function loadPrices() {
         band: priceBand(100 * s.price / base[s.type]) } })),
   };
   return { subareas, sales };
+}
+
+// ---------- crime by neighbourhood ----------
+// police.uk street-level crime, 12 months, placed in the same Census neighbourhoods (LSOAs) as the sold prices.
+// "all" leaves out shoplifting, which piles onto shopping streets and says little about living there.
+export const CRIME_GROUPS = ['asb', 'violent', 'burglary', 'vehicle', 'shoplifting', 'other'];
+export const CRIME_KINDS = { all: 'All crime except shoplifting', violent: 'Violence and robbery', burglary: 'Burglary', asb: 'Anti-social behaviour' };
+const kindCount = (r, k) => k === 'all' ? r.total - r.shoplifting : r[k];
+// Bands are multiples of the shortlist's typical (median) neighbourhood rate for that kind of crime.
+export const CRIME_MULT = [0.5, 0.75, 1, 1.5, 2.5];
+
+// Small (about 150 kB): loaded with the page so the area cards can name their quietest and busiest neighbourhoods.
+export async function loadCrimeSubs() {
+  const [crimeCsv, subCsv] = await Promise.all([getCSV('data/crime_subareas.csv'), getCSV('data/subareas.csv')]);
+  const names = Object.fromEntries(subCsv.map(r => [r.id, r.name]));
+  const rows = crimeCsv.filter(r => r.residents > 0).map(r => {
+    const rate = {};
+    for (const k of Object.keys(CRIME_KINDS)) rate[k] = 1000 * kindCount(r, k) / r.residents;
+    return { ...r, name: names[r.id] || r.id, top: r.top_streets || '', rate };
+  });
+  const med = arr => { const s = [...arr].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  const typical = Object.fromEntries(Object.keys(CRIME_KINDS).map(k => [k, med(rows.map(r => r.rate[k]))]));
+  const cuts = Object.fromEntries(Object.keys(CRIME_KINDS).map(k => [k, CRIME_MULT.map(m => m * typical[k])]));
+  return { rows, typical, cuts, band: (k, v) => cuts[k].filter(c => v >= c).length };
+}
+
+// The map layer: outlines (shared with the price layer) and the "on or near" points. Loaded on first use.
+export async function loadCrime(subs) {
+  const [geo, pts] = await Promise.all([getJSON('data/geo/subareas.json'), getCSV('data/crime_points.csv')]);
+  const byId = Object.fromEntries(subs.rows.map(r => [r.id, r]));
+  const subareas = geo.features.filter(f => byId[f.properties.id]).map(f => {
+    const r = byId[f.properties.id];
+    return { ...f, properties: { id: r.id, area: r.area_id, name: r.name, residents: r.residents, top: r.top,
+      ...Object.fromEntries(CRIME_GROUPS.map(g => [g, r[g]])), total: r.total,
+      ...Object.fromEntries(Object.keys(CRIME_KINDS).flatMap(k => [['r_' + k, r.rate[k]], ['b_' + k, subs.band(k, r.rate[k])]])) } };
+  });
+  const points = pts.map(p => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+    properties: { street: String(p.street), total: p.n, all: p.n - p.shoplifting, ...Object.fromEntries(CRIME_GROUPS.map(g => [g, p[g]])) } }));
+  return { subareas, points };
 }

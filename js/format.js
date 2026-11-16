@@ -71,3 +71,28 @@ export function saleHtml(p) {
   return `<div class="pop"><h3>${money(p.price)} <span class="muted">· ${TYPE_NAME[p.type] || esc(p.type)}</span></h3>
     <p>${esc(p.street)}${p.street ? ', ' : ''}${esc(p.pc)}</p><p class="meta">Sold ${esc(p.date)} · HM Land Registry</p></div>`;
 }
+
+// ---------- crime ----------
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// "2025-10:2026-09" → "Oct 2025–Sep 2026"
+export const crimePeriod = p => String(p || '').split(':').map(d => { const [y, m] = d.split('-'); return `${MONTHS[+m - 1]} ${y}`; }).join('–');
+export const GROUP_LABEL = { asb: 'anti-social', violent: 'violence & robbery', burglary: 'burglary', vehicle: 'vehicle & bike', shoplifting: 'shoplifting', other: 'other' };
+export const KIND_SHORT = { all: 'crimes (excl. shoplifting)', violent: 'violent crimes and robberies', burglary: 'burglaries', asb: 'anti-social incidents' };
+const groupsLine = p => Object.keys(GROUP_LABEL).filter(g => p[g] > 0).sort((a, b) => p[b] - p[a]).map(g => `${fmt(p[g])} ${GROUP_LABEL[g]}`).join(' · ');
+const times = x => x >= 0.9 && x <= 1.1 ? 'about typical for the shortlist'
+  : x < 0.9 ? `${Math.round((1 - x) * 100)}% below the shortlist typical` : `${x.toFixed(1)}× the shortlist typical`;
+
+export function crimeSubHtml(p, kind, typical, period) {
+  const r = p['r_' + kind];
+  const top = String(p.top || '').split('; ').filter(Boolean).slice(0, 3).map(esc).join(', ');
+  return `<div class="pop"><h3>${esc(p.name)}</h3>
+    <p><b>${Math.round(r)}</b> ${KIND_SHORT[kind]} per 1,000 residents a year <span class="muted">(${times(r / typical)})</span></p>
+    <p class="meta">${fmt(p.total)} in 12 months: ${groupsLine(p) || 'none'}</p>
+    ${top ? `<p class="meta">Most reported on or near ${top}</p>` : ''}
+    <p class="meta">${fmt(p.residents)} residents · police.uk, ${esc(period)}</p></div>`;
+}
+
+export function crimePointHtml(p) {
+  return `<div class="pop"><h3>On or near ${esc(p.street)}</h3><p><b>${fmt(p.total)}</b> crime${p.total === 1 ? '' : 's'} in 12 months</p>
+    <p class="meta">${groupsLine(p)}</p><p class="meta">police.uk places each crime at the nearest of a fixed set of points, not the exact address.</p></div>`;
+}

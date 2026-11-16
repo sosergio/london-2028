@@ -8,7 +8,7 @@
 //
 // The panel talks to this module only through the object returned by createMap().
 
-import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml } from './format.js';
+import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml, crimeSubHtml, crimePointHtml } from './format.js';
 
 const STYLES = {
   light: 'https://tiles.openfreemap.org/styles/positron',
@@ -60,12 +60,21 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
-  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, lines: true, guides: true };
+  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, crime: null, lines: true, guides: true };
   let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
 
   // ---------- GeoJSON builders ----------
+  // Crime: colour each neighbourhood by the chosen kind of crime; size each street point by its count of it.
+  function crimeFeatures() {
+    const c = view.crime;
+    if (!c) return { subs: fc([]), points: fc([]) };
+    return {
+      subs: fc(c.data.subareas.map(f => ({ ...f, properties: { ...f.properties, band: f.properties['b_' + c.kind] } }))),
+      points: fc(c.data.points.filter(f => f.properties[c.kind] > 0).map(f => ({ ...f, properties: { ...f.properties, c: f.properties[c.kind] } }))),
+    };
+  }
   function schoolFeatures() {
     return fc(view.shown.map(s => {
       const r = radiusFor(s.pu), w = s.p === 'P' ? 1.5 : 3;
@@ -136,6 +145,9 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
 
     map.addSource('subareas', { type: 'geojson', data: view.prices?.subareas || fc([]) });
     map.addSource('sales', { type: 'geojson', data: view.prices?.sales || fc([]) });
+    const crime = crimeFeatures();
+    map.addSource('crime-subs', { type: 'geojson', data: crime.subs });
+    map.addSource('crime-points', { type: 'geojson', data: crime.points });
     map.addSource('boroughs', { type: 'geojson', data: geo.boroughs });
     map.addSource('tube', { type: 'geojson', data: tube });
     map.addSource('wards', { type: 'geojson', data: wards.polys });
@@ -155,6 +167,11 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addLayer({ id: 'price-line', type: 'line', source: 'subareas',
       paint: { 'line-color': ['case', ['>=', ['get', 'band'], 0], panel, muted], 'line-width': ['case', ['>=', ['get', 'band'], 0], 0.8, 0.6],
         'line-opacity': ['case', ['>=', ['get', 'band'], 0], 0.9, 0.6] } }, firstLabel);
+    const cramp = [0, 1, 2, 3, 4, 5].flatMap(b => [b, css('--crime-' + b)]);
+    map.addLayer({ id: 'crime-fill', type: 'fill', source: 'crime-subs',
+      paint: { 'fill-color': ['match', ['get', 'band'], ...cramp, 'rgba(0,0,0,0)'],
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.55, 13, 0.42, 15, 0.2] } }, firstLabel);
+    map.addLayer({ id: 'crime-line', type: 'line', source: 'crime-subs', paint: { 'line-color': panel, 'line-width': 0.8, 'line-opacity': 0.9 } }, firstLabel);
     map.addLayer({ id: 'boroughs', type: 'line', source: 'boroughs', paint: { 'line-color': border, 'line-width': 1, 'line-dasharray': [2, 3] } }, firstLabel);
     map.addLayer({ id: 'tube', type: 'line', source: 'tube', layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': ['get', 'c'],
@@ -174,6 +191,10 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addLayer({ id: 'sales', type: 'circle', source: 'sales', minzoom: 14,
       paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 2.5, 17, 5], 'circle-color': ['match', ['get', 'band'], ...ramp, muted],
         'circle-stroke-color': panel, 'circle-stroke-width': 1 } });
+    // "On or near" points: area grows with the count, so a busy junction reads bigger than a quiet close.
+    map.addLayer({ id: 'crime-points', type: 'circle', source: 'crime-points', minzoom: 14,
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, ['min', 14, ['+', 2, ['*', 1.1, ['sqrt', ['get', 'c']]]]], 17, ['min', 22, ['+', 3, ['*', 1.8, ['sqrt', ['get', 'c']]]]]],
+        'circle-color': css('--crime-4'), 'circle-opacity': 0.75, 'circle-stroke-color': panel, 'circle-stroke-width': 1 } });
     map.addLayer({ id: 'school-ring', type: 'circle', source: 'schools', filter: ['==', ['get', 'p'], 'A'],
       paint: { 'circle-radius': ['get', 'ring'], 'circle-opacity': 0, 'circle-stroke-color': ['get', 'col'], 'circle-stroke-width': 2 } });
     map.addLayer({ id: 'schools', type: 'circle', source: 'schools',
@@ -228,6 +249,9 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.getSource('shops').setData(shopFeatures());
     map.getSource('subareas').setData(view.prices?.subareas || fc([]));
     map.getSource('sales').setData(view.prices?.sales || fc([]));
+    const crime = crimeFeatures();
+    map.getSource('crime-subs').setData(crime.subs);
+    map.getSource('crime-points').setData(crime.points);
   }
 
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
@@ -243,7 +267,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'tube', 'price-fill', 'price-line']
+  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line']
     .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
@@ -252,9 +276,21 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     const box = [[point.x - 4, point.y - 4], [point.x + 4, point.y + 4]];
     const hits = map.queryRenderedFeatures(box, { layers: hitLayers() });
     return hits.find(f => f.layer.id === 'guide-dot') || hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
-      || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'tube')
-      || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line');
+      || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'crime-points') || hits.find(f => f.layer.id === 'tube')
+      || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line')
+      || hits.find(f => f.layer.id === 'crime-fill' || f.layer.id === 'crime-line');
   }
+
+  const CRIME_SUB = new Set(['crime-fill', 'crime-line']), SUB = new Set(['price-fill', 'price-line', 'crime-fill', 'crime-line']);
+  // Popup or hover text for anything that is not a school, shop or guide dot.
+  function otherHtml(f) {
+    const c = view.crime;
+    if (f.layer.id === 'sales') return saleHtml(f.properties);
+    if (f.layer.id === 'crime-points') return crimePointHtml(f.properties);
+    if (CRIME_SUB.has(f.layer.id)) return crimeSubHtml(f.properties, c.kind, c.typical[c.kind], c.period);
+    return subareaHtml(f.properties);
+  }
+  const pointOf = (f, e) => f.geometry.type === 'Point' ? f.geometry.coordinates : e.lngLat;
 
   function openSchool(s) { popup.setLngLat(lngLat(s.ll)).setHTML(schoolPopup(s, areaById[s.a])).addTo(map); }
 
@@ -265,21 +301,19 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     if (f.layer.id === 'guide-dot') { if (onGuide) onGuide(f.properties.area, f.properties.id); return; }
     if (SCHOOL_LAYERS.has(f.layer.id)) openSchool(schoolByI.get(f.properties.i));
     else if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); popup.setLngLat(lngLat(p.ll)).setHTML(shopPopup(p)).addTo(map); }
-    else if (f.layer.id === 'sales') popup.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
     else if (f.layer.id === 'tube') return;
-    else popup.setLngLat(e.lngLat).setHTML(subareaHtml(f.properties)).addTo(map);
+    else popup.setLngLat(pointOf(f, e)).setHTML(otherHtml(f)).addTo(map);
   });
   map.on('mousemove', e => {
     if (!ready) return;
     const f = pick(e.point);
-    const sub = f && (f.layer.id === 'price-fill' || f.layer.id === 'price-line');
+    const sub = f && SUB.has(f.layer.id);
     map.getCanvas().style.cursor = f && !sub ? 'pointer' : '';
     if (!f || SCHOOL_LAYERS.has(f.layer.id)) { tip.remove(); return; }
     if (f.layer.id === 'guide-dot') { tip.setLngLat(f.geometry.coordinates).setHTML(`<div class="tip">${f.properties.name}<br><span>Highlight · click for the guide</span></div>`).addTo(map); return; }
     if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); tip.setLngLat(lngLat(p.ll)).setHTML(shopTip(p)).addTo(map); }
-    else if (f.layer.id === 'sales') tip.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
     else if (f.layer.id === 'tube') tip.setLngLat(e.lngLat).setHTML(`<div class="tip"><i class="line-key" style="background:${f.properties.c}"></i>${f.properties.n}</div>`).addTo(map);
-    else tip.setLngLat(e.lngLat).setHTML(subareaHtml(f.properties)).addTo(map);
+    else tip.setLngLat(pointOf(f, e)).setHTML(otherHtml(f)).addTo(map);
   });
   map.getCanvas().addEventListener('mouseleave', () => tip.remove());
 
@@ -314,6 +348,8 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     },
     setLines(on) { view = { ...view, lines: on }; if (!on) tip.remove(); if (ready) applyLines(); },
     setPrices(prices) { view = { ...view, prices }; if (!prices) tip.remove(); refresh(); },
+    // crime: null, or { data: loadCrime() result, kind, typical, period }
+    setCrime(crime) { view = { ...view, crime }; tip.remove(); refresh(); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },
     selectArea(id) {
       popup.remove();

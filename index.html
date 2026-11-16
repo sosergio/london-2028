@@ -19,6 +19,8 @@
   --poi-up:#0b6e4f; --poi-bake:#b5651d; --poi-cult:#8e3b8e; --poi-gym:#2f5fb3; --poi-disc:#c23b3b;
   /* Sold-price level: one hue, cheap → expensive (validated with the dataviz ordinal checks) */
   --price-0:#dba0c7; --price-1:#c97faf; --price-2:#b46298; --price-3:#9a4a82; --price-4:#7d346a; --price-5:#5d2251;
+  /* Crime level: one hue, fewer → more crimes per resident (OKLab lightness in even steps) */
+  --crime-0:#f4b39e; --crime-1:#e8866b; --crime-2:#d45f45; --crime-3:#b5412d; --crime-4:#8e2c1f; --crime-5:#641a14;
   --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
 }
@@ -29,7 +31,8 @@
   --cath:#b48cf0; --cofe:#f08a5d; --none:#6fb0f0;
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
   --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
-  --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de; color-scheme:dark}}
+  --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de;
+  --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141917; --panel:#1b211e; --fg:#e6ece8; --muted:#9aa8a0; --line:#2c3530;
   --land:#1e2622; --land-london:#25302a; --border:#3e4b44;
@@ -37,7 +40,8 @@
   --cath:#b48cf0; --cofe:#f08a5d; --none:#6fb0f0;
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
   --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
-  --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de; color-scheme:dark}
+  --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de;
+  --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}
 [hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0}
@@ -285,6 +289,18 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
             <p class="hint">Price level by neighbourhood: median sale price against the shortlist median for the same type (flat, terraced, semi, detached), last 2 years. Grey outline = too few sales. Zoom in to see each sale.</p>
           </div>
         </section>
+        <section class="fsec">
+          <div class="fhead"><span class="label">Crime</span><label class="switch"><input type="checkbox" id="showcrime" aria-label="Show crime level by neighbourhood"><span aria-hidden="true"></span></label></div>
+          <div class="fbody" id="crime-legend" hidden>
+            <div class="seg" id="crimeseg" role="group" aria-label="Kind of crime">
+              <button type="button" data-k="all">All</button><button type="button" data-k="violent">Violence</button><button type="button" data-k="burglary">Burglary</button><button type="button" data-k="asb">Anti-social</button>
+            </div>
+            <div class="ramp" aria-hidden="true"><i style="background:var(--crime-0)"></i><i style="background:var(--crime-1)"></i><i style="background:var(--crime-2)"></i><i style="background:var(--crime-3)"></i><i style="background:var(--crime-4)"></i><i style="background:var(--crime-5)"></i></div>
+            <div class="ticks" id="crime-ticks"></div>
+            <div class="ends"><span>fewer</span><span id="crime-typical">typical</span><span>more</span></div>
+            <p class="hint">Crimes a year per 1,000 residents in each neighbourhood, from police.uk (<span id="crime-period"></span>). "All" leaves out shoplifting. Town centres and stations look worst because few people live there. Zoom in to see the streets where crimes were reported.</p>
+          </div>
+        </section>
       </div>
     </details>
   </div>
@@ -312,6 +328,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
       <p>Faith schools rank baptised, practising families first, so their non-faith distance says little about your chances with a priest's reference.</p>
       <p><strong>Not shown, because they are boys or girls only:</strong> <span id="excluded"></span>.</p>
       <p><strong>Sold prices</strong>: HM Land Registry Price Paid Data, standard sales over the last two years in each area's postcode sectors. It does not record bedrooms, so flats (mostly 1–2 bed) and houses (mostly 2–4 bed) are shown separately. The price level compares each neighbourhood (an ONS Census LSOA, about 650 homes) with the shortlist median for the same property type, so 100 is typical and 150 is half as dear again.</p>
+      <p><strong>Crime</strong>: police.uk street-level crime for 12 months. The card's 1-mile count is the same radius everywhere, so it is not per person; the rates per 1,000 residents count every crime inside the area's neighbourhoods (the same Census LSOAs as the prices) and divide by their 2021 population. police.uk moves each crime to the nearest of a fixed set of points (usually the middle of a street), so a point means "on or near this street", never an address. Fraud and some sensitive offences are not published. Shoplifting is left out of "all", as it piles onto shopping streets.</p>
       <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
     </section>
   </aside>
@@ -330,7 +347,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
     <h2 id="compare-title">Compare areas</h2>
     <button type="button" class="dlg-close" aria-label="Close">×</button>
   </div>
-  <p class="dlg-note">Click a heading to sort (the first click puts the better end on top); click an area to show it on the map. Shading runs from the weakest value in each column (none) to the best (strongest green); the number of schools is not shaded, as it mostly reflects how big the area is. Commute, family time, rent, green and lifestyle are estimates; prices are Land Registry medians for the last 2 years; crime counts everything within 1 mile of each centre.</p>
+  <p class="dlg-note">Click a heading to sort (the first click puts the better end on top); click an area to show it on the map. Shading runs from the weakest value in each column (none) to the best (strongest green); the number of schools is not shaded, as it mostly reflects how big the area is. Commute, family time, rent, green and lifestyle are estimates; prices are Land Registry medians for the last 2 years; crime is per 1,000 residents a year across each area's neighbourhoods (police.uk, shoplifting left out).</p>
   <div class="tbl-wrap"><table class="cmp"></table></div>
 </dialog>
 

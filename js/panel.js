@@ -2,8 +2,8 @@
 // the map is driven through the small API returned by createMap().
 
 import { state, poiOn, saveState, savePoi, isVisible } from './state.js';
-import { ETH_KEYS, loadPrices, PRICE_BANDS } from './data.js';
-import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money } from './format.js';
+import { ETH_KEYS, loadPrices, PRICE_BANDS, loadCrime, CRIME_KINDS } from './data.js';
+import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money, crimePeriod } from './format.js';
 
 const ETH = { whiteBritish: ['White British', '#7f9c8f'], whiteOther: ['Other White', '#b9cbbf'], asian: ['Asian', '#d6a84a'],
   black: ['Black', '#8a6bb8'], mixed: ['Mixed', '#e08aa0'], other: ['Other', '#9aa3a0'] };
@@ -16,7 +16,14 @@ const onActivate = (el, fn) => {
 export function createPanel(DATA, map, { openGuide } = {}) {
   const { areas, schools, shops, areaById } = DATA;
   const maxDens = Math.max(...areas.map(a => a.dens));
-  const maxCrime = Math.max(...areas.map(a => a.crimeTotal));
+  const { crimeSubs } = DATA;
+  const maxRate = Math.max(...areas.map(a => +a.crimeRate.all || 0));
+  // Each area's quietest and busiest neighbourhoods (with enough residents for a rate to mean something).
+  const subsByArea = {}; (crimeSubs?.rows || []).filter(r => r.residents >= 1000).forEach(r => (subsByArea[r.area_id] ||= []).push(r));
+  const firstStreet = r => String(r.top).split(' (')[0];
+  // The middle of the shortlist for each kind of crime, so a card can say whether its area is high or low.
+  const midOf = k => { const v = areas.map(a => +a.crimeRate[k]).filter(x => x > 0).sort((x, y) => x - y), m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
+  const mid = Object.fromEntries(['all', 'violent', 'burglary', 'asb'].map(k => [k, midOf(k)]));
   const maxLevel = Math.max(...areas.map(a => +a.priceLevel || 0));
   const shopsByArea = {}; shops.forEach(p => (shopsByArea[p.a] ||= []).push(p));
 
@@ -34,12 +41,22 @@ export function createPanel(DATA, map, { openGuide } = {}) {
       <div class="stat-row"><span>Density</span><div class="bar" title="People per km²"><i style="width:${(a.dens / maxDens * 100).toFixed(0)}%;background:var(--accent)"></i></div><b>${fmt(a.dens)}/km²</b></div>
       <div class="amen">People per km²: ${fmt(a.densMin)}–${fmt(a.densMax)} across these neighbourhoods; London average 5,598</div>
       <div class="stat-row"><span>Ethnicity</span><div class="bar" aria-label="Ethnic groups">${eb}</div><b>${a.eth.whiteBritish}% WB</b></div>
-      <div class="stat-row"><span>Crime, 12 mo</span><div class="bar"><i style="width:${(a.crimeTotal / maxCrime * 100).toFixed(0)}%;background:var(--of-w)"></i></div><b>${fmt(a.crimeTotal)}</b></div>
-      <div class="amen">Within 1 mile of the centre: ${fmt(a.crime['violent-crime'])} violent, ${fmt(a.crime.burglary)} burglaries, ${fmt(a.crime.robbery)} robberies (Oct 2025–Sep 2026)</div>
+      ${crimeHtml(a)}
       <div class="amen">${shopCounts(a.id)}</div>
       ${a.priceLevel ? `<div class="stat-row"><span>Price level</span><div class="bar" title="100 = typical for the shortlist"><i style="width:${(a.priceLevel / maxLevel * 100).toFixed(0)}%;background:var(--price-4)"></i></div><b>${a.priceLevel}</b></div>
       <div class="amen">Median sold, ${esc(a.pricePeriod)}: flat ${money(a.price.flat)} · terraced ${money(a.price.terraced)} · semi ${money(a.price.semi)} (${fmt(a.priceSales)} sales; 100 = typical for the shortlist)</div>` : ''}
     </div>`;
+  }
+
+  function crimeHtml(a) {
+    const r = a.crimeRate;
+    if (!r.all) return `<div class="stat-row"><span>Crime, 12 mo</span><div class="amen">${fmt(a.crimeTotal)} within 1 mile of the centre</div><b></b></div>`;
+    const subs = [...(subsByArea[a.id] || [])].sort((x, y) => x.rate.all - y.rate.all);
+    const lo = subs[0], hi = subs.at(-1);
+    return `<div class="stat-row"><span>Crime</span><div class="bar" title="Crimes a year per 1,000 residents, shoplifting left out"><i style="width:${(r.all / maxRate * 100).toFixed(0)}%;background:var(--crime-3)"></i></div><b>${Math.round(r.all)}/1k</b></div>
+      <div class="amen">A year per 1,000 residents, shoplifting left out: ${Math.round(r.all)} in all (middle of the shortlist ${Math.round(mid.all)}) · ${Math.round(r.violent)} violence &amp; robbery (${Math.round(mid.violent)}) · ${r.burglary.toFixed(1)} burglary (${mid.burglary.toFixed(1)}) · ${Math.round(r.asb)} anti-social (${Math.round(mid.asb)})</div>
+      ${lo && hi && lo !== hi ? `<div class="amen">Quietest: ${esc(lo.name)} (${Math.round(lo.rate.all)}) · busiest: ${esc(hi.name)} (${Math.round(hi.rate.all)}${hi.top ? `, mostly near ${esc(firstStreet(hi))}` : ''})</div>` : ''}
+      <div class="amen muted">${fmt(a.crimeTotal)} crimes within 1 mile of the centre · police.uk, ${esc(crimePeriod(a.crimePeriod))}</div>`;
   }
 
   // ---------- area cards ----------
@@ -132,8 +149,48 @@ export function createPanel(DATA, map, { openGuide } = {}) {
     map.setPrices(state.price ? prices : null);
   }
   priceEl.checked = state.price;
-  priceEl.addEventListener('change', () => { state.price = priceEl.checked; saveState(); applyPrices(); });
+  // Prices and crime both colour the neighbourhoods, so only one is shown at a time.
+  priceEl.addEventListener('change', () => {
+    state.price = priceEl.checked;
+    if (state.price && state.crime) { state.crime = false; crimeEl.checked = false; applyCrime(); }
+    saveState(); applyPrices();
+  });
+
+  // Crime by neighbourhood: same pattern, with a choice of what kind of crime to show.
+  const crimeEl = document.getElementById('showcrime'), crimeLegend = document.getElementById('crime-legend');
+  const crimeSeg = document.querySelectorAll('#crimeseg button');
+  let crime = null;
+  if (!crimeSubs) crimeEl.closest('.fsec').hidden = true;
+  else document.getElementById('crime-period').textContent = crimePeriod(areas[0].crimePeriod);
+  function crimeLegendText() {
+    const k = state.crimeKind, c = crimeSubs.cuts[k], f = v => v < 10 ? v.toFixed(1).replace(/\.0$/, '') : Math.round(v);
+    document.getElementById('crime-ticks').innerHTML = ['<' + f(c[0]), ...c.slice(0, -1).map((v, i) => `${f(v)}–${f(c[i + 1])}`), f(c.at(-1)) + '+']
+      .map(t => `<span>${t}</span>`).join('');
+    document.getElementById('crime-typical').textContent = `typical ${f(crimeSubs.typical[k])}`;
+    crimeSeg.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === k)));
+    crimeEl.closest('.fsec').querySelector('#crimeseg').title = CRIME_KINDS[k];
+  }
+  async function applyCrime() {
+    crimeLegend.hidden = !state.crime;
+    if (!crimeSubs) return;
+    crimeLegendText();
+    if (state.crime && !crime) {
+      crimeEl.disabled = true;
+      try { crime = await loadCrime(crimeSubs); } catch (err) { console.error(err); state.crime = false; crimeEl.checked = false; crimeLegend.hidden = true; }
+      crimeEl.disabled = false;
+    }
+    map.setCrime(state.crime && crime ? { data: crime, kind: state.crimeKind, typical: crimeSubs.typical, period: crimePeriod(areas[0].crimePeriod) } : null);
+  }
+  crimeEl.checked = state.crime;
+  crimeEl.addEventListener('change', () => {
+    state.crime = crimeEl.checked;
+    if (state.crime && state.price) { state.price = false; priceEl.checked = false; applyPrices(); }
+    saveState(); applyCrime();
+  });
+  crimeSeg.forEach(b => b.addEventListener('click', () => { state.crimeKind = b.dataset.k; saveState(); applyCrime(); }));
+  if (state.price && state.crime) state.crime = false;
   if (state.price) applyPrices();
+  if (state.crime) applyCrime(); else if (crimeSubs) crimeLegendText();
 
   const linesEl = document.getElementById('showlines');
   linesEl.checked = state.lines; map.setLines(state.lines);

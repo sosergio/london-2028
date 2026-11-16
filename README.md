@@ -8,7 +8,8 @@ All data is in `data/`. Edit a file, commit, and the page shows the change on th
 
 | File | What it holds |
 |---|---|
-| `data/areas.csv` | One row per area: rank, rent, commute, notes, Census 2021 residents, density and ethnicity, and 12 months of police.uk crime within 1 mile of the centre |
+| `data/areas.csv` | One row per area: rank, rent, commute, notes, Census 2021 residents, density and ethnicity, and 12 months of police.uk crime (within 1 mile of the centre, and per 1,000 residents) |
+| `data/crime_subareas.csv`, `data/crime_points.csv` | police.uk crime per neighbourhood (LSOA) and per "on or near" street point, for the crime map layer |
 | `data/schools.csv` | One row per school: area, phase (P primary, S secondary, A all-through), faith (Catholic, CofE, None), pupils, Ofsted (colour: O outstanding, G good, W needs attention, N not rated), location, catchment distance in miles if known |
 | `data/shops.csv` | Shops and places from OpenStreetMap. `group` is one of: up (Waitrose, M&S, organic), bake (bakeries, delis, butchers), cult (cinemas, theatres, books), gym, disc (Aldi, Lidl, Iceland) |
 | `data/excluded.json` | Boys-only or girls-only schools left out |
