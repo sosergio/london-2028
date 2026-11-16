@@ -52,7 +52,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   const { schools, shops, areas, areaById, geo } = DATA;
   const map = new maplibregl.Map({
     container, style: isDark() ? STYLES.dark : STYLES.light,
-    bounds: boundsOf(schools.map(s => s.ll)), fitBoundsOptions: { padding: 30 },
+    center: [-0.1, 51.55], zoom: 9,
     minZoom: 8, maxZoom: 19, attributionControl: { compact: true },
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-left');
@@ -216,8 +216,10 @@ export function createMap(container, DATA, { onReady } = {}) {
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
   map.on('styleimagemissing', e => { if (!e.id.startsWith('poi-') && !map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) }); });
 
+  let fitted = false;
   map.on('style.load', () => {
     addOverlays(); applyLines(); ready = true;
+    if (!fitted) { fitted = true; map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 0 }); }
     if (onReady) { onReady(); onReady = null; }
   });
 
@@ -273,7 +275,13 @@ export function createMap(container, DATA, { onReady } = {}) {
     lls.forEach(ll => b.extend(lngLat(ll)));
     return b;
   }
-  const padding = () => (container.clientWidth < 500 ? 24 : 50);
+  // Keep fitted views clear of the floating filter box (top right) when it is open on a wide screen.
+  const padding = () => {
+    const base = container.clientWidth < 500 ? 24 : 50;
+    const box = document.getElementById('filters');
+    const wide = container.clientWidth >= 700 && box?.open;
+    return { top: base, bottom: base, left: base, right: wide ? box.offsetWidth + 30 : base };
+  };
 
   return {
     render(shown, { area, cat }) { view = { ...view, shown, area, cat }; refresh(); },
