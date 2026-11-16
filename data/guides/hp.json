@@ -1,0 +1,49 @@
+{
+ "area_id": "hp",
+ "title": "Highams Park",
+ "updated": "November 2026",
+ "intro": "A village on the edge of Epping Forest, with a forest lake at the end of the high street and a hilltop with views across the Lea Valley to the City.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "highams-park-lake",
+   "n": 1,
+   "name": "Highams Park Lake",
+   "kind": "park",
+   "lat": 51.6135,
+   "lon": 0.0045,
+   "km": 0.7,
+   "blurb": "A lake in a wooded corner of Epping Forest, once part of the grounds of the Highams estate, a short walk from the station.",
+   "tip": "Walk on into the forest along the lake's northern end.",
+   "photo": "data/guides/hp/highams-park-lake.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "The wub",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Highams_Park_Lake.jpg"
+   }
+  },
+  {
+   "id": "pole-hill",
+   "n": 2,
+   "name": "Pole Hill",
+   "kind": "walk",
+   "lat": 51.63,
+   "lon": -0.009,
+   "km": 2.5,
+   "blurb": "A grassy hill on the forest's edge with an obelisk put up in 1824 as a marker for the Royal Observatory, and wide views over the Lea Valley to the City.",
+   "tip": "Go on a clear evening for the view.",
+   "photo": "data/guides/hp/pole-hill.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "sludgegulper",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:London_from_Chingford_Pole_Hill.jpg"
+   }
+  }
+ ]
+}

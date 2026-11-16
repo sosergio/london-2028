@@ -1,0 +1,109 @@
+{
+ "area_id": "pg",
+ "title": "Palmers Green & Winchmore Hill",
+ "updated": "November 2026",
+ "intro": "Edwardian suburbs built around two great parks, with a village green, a Quaker meeting house and some of the London Underground's finest stations nearby.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "grovelands",
+   "n": 1,
+   "name": "Grovelands Park",
+   "kind": "park",
+   "lat": 51.629,
+   "lon": -0.118,
+   "km": 1.3,
+   "blurb": "A landscaped park with a lake and woods around Grovelands House, a villa of 1797 by John Nash and Grade I listed.",
+   "tip": "The lake and its woodland walk are the best part.",
+   "photo": "data/guides/pg/grovelands.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Stu's Images",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Grovelands_House,_The_Bourne,_Southgate,_N14.jpg"
+   }
+  },
+  {
+   "id": "broomfield",
+   "n": 2,
+   "name": "Broomfield Park",
+   "kind": "park",
+   "lat": 51.618,
+   "lon": -0.119,
+   "km": 0.6,
+   "blurb": "Palmers Green's park, with ornamental lakes, a conservatory, gardens and the shell of Broomfield House, a Tudor mansion damaged by fire.",
+   "tip": "The conservatory is a sheltered spot on cold days.",
+   "photo": "data/guides/pg/broomfield.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Paul Bryan",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bandstand_in_Broomfield_Park,_Palmers_Green_-_geograph.org.uk_-_3867580.jpg"
+   }
+  },
+  {
+   "id": "winchmore-hill-green",
+   "n": 3,
+   "name": "Winchmore Hill Green",
+   "kind": "street",
+   "lat": 51.6325,
+   "lon": -0.101,
+   "km": 1.7,
+   "blurb": "A village green with old houses, pubs and shops, and Church Hill rising beside it to an 18th-century Quaker meeting house.",
+   "tip": "Walk up Church Hill for the prettiest houses.",
+   "photo": "data/guides/pg/winchmore-hill-green.jpg",
+   "w": 1200,
+   "h": 782,
+   "credit": {
+    "author": "Martin Addison",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Green,_Winchmore_Hill_-_geograph.org.uk_-_2272875.jpg"
+   }
+  },
+  {
+   "id": "southgate-station",
+   "n": 4,
+   "name": "Southgate station",
+   "kind": "history",
+   "lat": 51.6322,
+   "lon": -0.128,
+   "km": 2.0,
+   "blurb": "A round 1933 station by Charles Holden, often compared to a flying saucer, Grade II* listed.",
+   "tip": "Look at the bronze 'Tesla coil' on the roof.",
+   "photo": "data/guides/pg/southgate-station.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Sunil060902",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Southgate_station_building2.JPG"
+   }
+  },
+  {
+   "id": "arnos-park",
+   "n": 5,
+   "name": "Arnos Park and the viaduct",
+   "kind": "walk",
+   "lat": 51.615,
+   "lon": -0.1335,
+   "km": 1.6,
+   "blurb": "A long park following the Pymmes Brook, crossed by the brick viaduct of the Piccadilly line built in the 1930s.",
+   "tip": "Follow the brook under the arches.",
+   "photo": "data/guides/pg/arnos-park.jpg",
+   "w": 1200,
+   "h": 676,
+   "credit": {
+    "author": "Paul Bryan",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Arnos_Park_Viaduct_-_geograph.org.uk_-_5691324.jpg"
+   }
+  }
+ ]
+}

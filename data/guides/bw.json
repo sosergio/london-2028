@@ -1,0 +1,109 @@
+{
+ "area_id": "bw",
+ "title": "Brentwood",
+ "updated": "November 2026",
+ "intro": "An Essex market town between two country parks, with a medieval chapel ruin on its high street and a classical cathedral finished in 1991.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "weald",
+   "n": 1,
+   "name": "Weald Country Park",
+   "kind": "park",
+   "lat": 51.631,
+   "lon": 0.264,
+   "km": 3.1,
+   "blurb": "A former deer park with lakes, woods and open grassland on the west side of Brentwood, with a herd of deer and a visitor centre.",
+   "tip": "Walk up to the top of the park for the view.",
+   "photo": "data/guides/bw/weald.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Philip Airey",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Weald_Country_park_midday_-_geograph.org.uk_-_2115374.jpg"
+   }
+  },
+  {
+   "id": "thorndon",
+   "n": 2,
+   "name": "Thorndon Country Park",
+   "kind": "park",
+   "lat": 51.596,
+   "lon": 0.315,
+   "km": 2.2,
+   "blurb": "Ancient woodland, meadows and lakes on the old Thorndon estate south of Brentwood, with views from the hill over the Thames estuary.",
+   "tip": "The southern park has the lakes; the northern woods have bluebells in spring.",
+   "photo": "data/guides/bw/thorndon.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Entering_Thorndon_Country_Park_from_Childerditch_Street_-_geograph.org.uk_-_5352569.jpg"
+   }
+  },
+  {
+   "id": "cathedral",
+   "n": 3,
+   "name": "Brentwood Cathedral",
+   "kind": "history",
+   "lat": 51.6195,
+   "lon": 0.2985,
+   "km": 0.7,
+   "blurb": "A Roman Catholic cathedral in a classical style designed by Quinlan Terry and completed in 1991, light and white inside.",
+   "tip": "Visitors are welcome outside services.",
+   "photo": "data/guides/bw/cathedral.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Fr James Bradley from Washington, DC",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Brentwood_Cathedral_interior_1.jpg"
+   }
+  },
+  {
+   "id": "becket-chapel",
+   "n": 4,
+   "name": "Thomas Becket Chapel ruins",
+   "kind": "history",
+   "lat": 51.6205,
+   "lon": 0.303,
+   "km": 0.8,
+   "blurb": "The ruined walls of a medieval chapel dedicated to Thomas Becket, on the High Street where pilgrims once passed on the way to Canterbury.",
+   "tip": "A quick stop on the High Street.",
+   "photo": "data/guides/bw/becket-chapel.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "PAUL FARMER",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chapel_of_St_Thomas_a_Becket,_Brentwood_-_geograph.org.uk_-_4730062.jpg"
+   }
+  },
+  {
+   "id": "ingatestone-hall",
+   "n": 5,
+   "name": "Ingatestone Hall",
+   "kind": "history",
+   "lat": 51.67,
+   "lon": 0.394,
+   "km": 9.0,
+   "blurb": "A Tudor manor house built in the 1540s for Sir William Petre and still owned by his family, with gardens and opening days in summer.",
+   "tip": "Check the summer opening days before you go.",
+   "photo": "data/guides/bw/ingatestone-hall.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Klovovi",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ingatestone_Hall_(7710644796).jpg"
+   }
+  }
+ ]
+}

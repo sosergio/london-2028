@@ -1,0 +1,109 @@
+{
+ "area_id": "ap",
+ "title": "Alexandra Park & Bowes Park",
+ "updated": "November 2026",
+ "intro": "Streets below the 'People's Palace', with one of the best views over London, a boating lake and woodland garden in its park, and Muswell Hill's Edwardian broadway up the hill.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "alexandra-palace",
+   "n": 1,
+   "name": "Alexandra Palace",
+   "kind": "history",
+   "lat": 51.5943,
+   "lon": -0.13,
+   "km": 0.8,
+   "blurb": "The great Victorian 'People's Palace' of 1873, where the BBC began the world's first regular high-definition television service in 1936.",
+   "tip": "The theatre and the ice rink are inside; the terrace view is free.",
+   "photo": "data/guides/ap/alexandra-palace.jpg",
+   "w": 1200,
+   "h": 878,
+   "credit": {
+    "author": "Oliver Spalt",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Alex_palace1.jpg"
+   }
+  },
+  {
+   "id": "ally-pally-view",
+   "n": 2,
+   "name": "The view from Alexandra Palace",
+   "kind": "walk",
+   "lat": 51.5935,
+   "lon": -0.1305,
+   "km": 0.9,
+   "blurb": "From the terrace in front of the palace the whole of London is laid out below, from the City to Canary Wharf.",
+   "tip": "Come at sunset, or on Bonfire Night for the fireworks.",
+   "photo": "data/guides/ap/ally-pally-view.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "The wub",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:City_of_London_from_Alexandra_Palace_-_2022-09-02.jpg"
+   }
+  },
+  {
+   "id": "boating-lake",
+   "n": 3,
+   "name": "Alexandra Park boating lake",
+   "kind": "park",
+   "lat": 51.599,
+   "lon": -0.1255,
+   "km": 0.4,
+   "blurb": "A boating lake below the palace with pedalos in summer, a café and a playground.",
+   "tip": "Pedalos run on summer weekends.",
+   "photo": "data/guides/ap/boating-lake.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Poliphilo",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Alexandra_Park,_boating_lake.JPG"
+   }
+  },
+  {
+   "id": "muswell-hill",
+   "n": 4,
+   "name": "Muswell Hill Broadway",
+   "kind": "street",
+   "lat": 51.59,
+   "lon": -0.143,
+   "km": 1.8,
+   "blurb": "An Edwardian shopping centre on the top of the hill, with parades of red-brick shops, cafés and an Art Deco cinema.",
+   "tip": "Walk over from the palace along The Avenue.",
+   "photo": "data/guides/ap/muswell-hill.jpg",
+   "w": 1200,
+   "h": 784,
+   "credit": {
+    "author": "Christopher Hilton",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Muswell_Hill_Broadway_-_geograph.org.uk_-_5283002.jpg"
+   }
+  },
+  {
+   "id": "bounds-green-station",
+   "n": 5,
+   "name": "Bounds Green station",
+   "kind": "history",
+   "lat": 51.6071,
+   "lon": -0.1243,
+   "km": 1.0,
+   "blurb": "A 1932 Piccadilly line station by Charles Holden with a brick and glass ticket hall, Grade II listed.",
+   "tip": "The Piccadilly line runs from here to King's Cross in about 15 minutes.",
+   "photo": "data/guides/ap/bounds-green-station.jpg",
+   "w": 1200,
+   "h": 750,
+   "credit": {
+    "author": "Julian Osley",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bounds_Green_Underground_Station_(geograph_6763255_by_Julian_Osley).jpg"
+   }
+  }
+ ]
+}

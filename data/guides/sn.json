@@ -1,0 +1,129 @@
+{
+ "area_id": "sn",
+ "title": "Stoke Newington",
+ "updated": "November 2026",
+ "intro": "A Georgian village swallowed by London, with a park around a 1790s house, a wild Victorian cemetery, wetlands on old reservoirs and a high street of independent shops.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "clissold-park",
+   "n": 1,
+   "name": "Clissold Park",
+   "kind": "park",
+   "lat": 51.5615,
+   "lon": -0.088,
+   "km": 1.0,
+   "blurb": "A park around Clissold House, a villa of the 1790s, with lakes, an animal enclosure, a paddling pool and a café in the house.",
+   "tip": "The café on the house's veranda is the classic Saturday stop.",
+   "photo": "data/guides/sn/clissold-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "David Holt",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Clissold_Park_-_panoramio_-_David_Holt.jpg"
+   }
+  },
+  {
+   "id": "abney-park",
+   "n": 2,
+   "name": "Abney Park",
+   "kind": "walk",
+   "lat": 51.564,
+   "lon": -0.076,
+   "km": 0.3,
+   "blurb": "A Victorian garden cemetery left to grow wild, now a woodland nature reserve with a ruined chapel at its heart.",
+   "tip": "Enter from Stoke Newington High Street and head for the chapel.",
+   "photo": "data/guides/sn/abney-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Mx. Granger",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Abney_Park_1.jpg"
+   }
+  },
+  {
+   "id": "church-street",
+   "n": 3,
+   "name": "Stoke Newington Church Street",
+   "kind": "street",
+   "lat": 51.562,
+   "lon": -0.079,
+   "km": 0.4,
+   "blurb": "A long, curving street of independent shops, bookshops, cafés and restaurants, with Georgian houses at the Clissold Park end.",
+   "tip": "Saturday mornings are busiest.",
+   "photo": "data/guides/sn/church-street.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Spudgun67",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Site_of_Medieval_Mansion_-_173_Stoke_Newington_Church_Street_N16.jpg"
+   }
+  },
+  {
+   "id": "woodberry-wetlands",
+   "n": 4,
+   "name": "Woodberry Wetlands",
+   "kind": "walk",
+   "lat": 51.571,
+   "lon": -0.09,
+   "km": 1.6,
+   "blurb": "A reservoir turned into a nature reserve in 2016, with reed beds, birdlife and a café in the old Coal House.",
+   "tip": "Free; the boardwalks are good for buggies.",
+   "photo": "data/guides/sn/woodberry-wetlands.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Peter O'Connor aka anemoneprojectors",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:GOC_Ally_Pally_to_Kings_Cross_071_Woodberry_Wetlands_(39065056785).jpg"
+   }
+  },
+  {
+   "id": "st-marys-old-church",
+   "n": 5,
+   "name": "St Mary's Old Church",
+   "kind": "history",
+   "lat": 51.563,
+   "lon": -0.087,
+   "km": 0.9,
+   "blurb": "A small parish church rebuilt in 1563, one of the few Elizabethan churches in London, facing the tall spire of the Victorian St Mary's across the road.",
+   "tip": "The churchyard opens onto Clissold Park.",
+   "photo": "data/guides/sn/st-marys-old-church.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "GilPe",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:London,_Stoke_Newington,_St_Mary%27s_Old_Church_(101).jpg"
+   }
+  },
+  {
+   "id": "newington-green",
+   "n": 6,
+   "name": "Newington Green Unitarian Church",
+   "kind": "history",
+   "lat": 51.552,
+   "lon": -0.085,
+   "km": 1.3,
+   "blurb": "Built in 1708 and the oldest nonconformist place of worship in London still in use, facing the small square of Newington Green.",
+   "tip": "Newington Green has good cafés around it.",
+   "photo": "data/guides/sn/newington-green.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Carbon Caryatid",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Newington_Green_Unitarian_Church_with_Mary_Wollstonecraft_street_art.jpg"
+   }
+  }
+ ]
+}

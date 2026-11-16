@@ -14,6 +14,11 @@
   "wk": "data/guides/wk.json",
   "sa": "data/guides/sa.json",
   "fg": "data/guides/fg.json",
-  "ly": "data/guides/ly.json"
+  "ly": "data/guides/ly.json",
+  "hp": "data/guides/hp.json",
+  "pg": "data/guides/pg.json",
+  "ap": "data/guides/ap.json",
+  "sn": "data/guides/sn.json",
+  "bw": "data/guides/bw.json"
  }
 }
