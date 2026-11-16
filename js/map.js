@@ -60,7 +60,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
-  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null };
+  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, lines: true };
   let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
@@ -123,7 +123,10 @@ export function createMap(container, DATA, { onReady } = {}) {
     }).catch(err => console.error('shop icons', err));
 
     const wards = wardFeatures();
-    const tube = fc(geo.tubeLines.features.map(f => ({ ...f, properties: { ...f.properties, emph: f.properties.n === 'Northern' || f.properties.n === 'Central' } })));
+    // The Northern line is black: lighten it in dark mode so it stays visible.
+    const tube = fc(geo.tubeLines.features.map(f => ({ ...f, properties: { ...f.properties,
+      c: isDark() && f.properties.n === 'Northern' ? '#c8ceca' : f.properties.c,
+      emph: f.properties.n === 'Northern' || f.properties.n === 'Central' } })));
     const stations = fc(geo.stations.map(([n, lat, lon]) => point([lat, lon], { label: n === 'Moorgate' ? 'Moorgate (office)' : n, big: n === 'Moorgate' })));
 
     map.addSource('subareas', { type: 'geojson', data: view.prices?.subareas || fc([]) });
@@ -148,7 +151,9 @@ export function createMap(container, DATA, { onReady } = {}) {
         'line-opacity': ['case', ['>=', ['get', 'band'], 0], 0.9, 0.6] } }, firstLabel);
     map.addLayer({ id: 'boroughs', type: 'line', source: 'boroughs', paint: { 'line-color': border, 'line-width': 1, 'line-dasharray': [2, 3] } }, firstLabel);
     map.addLayer({ id: 'tube', type: 'line', source: 'tube', layout: { 'line-join': 'round', 'line-cap': 'round' },
-      paint: { 'line-color': ['get', 'c'], 'line-width': ['case', ['get', 'emph'], 2.6, 1.4], 'line-opacity': ['case', ['get', 'emph'], 0.85, 0.35] } }, firstLabel);
+      paint: { 'line-color': ['get', 'c'],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 9, ['case', ['get', 'emph'], 2.2, 1.4], 14, ['case', ['get', 'emph'], 4, 3]],
+        'line-opacity': ['case', ['get', 'emph'], 0.95, 0.8] } }, firstLabel);
     map.addLayer({ id: 'ward-fill', type: 'fill', source: 'wards', paint: { 'fill-color': accent, 'fill-opacity': ['case', ['get', 'sel'], 0.12, 0.05] } }, firstLabel);
     map.addLayer({ id: 'ward-line', type: 'line', source: 'wards', filter: ['!', ['get', 'sel']], paint: { 'line-color': accent, 'line-width': 1.2, 'line-dasharray': [4, 3] } }, firstLabel);
     map.addLayer({ id: 'ward-line-sel', type: 'line', source: 'wards', filter: ['get', 'sel'], paint: { 'line-color': accent, 'line-width': 2.5 } }, firstLabel);
@@ -156,8 +161,10 @@ export function createMap(container, DATA, { onReady } = {}) {
     map.addLayer({ id: 'catchment-line', type: 'line', source: 'catchments', paint: { 'line-color': ['get', 'col'], 'line-width': 1.5, 'line-dasharray': [3, 3] } }, firstLabel);
 
     // Above the basemap labels
-    map.addLayer({ id: 'stations', type: 'circle', source: 'stations',
-      paint: { 'circle-radius': ['case', ['get', 'big'], 5, 2.5], 'circle-color': panel, 'circle-stroke-color': fg, 'circle-stroke-width': ['case', ['get', 'big'], 2, 1] } });
+    map.addLayer({ id: 'stations', type: 'circle', source: 'stations', filter: ['!', ['get', 'big']], minzoom: 10.5,
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 10.5, 2, 14, 4], 'circle-color': panel, 'circle-stroke-color': fg, 'circle-stroke-width': 1 } });
+    map.addLayer({ id: 'moorgate', type: 'circle', source: 'stations', filter: ['get', 'big'],
+      paint: { 'circle-radius': 5, 'circle-color': panel, 'circle-stroke-color': fg, 'circle-stroke-width': 2 } });
     map.addLayer({ id: 'sales', type: 'circle', source: 'sales', minzoom: 14,
       paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 2.5, 17, 5], 'circle-color': ['match', ['get', 'band'], ...ramp, muted],
         'circle-stroke-color': panel, 'circle-stroke-width': 1 } });
@@ -169,7 +176,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     map.addLayer({ id: 'shops', type: 'symbol', source: 'shops',
       layout: { 'icon-image': ['concat', 'poi-', ['get', 'g']], 'icon-allow-overlap': true, 'icon-ignore-placement': true,
         'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.55, 13, 0.8, 15, 1] } });
-    map.addLayer({ id: 'station-labels', type: 'symbol', source: 'stations', filter: ['!', ['get', 'big']],
+    map.addLayer({ id: 'station-labels', type: 'symbol', source: 'stations', filter: ['!', ['get', 'big']], minzoom: 12,
       layout: { 'text-field': ['get', 'label'], 'text-font': FONT_BOLD, 'text-size': 11, 'text-anchor': 'left', 'text-offset': [0.6, 0] },
       paint: { 'text-color': muted, 'text-halo-color': bg, 'text-halo-width': 1.5 } });
     map.addLayer({ id: 'moorgate-label', type: 'symbol', source: 'stations', filter: ['get', 'big'],
@@ -187,8 +194,14 @@ export function createMap(container, DATA, { onReady } = {}) {
       paint: { 'text-color': accent, 'text-halo-color': bg, 'text-halo-width': 2 } });
   }
 
+  // Tube, Overground, DLR and Elizabeth line, with their stations; Moorgate stays visible either way.
+  function applyLines() {
+    ['tube', 'stations', 'station-labels'].forEach(id => map.getLayer(id) && map.setLayoutProperty(id, 'visibility', view.lines ? 'visible' : 'none'));
+  }
+
   function refresh() {
     if (!ready) return;
+    applyLines();
     const wards = wardFeatures();
     map.getSource('wards').setData(wards.polys);
     map.getSource('ward-names').setData(wards.names);
@@ -204,20 +217,24 @@ export function createMap(container, DATA, { onReady } = {}) {
   map.on('styleimagemissing', e => { if (!e.id.startsWith('poi-') && !map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) }); });
 
   map.on('style.load', () => {
-    addOverlays(); ready = true;
+    addOverlays(); applyLines(); ready = true;
     if (onReady) { onReady(); onReady = null; }
   });
 
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['schools', 'school-ring', 'shops', 'sales', 'price-fill', 'price-line'].filter(id => map.getLayer(id));
+  const hitLayers = () => ['schools', 'school-ring', 'shops', 'sales', 'tube', 'price-fill', 'price-line']
+    .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
   function pick(point) {
-    const hits = map.queryRenderedFeatures(point, { layers: hitLayers() });
+    // A few pixels of slack so thin lines and small dots are easy to hit.
+    const box = [[point.x - 4, point.y - 4], [point.x + 4, point.y + 4]];
+    const hits = map.queryRenderedFeatures(box, { layers: hitLayers() });
     return hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
-      || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line');
+      || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'tube')
+      || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line');
   }
 
   function openSchool(s) { popup.setLngLat(lngLat(s.ll)).setHTML(schoolPopup(s, areaById[s.a])).addTo(map); }
@@ -229,6 +246,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     if (SCHOOL_LAYERS.has(f.layer.id)) openSchool(schoolByI.get(f.properties.i));
     else if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); popup.setLngLat(lngLat(p.ll)).setHTML(shopPopup(p)).addTo(map); }
     else if (f.layer.id === 'sales') popup.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
+    else if (f.layer.id === 'tube') return;
     else popup.setLngLat(e.lngLat).setHTML(subareaHtml(f.properties)).addTo(map);
   });
   map.on('mousemove', e => {
@@ -239,6 +257,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     if (!f || SCHOOL_LAYERS.has(f.layer.id)) { tip.remove(); return; }
     if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); tip.setLngLat(lngLat(p.ll)).setHTML(shopTip(p)).addTo(map); }
     else if (f.layer.id === 'sales') tip.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
+    else if (f.layer.id === 'tube') tip.setLngLat(e.lngLat).setHTML(`<div class="tip"><i class="line-key" style="background:${f.properties.c}"></i>${f.properties.n}</div>`).addTo(map);
     else tip.setLngLat(e.lngLat).setHTML(subareaHtml(f.properties)).addTo(map);
   });
   map.getCanvas().addEventListener('mouseleave', () => tip.remove());
@@ -259,6 +278,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   return {
     render(shown, { area, cat }) { view = { ...view, shown, area, cat }; refresh(); },
     setPoi(poiOn) { view = { ...view, poiOn: { ...poiOn } }; refresh(); },
+    setLines(on) { view = { ...view, lines: on }; if (!on) tip.remove(); if (ready) applyLines(); },
     setPrices(prices) { view = { ...view, prices }; if (!prices) tip.remove(); refresh(); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },
     selectArea(id) {

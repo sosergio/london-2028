@@ -103,6 +103,10 @@ export function createPanel(DATA, map) {
   priceEl.addEventListener('change', () => { state.price = priceEl.checked; saveState(); applyPrices(); });
   if (state.price) applyPrices();
 
+  const linesEl = document.getElementById('showlines');
+  linesEl.checked = state.lines; map.setLines(state.lines);
+  linesEl.addEventListener('change', () => { state.lines = linesEl.checked; saveState(); map.setLines(state.lines); });
+
   const catEl = document.getElementById('showcat');
   catEl.checked = state.cat;
   catEl.addEventListener('change', () => { state.cat = catEl.checked; render(); });

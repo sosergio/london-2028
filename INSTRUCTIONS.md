@@ -67,8 +67,9 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - Popup: name, group, type, and Google Maps / Street View links.
 - **Sold prices layer** (off by default, remembered): neighbourhoods (ONS LSOAs) shaded by a mix-adjusted price level, 100 = typical for the shortlist, in a one-hue plum ramp with a legend; hover or click for medians by type; each sale shows as a dot from zoom 14. Area cards show median flat / terraced / semi prices and the area's price level.
 - **Context layers:**
-  - Tube lines, with the Northern and Central lines emphasised.
-  - Stations, with Moorgate highlighted as "Moorgate (office)".
+  - Tube, Overground, DLR and Elizabeth lines in their colours, with the Northern and Central lines emphasised (Northern drawn light grey in dark mode). Hover a line for its name.
+  - All 429 Tube, Overground, DLR and Elizabeth line stations (TfL API, Nov 2026); labels from zoom 12. Moorgate highlighted as "Moorgate (office)".
+  - A "Transport" toggle in the floating filters shows or hides lines and stations (remembered); Moorgate always shows.
   - Borough borders, faint.
 - **Other:**
   - Light and dark mode via `prefers-color-scheme`.
