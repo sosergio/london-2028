@@ -39,7 +39,7 @@ It prints, per area, `OK`, `MISSING` (a dimension or required field is empty) or
 1. **Agree the basics with the user**: the name, a two-letter `id` not already used (`ef`, `ro`, `ce`, ...), its `rank` (renumber the others if it slots in between), and the centre point (usually the high street or station).
 2. **Wards** (dimension 2): pick the 2-6 council wards that make up the neighbourhood and add them to `wards.json`. Everything else is measured against these, so get the user to confirm the list.
 3. **MSOAs** (dimension 3): the Census neighbourhoods that best overlap the wards, written like `Haringey 034, Haringey 022`.
-4. Collect dimensions 3-8 using `references/sources.md`.
+4. Collect dimensions 2-8. `scripts/add_area.py spec.json` does wards, MSOAs, Census, crime, shops and the Rightmove id in one go from a small JSON spec (see its docstring; preview first, then `--write`). Then `scripts/schools_gias.py ... <ids> --write`, `scripts/property_prices.py <ids> --write` and `scripts/price_subareas.py`. If an area has no secondary inside its wards, add the nearest popular ones just outside and say so in `note`.
 5. Write the `why` text and the estimates (dimension 9) last, once the numbers are in, so the text reflects them.
 6. Run the audit, then open the site locally (`python3 -m http.server`, http://localhost:8000) and check the area's card, outline, schools and shops.
 
