@@ -1,16 +1,16 @@
 // Shared state. Filters and shop toggles are remembered per browser; the selected area is not.
 
-export const state = { phase: 'all', faith: 'all', of: { O: true, G: true, W: true, N: true }, cat: true, price: false, lines: true, area: null };
+export const state = { phase: 'all', faith: 'all', of: { O: true, G: true, W: true, N: true }, cat: true, price: false, lines: true, schools: true, shops: true, area: null };
 export const poiOn = { up: true, bake: true, cult: false, gym: false, disc: false };
 
 try {
   const s = JSON.parse(localStorage.getItem('lsm-state') || 'null');
-  if (s) { state.phase = s.phase ?? state.phase; state.faith = s.faith ?? state.faith; state.cat = s.cat ?? state.cat; state.price = s.price ?? state.price; state.lines = s.lines ?? state.lines; Object.assign(state.of, s.of); }
+  if (s) { state.phase = s.phase ?? state.phase; state.faith = s.faith ?? state.faith; state.cat = s.cat ?? state.cat; state.price = s.price ?? state.price; state.lines = s.lines ?? state.lines; state.schools = s.schools ?? state.schools; state.shops = s.shops ?? state.shops; Object.assign(state.of, s.of); }
 } catch (e) {}
 try { const s = JSON.parse(localStorage.getItem('lsm-poi') || 'null'); if (s) Object.assign(poiOn, s); } catch (e) {}
 
 export function saveState() {
-  try { localStorage.setItem('lsm-state', JSON.stringify({ phase: state.phase, faith: state.faith, of: state.of, cat: state.cat, price: state.price, lines: state.lines })); } catch (e) {}
+  try { localStorage.setItem('lsm-state', JSON.stringify({ phase: state.phase, faith: state.faith, of: state.of, cat: state.cat, price: state.price, lines: state.lines, schools: state.schools, shops: state.shops })); } catch (e) {}
 }
 export function savePoi() {
   try { localStorage.setItem('lsm-poi', JSON.stringify(poiOn)); } catch (e) {}

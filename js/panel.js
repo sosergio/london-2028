@@ -44,23 +44,49 @@ export function createPanel(DATA, map) {
 
   // ---------- area cards ----------
   const areasEl = document.getElementById('areas');
+  // Cards start collapsed to their title. The name selects the area (zoom + filter, and opens it);
+  // the chevron only opens or closes the details, so several areas can be compared side by side.
+  const setOpen = (el, open) => {
+    el.querySelector('.area-toggle').setAttribute('aria-expanded', String(open));
+    el.querySelector('.area-body').hidden = !open;
+  };
   areas.forEach(a => {
     const el = document.createElement('div');
-    el.className = 'area'; el.dataset.id = a.id; el.tabIndex = 0; el.setAttribute('role', 'button');
-    el.innerHTML = `<div class="area-head"><span class="rank">${a.rank}</span><div><div class="area-name">${esc(a.name)}</div><div class="area-sub">${esc(a.sub)}</div></div></div>
-      <p class="why">${esc(a.why)}</p>
-      <div class="facts"><div><span>Rent, 3-bed</span><b>${esc(a.rent)}</b></div><div><span>To Moorgate</span><b>${esc(a.commute)}</b></div><div><span>To family</span><b>${esc(a.family)}</b></div>
-      <div><span>Lifestyle</span><b>${esc(a.life)}</b></div><div><span>Green</span><b>${esc(a.green)}</b></div><div></div></div>
-      ${statsHtml(a)}
-      <div class="links"><a class="rm" href="${esc(rightmoveUrl(a))}" target="_blank" rel="noopener">Rightmove map: houses to rent ↗</a>
-      <a class="rm" href="${esc(commuteUrl(a.ll))}" target="_blank" rel="noopener">Commute from here ↗</a></div>`;
-    onActivate(el, e => {
-      if (e.target.closest('a')) return;
+    el.className = 'area'; el.dataset.id = a.id;
+    el.innerHTML = `<div class="area-head">
+        <button type="button" class="area-pick" title="Show on the map"><span class="rank">${a.rank}</span><span><span class="area-name">${esc(a.name)}</span><br><span class="area-sub">${esc(a.sub)}</span></span></button>
+        <button type="button" class="area-toggle" aria-expanded="false" aria-controls="area-body-${a.id}" aria-label="Details for ${esc(a.name)}"><span class="chev" aria-hidden="true"></span></button>
+      </div>
+      <div class="area-body" id="area-body-${a.id}" hidden>
+        <p class="why">${esc(a.why)}</p>
+        <div class="facts"><div><span>Rent, 3-bed</span><b>${esc(a.rent)}</b></div><div><span>To Moorgate</span><b>${esc(a.commute)}</b></div><div><span>To family</span><b>${esc(a.family)}</b></div>
+        <div><span>Lifestyle</span><b>${esc(a.life)}</b></div><div><span>Green</span><b>${esc(a.green)}</b></div><div></div></div>
+        ${statsHtml(a)}
+        <div class="links"><a class="rm" href="${esc(rightmoveUrl(a))}" target="_blank" rel="noopener">Rightmove map: houses to rent ↗</a>
+        <a class="rm" href="${esc(commuteUrl(a.ll))}" target="_blank" rel="noopener">Commute from here ↗</a></div>
+      </div>`;
+    el.querySelector('.area-toggle').addEventListener('click', () => {
+      setOpen(el, el.querySelector('.area-toggle').getAttribute('aria-expanded') !== 'true'); syncExpandAll();
+    });
+    el.querySelector('.area-pick').addEventListener('click', () => {
       state.area = state.area === a.id ? null : a.id;
+      if (state.area) setOpen(el, true);
+      syncExpandAll();
       render();
       if (state.area) map.selectArea(a.id); else map.fitAll();
     });
     areasEl.appendChild(el);
+  });
+  const expandAll = document.getElementById('expand-all');
+  function syncExpandAll() {
+    const all = [...areasEl.querySelectorAll('.area-toggle')].every(b => b.getAttribute('aria-expanded') === 'true');
+    expandAll.textContent = all ? 'Collapse all' : 'Expand all';
+    expandAll.setAttribute('aria-expanded', String(all));
+  }
+  expandAll.addEventListener('click', () => {
+    const open = expandAll.getAttribute('aria-expanded') !== 'true';
+    areasEl.querySelectorAll('.area').forEach(el => setOpen(el, open));
+    syncExpandAll();
   });
   document.getElementById('excluded').textContent = DATA.excluded.join(', ');
 
@@ -124,18 +150,43 @@ export function createPanel(DATA, map) {
     b.addEventListener('click', () => {
       poiOn[b.dataset.c] = !poiOn[b.dataset.c];
       b.setAttribute('aria-pressed', String(poiOn[b.dataset.c]));
-      savePoi(); map.setPoi(poiOn);
+      savePoi(); applyShops();
     });
   });
+
+  // ---------- group switches ----------
+  // Each section of the floating box has a switch: off hides the whole group on the map and folds the
+  // section, but keeps the choices inside it for when it is switched back on.
+  document.querySelectorAll('.fsec').forEach(sec => {
+    const sw = sec.querySelector('.fhead input'), body = sec.querySelector('.fbody');
+    const sync = () => { body.hidden = !sw.checked; };
+    sw.addEventListener('change', sync);
+    sec.syncBody = sync;
+  });
+  const schoolsSw = document.getElementById('sw-schools'), shopsSw = document.getElementById('sw-shops');
+  schoolsSw.checked = state.schools; shopsSw.checked = state.shops;
+  schoolsSw.addEventListener('change', () => { state.schools = schoolsSw.checked; render(); });
+  const applyShops = () => map.setPoi(state.shops ? poiOn : {});
+  shopsSw.addEventListener('change', () => {
+    state.shops = shopsSw.checked;
+    // Switching the group back on with nothing selected would show nothing: select every kind instead.
+    if (state.shops && !Object.values(poiOn).some(Boolean)) {
+      Object.keys(poiOn).forEach(k => poiOn[k] = true);
+      document.querySelectorAll('#poiseg button').forEach(b => b.setAttribute('aria-pressed', 'true'));
+      savePoi();
+    }
+    saveState(); applyShops();
+  });
+  document.querySelectorAll('.fsec').forEach(sec => sec.syncBody());
 
   // ---------- school list + map ----------
   const listEl = document.getElementById('list');
   function render() {
     const shown = schools.filter(isVisible).sort((x, y) => x.pu - y.pu);
-    map.render(shown, { area: state.area, cat: state.cat });
+    map.render(state.schools ? shown : [], { area: state.area, cat: state.cat });
 
     document.getElementById('list-title').textContent =
-      (state.area ? areaById[state.area].name + ': ' : '') + shown.length + ' schools shown, smallest first';
+      (state.area ? areaById[state.area].name + ': ' : '') + shown.length + ' schools, smallest first' + (state.schools ? '' : ' (hidden on the map)');
     listEl.innerHTML = shown.length ? '' : '<p class="empty">No school matches these filters. Turn on more Ofsted ratings or pick "All".</p>';
     shown.forEach(s => {
       const r = document.createElement('div');
@@ -148,7 +199,7 @@ export function createPanel(DATA, map) {
     saveState();
   }
 
-  map.setPoi(poiOn);
+  applyShops();
   render();
   return { render };
 }

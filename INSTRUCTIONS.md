@@ -22,7 +22,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
 ### Features to keep (all present in the prototype)
 
 - **Side panel and map:** the map fills the left and a scrolling side panel sits on the right. On phones they stack, map on top.
-- **Filters float on the map** in a collapsible box (top right), folded by default on phones.
+- **Filters float on the map** in a collapsible box (top right), folded by default on phones. It has four sections, Schools, Shops and places, Transport and Sold prices, each with an on/off switch that hides the whole group on the map and folds the section while keeping the choices inside it.
 - **Filters:**
   - Phase: All, Primary or Secondary. All-through schools always show.
   - Faith: All, Catholic, CofE or None.
@@ -46,7 +46,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - Selected area: solid outline. Others: dashed.
   - The area label sits at the top of the outline, for example "11. Woking".
   - Ward names show when the area is selected.
-- **Area cards in the side panel**, in rank order, each showing:
+- **Area cards in the side panel**, in rank order, collapsed to rank, name and sub-title with a chevron to open the details ("Expand all" / "Collapse all" above the list). Clicking the name selects the area and opens its card. Each card shows:
   - rank, name, sub-title and the "why" text;
   - rent, commute, time to family, lifestyle and green;
   - the residents line;
