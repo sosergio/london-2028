@@ -56,6 +56,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - shop counts;
   - a Rightmove link.
 - **Compare areas** (button under the intro): a dialog with a sortable table, one row per area, columns grouped as Schools (count, % Good or better, Outstanding, below good, under 400 pupils, smallest secondary), Getting about (Moorgate, family), Housing (price level, median flat / terraced / semi, rent) and Neighbourhood (crime, violent crime, density, green, lifestyle, grocers, bakeries). Each heading says which direction is better; cells are tinted green from worst to best within the column; clicking a row selects that area. Code in `js/compare.js`.
+- **Area guides** (Gidea Park so far): numbered highlight markers on the map (switch "Highlights" in the filter box) and a photo guide dialog opened from the area card, a marker or the filter box; each highlight has a photo with its credit, a short description, a tip, "Show on the map" and a Google Maps link. Data in `data/guides/`; code in `js/guide.js`.
 - **Picking an area card:**
   - zooms to its wards and filters the school list to it;
   - clicking the same card again clears the selection.

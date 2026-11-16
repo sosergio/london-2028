@@ -39,8 +39,15 @@ export async function loadData() {
 
   const shops = shopsCsv.map((r, i) => ({ i, a: r.area_id, n: String(r.name), g: r.group, kind: r.type || '', ll: [r.lat, r.lon] }));
 
+  // Area guides: optional, listed in data/guides/index.json ({"guides": {"<area id>": "<path>"}}).
+  const guides = {};
+  try {
+    const idx = await getJSON('data/guides/index.json');
+    await Promise.all(Object.entries(idx.guides || {}).map(async ([id, path]) => { guides[id] = await getJSON(path); }));
+  } catch (e) { console.warn('No area guides loaded', e); }
+
   return {
-    areas, schools, shops, excluded: extra.excluded,
+    areas, schools, shops, guides, excluded: extra.excluded,
     areaById: Object.fromEntries(areas.map(a => [a.id, a])),
     geo: { boroughs, tubeLines, stations, wards },
   };

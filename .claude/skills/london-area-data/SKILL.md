@@ -62,6 +62,14 @@ The script works out the area's postcode sectors from its ward outlines (or uses
 
 Rents: see `references/sources.md`, "Rents". There is no free official source at neighbourhood level, so record where each figure came from in `rent_source`.
 
+## Area guides (highlights with photos)
+
+A guide is a short, photographic "best of" for one area: up to 10 places that genuinely make it attractive to live there (parks, beautiful streets, historic buildings, walks, leisure), shown as numbered markers on the map and in a photo dialog. Quality beats quantity: 7 strong entries are better than 10 with filler.
+
+1. **Research first.** Use council park pages, conservation-area appraisals, Historic England / London Gardens Trust records and Wikipedia to pick the places, within about 5 km of the area centre. Write only facts two sources agree on; leave out disputed dates and claims.
+2. **Photos.** `scripts/guide_photos.py sheet` builds a numbered contact sheet of large landscape photos from Wikimedia Commons (which includes Geograph). Look at every sheet and choose only photos that are sharp, well lit and clearly show the place; if none is good, try other search words or drop the highlight. Never use maps, signs, interiors, gravestones or grey snapshots. Then `guide_photos.py fetch` saves them at 1400 px with credits.
+3. **Data.** `data/guides/<area id>.json`: `title`, `intro`, `updated`, and `items` with `id`, `n`, `name`, `kind` (park / street / history / walk / leisure), `lat`, `lon` (OpenStreetMap Nominatim), `km` from the main station, `blurb` (2 sentences), `tip` (1 practical sentence), `photo`, `w`, `h` and `credit` {`author`, `license`, `license_url`, `source`}. Add the area to `data/guides/index.json`. Every photo must keep its credit: the repository is public and the licences require it.
+
 ## Showing new data on the site
 
 Adding columns to `areas.csv` changes nothing visible until the panel uses them. After collecting a new dimension for all areas, add it to the area card in `js/panel.js` (the `facts` grid or `statsHtml`), keep the wording short, and add a line to the "How to read this" notes in `index.html` saying where it comes from. Columns the panel does not use are harmless, so it is fine to collect first and display later.

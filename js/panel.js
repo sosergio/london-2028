@@ -13,7 +13,7 @@ const onActivate = (el, fn) => {
   el.addEventListener('keydown', e => { if (e.target === el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); fn(e); } });
 };
 
-export function createPanel(DATA, map) {
+export function createPanel(DATA, map, { openGuide } = {}) {
   const { areas, schools, shops, areaById } = DATA;
   const maxDens = Math.max(...areas.map(a => a.dens));
   const maxCrime = Math.max(...areas.map(a => a.crimeTotal));
@@ -64,11 +64,13 @@ export function createPanel(DATA, map) {
         ${statsHtml(a)}
         <div class="links"><a class="rm" href="${esc(rightmoveUrl(a))}" target="_blank" rel="noopener">Rightmove map: houses to rent ↗</a>
         <a class="rm" href="${esc(commuteUrl(a.ll))}" target="_blank" rel="noopener">Commute from here ↗</a></div>
+        ${DATA.guides?.[a.id] ? `<button type="button" class="guide-btn" data-guide="${a.id}">Area guide: ${DATA.guides[a.id].items.length} highlights, with photos</button>` : ''}
       </div>`;
     el.querySelector('.area-toggle').addEventListener('click', () => {
       setOpen(el, el.querySelector('.area-toggle').getAttribute('aria-expanded') !== 'true'); syncExpandAll();
     });
     el.querySelector('.area-pick').addEventListener('click', () => pickArea(a.id, true));
+    el.querySelector('.guide-btn')?.addEventListener('click', () => openGuide?.(a.id));
     areasEl.appendChild(el);
   });
   // Select an area: zoom to it, filter the school list and open its card. With toggle, picking the
@@ -167,6 +169,11 @@ export function createPanel(DATA, map) {
     sw.addEventListener('change', sync);
     sec.syncBody = sync;
   });
+  const guidesSw = document.getElementById('sw-guides');
+  guidesSw.checked = state.guides; map.setGuides(state.guides);
+  guidesSw.addEventListener('change', () => { state.guides = guidesSw.checked; saveState(); map.setGuides(state.guides); });
+  document.getElementById('guide-list').innerHTML = Object.entries(DATA.guides || {})
+    .map(([id, g]) => `<button type="button" class="linkbtn" data-guide="${id}">${esc(g.title)} (${g.items.length})</button>`).join(' · ') || 'none yet';
   const schoolsSw = document.getElementById('sw-schools'), shopsSw = document.getElementById('sw-shops');
   schoolsSw.checked = state.schools; shopsSw.checked = state.shops;
   schoolsSw.addEventListener('change', () => { state.schools = schoolsSw.checked; render(); });

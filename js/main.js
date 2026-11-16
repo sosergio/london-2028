@@ -2,11 +2,19 @@ import { loadData } from './data.js';
 import { createMap } from './map.js';
 import { createPanel } from './panel.js';
 import { createCompare } from './compare.js';
+import { createGuide } from './guide.js';
 
 try {
   const DATA = await loadData();
-  const map = createMap(document.getElementById('map'), DATA);
-  const panel = createPanel(DATA, map);
+  let guide;
+  const map = createMap(document.getElementById('map'), DATA, { onGuide: (area, id) => guide.open(area, id) });
+  guide = createGuide(DATA, { onShow: (area, it) => map.showHighlight(area, it) });
+  const panel = createPanel(DATA, map, { openGuide: id => guide.open(id) });
+  // Any "data-guide" button (filter box, map popups) opens that area's guide.
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-guide]');
+    if (b && !b.classList.contains('guide-btn')) guide.open(b.dataset.guide, b.dataset.item);
+  });
   createCompare(DATA, { onPick: id => panel.pickArea(id) });
 } catch (err) {
   console.error(err);

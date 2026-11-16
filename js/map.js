@@ -48,7 +48,7 @@ async function poiImage(g, fill, edge) {
   return { image: ctx.getImageData(0, 0, size, size), opts: { pixelRatio: px } };
 }
 
-export function createMap(container, DATA, { onReady } = {}) {
+export function createMap(container, DATA, { onReady, onGuide } = {}) {
   const { schools, shops, areas, areaById, geo } = DATA;
   const map = new maplibregl.Map({
     container, style: isDark() ? STYLES.dark : STYLES.light,
@@ -60,7 +60,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
-  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, lines: true };
+  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, lines: true, guides: true };
   let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
@@ -97,6 +97,11 @@ export function createMap(container, DATA, { onReady } = {}) {
       tops.push(point(top, { label: `${a.rank}. ${a.name}`, sel }));
     });
     return { polys: fc(polys), names: fc(names), tops: fc(tops) };
+  }
+  // Area-guide highlights: numbered markers for every area that has a guide.
+  const guideItems = Object.entries(DATA.guides || {}).flatMap(([area, g]) => g.items.map(it => ({ ...it, area })));
+  function guideFeatures() {
+    return fc(guideItems.map(it => point([it.lat, it.lon], { area: it.area, id: it.id, n: String(it.n), name: it.name })));
   }
   function shopFeatures() {
     return fc(shops.filter(p => view.poiOn[p.g]).map(p => point(p.ll, { i: p.i, g: p.g })));
@@ -140,6 +145,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     map.addSource('stations', { type: 'geojson', data: stations });
     map.addSource('schools', { type: 'geojson', data: schoolFeatures() });
     map.addSource('shops', { type: 'geojson', data: shopFeatures() });
+    map.addSource('guide', { type: 'geojson', data: guideFeatures() });
 
     // Below the basemap labels. Sold-price sub-areas go lowest, so wards and catchments draw over them.
     const ramp = [0, 1, 2, 3, 4, 5].flatMap(b => [b, css('--price-' + b)]);
@@ -176,6 +182,14 @@ export function createMap(container, DATA, { onReady } = {}) {
     map.addLayer({ id: 'shops', type: 'symbol', source: 'shops',
       layout: { 'icon-image': ['concat', 'poi-', ['get', 'g']], 'icon-allow-overlap': true, 'icon-ignore-placement': true,
         'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.55, 13, 0.8, 15, 1] } });
+    map.addLayer({ id: 'guide-dot', type: 'circle', source: 'guide',
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 7, 14, 11], 'circle-color': fg, 'circle-stroke-color': panel, 'circle-stroke-width': 2 } });
+    map.addLayer({ id: 'guide-num', type: 'symbol', source: 'guide',
+      layout: { 'text-field': ['get', 'n'], 'text-font': FONT_BOLD, 'text-size': ['interpolate', ['linear'], ['zoom'], 9, 9, 14, 12], 'text-allow-overlap': true, 'text-ignore-placement': true },
+      paint: { 'text-color': panel } });
+    map.addLayer({ id: 'guide-label', type: 'symbol', source: 'guide', minzoom: 12.5,
+      layout: { 'text-field': ['get', 'name'], 'text-font': FONT_BOLD, 'text-size': 12, 'text-anchor': 'left', 'text-offset': [1.3, 0], 'text-max-width': 12 },
+      paint: { 'text-color': fg, 'text-halo-color': bg, 'text-halo-width': 2 } });
     map.addLayer({ id: 'station-labels', type: 'symbol', source: 'stations', filter: ['!', ['get', 'big']], minzoom: 12,
       layout: { 'text-field': ['get', 'label'], 'text-font': FONT_BOLD, 'text-size': 11, 'text-anchor': 'left', 'text-offset': [0.6, 0] },
       paint: { 'text-color': muted, 'text-halo-color': bg, 'text-halo-width': 1.5 } });
@@ -195,6 +209,9 @@ export function createMap(container, DATA, { onReady } = {}) {
   }
 
   // Tube, Overground, DLR and Elizabeth line, with their stations; Moorgate stays visible either way.
+  function applyGuides() {
+    ['guide-dot', 'guide-num', 'guide-label'].forEach(id => map.getLayer(id) && map.setLayoutProperty(id, 'visibility', view.guides ? 'visible' : 'none'));
+  }
   function applyLines() {
     ['tube', 'stations', 'station-labels'].forEach(id => map.getLayer(id) && map.setLayoutProperty(id, 'visibility', view.lines ? 'visible' : 'none'));
   }
@@ -218,7 +235,7 @@ export function createMap(container, DATA, { onReady } = {}) {
 
   let fitted = false;
   map.on('style.load', () => {
-    addOverlays(); applyLines(); ready = true;
+    addOverlays(); applyLines(); applyGuides(); ready = true;
     if (!fitted) { fitted = true; map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 0 }); }
     if (onReady) { onReady(); onReady = null; }
   });
@@ -226,7 +243,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['schools', 'school-ring', 'shops', 'sales', 'tube', 'price-fill', 'price-line']
+  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'tube', 'price-fill', 'price-line']
     .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
@@ -234,7 +251,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     // A few pixels of slack so thin lines and small dots are easy to hit.
     const box = [[point.x - 4, point.y - 4], [point.x + 4, point.y + 4]];
     const hits = map.queryRenderedFeatures(box, { layers: hitLayers() });
-    return hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
+    return hits.find(f => f.layer.id === 'guide-dot') || hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
       || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'tube')
       || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line');
   }
@@ -245,6 +262,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     if (!ready) return;
     const f = pick(e.point); if (!f) return;
     tip.remove();
+    if (f.layer.id === 'guide-dot') { if (onGuide) onGuide(f.properties.area, f.properties.id); return; }
     if (SCHOOL_LAYERS.has(f.layer.id)) openSchool(schoolByI.get(f.properties.i));
     else if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); popup.setLngLat(lngLat(p.ll)).setHTML(shopPopup(p)).addTo(map); }
     else if (f.layer.id === 'sales') popup.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
@@ -257,6 +275,7 @@ export function createMap(container, DATA, { onReady } = {}) {
     const sub = f && (f.layer.id === 'price-fill' || f.layer.id === 'price-line');
     map.getCanvas().style.cursor = f && !sub ? 'pointer' : '';
     if (!f || SCHOOL_LAYERS.has(f.layer.id)) { tip.remove(); return; }
+    if (f.layer.id === 'guide-dot') { tip.setLngLat(f.geometry.coordinates).setHTML(`<div class="tip">${f.properties.name}<br><span>Highlight · click for the guide</span></div>`).addTo(map); return; }
     if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); tip.setLngLat(lngLat(p.ll)).setHTML(shopTip(p)).addTo(map); }
     else if (f.layer.id === 'sales') tip.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
     else if (f.layer.id === 'tube') tip.setLngLat(e.lngLat).setHTML(`<div class="tip"><i class="line-key" style="background:${f.properties.c}"></i>${f.properties.n}</div>`).addTo(map);
@@ -286,6 +305,13 @@ export function createMap(container, DATA, { onReady } = {}) {
   return {
     render(shown, { area, cat }) { view = { ...view, shown, area, cat }; refresh(); },
     setPoi(poiOn) { view = { ...view, poiOn: { ...poiOn } }; refresh(); },
+    setGuides(on) { view = { ...view, guides: on }; if (!on) tip.remove(); if (ready) applyGuides(); },
+    // Fly to a guide highlight and label it with a small photo popup.
+    showHighlight(area, it) {
+      map.flyTo({ center: [it.lon, it.lat], zoom: Math.max(map.getZoom(), 15), duration: 700 });
+      popup.setLngLat([it.lon, it.lat]).setHTML(`<div class="pop hl-pop"><img src="${it.photo}" alt="" width="${it.w}" height="${it.h}">
+        <h3>${it.n}. ${it.name}</h3><button type="button" class="linkbtn" data-guide="${area}" data-item="${it.id}">Back to the guide</button></div>`).addTo(map);
+    },
     setLines(on) { view = { ...view, lines: on }; if (!on) tip.remove(); if (ready) applyLines(); },
     setPrices(prices) { view = { ...view, prices }; if (!prices) tip.remove(); refresh(); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },

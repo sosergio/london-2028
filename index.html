@@ -144,6 +144,31 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 .cmp tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .cmp td.shade{background:color-mix(in srgb, var(--accent) calc(var(--s) * 34%), transparent)}
 .cmp td:not(.shade){color:var(--fg)}
+.guide-btn{justify-self:start;font:inherit;font-size:13px;font-weight:600;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.guide-btn::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fg);margin-right:7px;vertical-align:1px}
+.guide-btn:hover{border-color:var(--fg)}
+.guide-dlg{width:min(1100px, calc(100vw - 32px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);box-shadow:0 10px 40px rgb(0 0 0 / .3);display:none;flex-direction:column}
+.guide-dlg[open]{display:flex}
+.guide-dlg::backdrop{background:rgb(0 0 0 / .45)}
+.guide-body{overflow:auto;padding:0 18px 18px;min-height:0}
+.guide-intro{font-size:15px;max-width:70ch;margin:2px 0 16px;color:var(--fg)}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(min(100%, 420px), 1fr));gap:22px}
+.hl{display:grid;gap:10px;align-content:start;border-radius:10px;scroll-margin-top:8px;transition:box-shadow .3s}
+.hl.flash{box-shadow:0 0 0 3px var(--accent)}
+.hl figure{margin:0;position:relative;border-radius:10px;overflow:hidden;background:var(--line);aspect-ratio:3/2}
+.hl img{display:block;width:100%;height:100%;object-fit:cover}
+.hl-n{position:absolute;top:10px;left:10px;width:30px;height:30px;border-radius:50%;background:var(--fg);color:var(--panel);font-weight:700;display:grid;place-items:center;font-size:14px;box-shadow:0 0 0 2px var(--panel)}
+.hl-text h3{font-family:var(--font-display);font-size:19px;margin:0 0 4px}
+.hl-text p{margin:0 0 6px;font-size:14px;line-height:1.5}
+.hl-kind{font-size:11px!important;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.hl-tip{color:var(--muted)}
+.hl-tip::before{content:"Tip: ";font-weight:600;color:var(--fg)}
+.hl-actions{display:flex;gap:16px;align-items:baseline;font-size:13px;margin:4px 0 6px}
+.hl-actions a{color:var(--accent);font-weight:600;text-decoration:none}
+.hl-credit{font-size:11px!important;color:var(--muted)}
+.hl-credit a{color:inherit}
+.guide-foot{font-size:12px;color:var(--muted);margin:18px 0 0}
+.hl-pop img{display:block;width:220px;max-width:100%;height:auto;border-radius:6px;margin-bottom:6px}
 .linkbtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .area[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .area-head{display:flex;align-items:stretch}
@@ -244,6 +269,10 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
           </div>
         </section>
         <section class="fsec">
+          <div class="fhead"><span class="label">Highlights</span><label class="switch"><input type="checkbox" id="sw-guides" checked aria-label="Show area highlights"><span aria-hidden="true"></span></label></div>
+          <div class="fbody"><p class="hint">Numbered places worth knowing, with a photo guide: <span id="guide-list"></span></p></div>
+        </section>
+        <section class="fsec">
           <div class="fhead"><span class="label">Transport</span><label class="switch"><input type="checkbox" id="showlines" checked aria-label="Show Tube, Overground, DLR and Elizabeth line"><span aria-hidden="true"></span></label></div>
           <div class="fbody"><p class="hint">Tube, Overground, DLR and Elizabeth line, with stations. Hover a line for its name. Moorgate is always shown.</p></div>
         </section>
@@ -288,6 +317,14 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
   </aside>
 </div>
 
+<dialog id="guide" class="guide-dlg" aria-labelledby="guide-title">
+  <div class="dlg-head">
+    <h2 id="guide-title">Highlights</h2>
+    <button type="button" class="dlg-close" aria-label="Close">×</button>
+  </div>
+  <div class="guide-body"></div>
+</dialog>
+
 <dialog id="compare" aria-labelledby="compare-title">
   <div class="dlg-head">
     <h2 id="compare-title">Compare areas</h2>
@@ -305,7 +342,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 // on each deploy), via an import map for the modules that main.js imports.
 (function () {
   const v = Date.parse(document.lastModified) || Date.now();
-  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare'];
+  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare', 'guide'];
   const map = document.createElement('script');
   map.type = 'importmap';
   map.textContent = JSON.stringify({ imports: Object.fromEntries(mods.map(m => [new URL('js/' + m + '.js', location.href).href, './js/' + m + '.js?v=' + v])) });
