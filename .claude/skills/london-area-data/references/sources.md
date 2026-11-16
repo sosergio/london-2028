@@ -52,6 +52,14 @@ Scope: state-funded **mixed** primaries, secondaries and all-through schools in 
   - `ofsted_detail`: date and whether a later short visit kept the grade.
 - **Catchment**: only from council "last distance offered" / allocation tables for the normal round (Reception, Year 7). Store miles in `catchment_miles` and the plain-English line plus year in `catchment_text`. If none is published, leave `catchment_miles` blank and write what is known (priority postcodes, faith criteria, "ask X admissions") in `catchment_text`.
 - `source_url`: the page the catchment or main facts came from.
+- **Where councils publish last distances** (checked Nov 2026; use a browser User-Agent with curl, and `pypdf` from a scratch `--target` folder to read PDFs):
+  - Haringey: HTML table, community primaries 2022-2026: `haringey.gov.uk/.../cutoff-distance-school-last-child-offered-place/primary-schools-distance-school-last-child-offered-place-national-offer-day` (a secondary twin page exists); Year 7 PDF `sites/default/files/2026-03/secondary_transfer_2026_how_offers_were_made.pdf`. "N/A" = no cut-off. Faith (VA) schools are not listed.
+  - Islington: HTML tables for primary and secondary, three years: `islington.gov.uk/.../school-admissions-information/cut-off-distance-maps`. "Not applicable" = every applicant offered.
+  - Lewisham: community primaries `lewisham.gov.uk/-/media/services/education/schools/admissions/grid-for-reception-2026.pdf` (metres, 7th number on each row); community secondaries on the "last year's number of applications and appeals" page. Faith schools and academies: ask the school.
+  - Greenwich: the secondary booklet (`royalgreenwich.gov.uk/sites/default/files/2026-02/secondary school booklet 26 27.pdf`) gives "Last offer on distance (km)" for the previous year on each school's page.
+  - Southwark: community primaries only, `services.southwark.gov.uk/assets/attach/127374/Allocation-of-community-school-places-by-criteria-Sept-2025.pdf` (metres; "all applicants offered" is common). No secondary distances; academies publish their own, if at all.
+  - Barnet: "How primary school places were allocated on 16 April <year>" PDFs, but the site serves a bot challenge to scripts: download in a browser and read the file.
+- Write the year and stage into `catchment_text` ("Haringey, Reception, offer day April 2026") and point `source_url` at the table. Where there is no cut-off, say why in `catchment_text` (every applicant offered; faith school with its own criteria; academy that does not publish) and leave `catchment_miles` blank, so no circle is drawn.
 
 ## 5. Shops and places → `shops.csv`
 
