@@ -30,6 +30,13 @@ Contents: 1 Wards · 2 Census · 3 Crime · 4 Schools · 5 Shops · 6 Sale price
 - Rate limit: about 15 requests/second; sleep briefly between calls.
 - Sum `category` counts across the months. Store `crime_total` and the six categories the panel uses: `anti-social-behaviour`, `burglary`, `robbery`, `vehicle-crime`, `violent-crime`, `shoplifting`.
 
+### Crime by neighbourhood → `crime_subareas.csv`, `crime_points.csv`, `crime_rate*`
+
+- `https://data.police.uk/api/crimes-street/all-crime?date=YYYY-MM&poly=lat,lon:lat,lon:...` (GET; poly is **lat,lon**). One request per area per month with the bounding box of the area's sub-areas; filter to the sub-areas yourself. More than 10,000 crimes returns HTTP 503: split the box. Dedupe by crime `id` (boxes of neighbouring areas overlap).
+- Available months: `https://data.police.uk/api/crimes-street-dates`. Data lags about two months.
+- `location.street.name` is "On or near X"; the point is the centre of an anonymised "snap point", not the crime's address. No postcodes, no LSOA in the API (the bulk downloads have LSOA, but point-in-polygon against our own outlines is simpler).
+- Residents per LSOA: Nomis TS001 `NM_2021_1`, `geography=<LSOA codes, up to ~100 per call>&c2021_restype_3=0&measures=20100`.
+
 ## 4. Schools → `schools.csv`, `excluded.json`
 
 Scope: state-funded **mixed** primaries, secondaries and all-through schools in or very near the area's wards (the audit flags anything over 3.5 km from the centre). Independent schools are out. Single-sex schools go in `excluded.json` with "(boys)" / "(girls)" when the name does not say.

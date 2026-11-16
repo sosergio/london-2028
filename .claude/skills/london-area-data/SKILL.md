@@ -16,7 +16,7 @@ All paths below are relative to the repo root. Scripts use only the Python stand
 | 1 | Core: id, rank, name, sub, centre, why, Rightmove id | `areas.csv` | by hand, see "Adding an area" |
 | 2 | Ward outlines | `data/geo/wards.json` | ONS boundaries |
 | 3 | Census: residents, density, ethnicity | `areas.csv` (`msoas`, `residents`, `people_per_km2`, `density_*`, `pct_*`) | Nomis API |
-| 4 | Crime, 12 months within 1 mile | `areas.csv` (`crime_*`) | police.uk API |
+| 4 | Crime: 12 months within 1 mile, and per 1,000 residents by neighbourhood | `areas.csv` (`crime_*`, `crime_rate*`), `crime_subareas.csv`, `crime_points.csv` | police.uk API, `scripts/crime_subareas.py` |
 | 5 | Schools: all mixed state primaries and secondaries in the wards, any Ofsted rating | `schools.csv` (+ single-sex ones in `excluded.json`) | `scripts/schools_gias.py` (GIAS + Ofsted), council admissions for catchment |
 | 6 | Shops and places, 5 groups | `shops.csv` | OpenStreetMap (Overpass, Nominatim fallback) |
 | 7 | Sale prices: area medians, every sale, sub-area price levels | `areas.csv` (`postcode_sectors`, `price_*`, `price_level`), `sales.csv`, `subareas.csv`, `geo/subareas.json` | Land Registry: `scripts/property_prices.py --write`, then `scripts/price_subareas.py` |
@@ -39,13 +39,13 @@ It prints, per area, `OK`, `MISSING` (a dimension or required field is empty) or
 1. **Agree the basics with the user**: the name, a two-letter `id` not already used (`ef`, `ro`, `ce`, ...), its `rank` (renumber the others if it slots in between), and the centre point (usually the high street or station).
 2. **Wards** (dimension 2): pick the 2-6 council wards that make up the neighbourhood and add them to `wards.json`. Everything else is measured against these, so get the user to confirm the list.
 3. **MSOAs** (dimension 3): the Census neighbourhoods that best overlap the wards, written like `Haringey 034, Haringey 022`.
-4. Collect dimensions 2-8. `scripts/add_area.py spec.json` does wards, MSOAs, Census, crime, shops and the Rightmove id in one go from a small JSON spec (see its docstring; preview first, then `--write`). Then `scripts/schools_gias.py ... <ids> --write`, `scripts/property_prices.py <ids> --write` and `scripts/price_subareas.py`. If an area has no secondary inside its wards, add the nearest popular ones just outside and say so in `note`.
+4. Collect dimensions 2-8. `scripts/add_area.py spec.json` does wards, MSOAs, Census, crime, shops and the Rightmove id in one go from a small JSON spec (see its docstring; preview first, then `--write`). Then `scripts/schools_gias.py ... <ids> --write`, `scripts/property_prices.py <ids> --write`, `scripts/price_subareas.py` and then `scripts/crime_subareas.py --write` (it needs the new area's sub-areas). If an area has no secondary inside its wards, add the nearest popular ones just outside and say so in `note`.
 5. Write the `why` text and the estimates (dimension 9) last, once the numbers are in, so the text reflects them.
 6. Run the audit, then open the site locally (`python3 -m http.server`, http://localhost:8000) and check the area's card, outline, schools and shops.
 
 ## Filling gaps or refreshing
 
-Work dimension by dimension across all areas, not area by area: one method and one time period per dimension keeps the areas comparable. When refreshing a dimension, refresh it for every area, and update the period in the text (for crime, the "Oct 2025–Sep 2026" line in `js/panel.js`; for prices, `price_period`).
+Work dimension by dimension across all areas, not area by area: one method and one time period per dimension keeps the areas comparable. When refreshing a dimension, refresh it for every area, and update the period in the text (for crime, `crime_rate_period` is written by `crime_subareas.py` and shown everywhere; refresh the 1-mile `crime_*` counts for the same months; for prices, `price_period`).
 
 ## Property prices and rents
 
@@ -61,6 +61,15 @@ The script works out the area's postcode sectors from its ward outlines (or uses
 `--write` also saves every sale (street and postcode, no house numbers) to `data/sales.csv`. Then run `scripts/price_subareas.py` to rebuild the sub-area dataset behind the map's "Price level by neighbourhood" layer: one row per ONS LSOA (about 650 homes) with medians by type and a mix-adjusted **price level** (100 = typical for the shortlist), plus `price_level` per area. Always rerun it after adding or refreshing an area, because the level is relative to all areas' sales.
 
 Rents: see `references/sources.md`, "Rents". There is no free official source at neighbourhood level, so record where each figure came from in `rent_source`.
+
+## Crime by neighbourhood
+
+```
+python3 .claude/skills/london-area-data/scripts/crime_subareas.py --months 2025-10:2026-09 --cache <scratch>/police          # preview
+python3 .claude/skills/london-area-data/scripts/crime_subareas.py --months 2025-10:2026-09 --cache <scratch>/police --write
+```
+
+It asks police.uk for every street-level crime in each area's sub-areas (the LSOAs in `subareas.csv`), month by month, places each crime in its sub-area by point-in-polygon, and divides by the sub-area's Census 2021 residents (Nomis TS001). It always redoes every area, so rates stay comparable. Writes `data/crime_subareas.csv` (per sub-area: residents, counts in six groups, top 3 streets), `data/crime_points.csv` (per police.uk "on or near" point) and the `crime_rate*` columns of `areas.csv`. "All" leaves out shoplifting, which piles onto shopping streets. Crime locations are anonymised to the nearest of a fixed set of points, so never present a point as an address.
 
 ## Area guides (highlights with photos)
 

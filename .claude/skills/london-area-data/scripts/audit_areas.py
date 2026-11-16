@@ -23,7 +23,8 @@ AREA_DIMENSIONS = {
     "census": ["msoas", "residents", "people_per_km2", "density_min", "density_max",
                "pct_whiteBritish", "pct_whiteOther", "pct_asian", "pct_black", "pct_mixed", "pct_other"],
     "crime": ["crime_total", "crime_anti-social-behaviour", "crime_burglary", "crime_robbery",
-              "crime_vehicle-crime", "crime_violent-crime", "crime_shoplifting"],
+              "crime_vehicle-crime", "crime_violent-crime", "crime_shoplifting",
+              "crime_rate", "crime_rate_burglary", "crime_rate_violent", "crime_rate_asb", "crime_rate_period"],
     "prices": ["postcode_sectors", "price_flat", "price_terraced", "price_semi", "price_sales", "price_period"],
     "rents": ["rent_2bed", "rent_3bed", "rent_source"],
 }
