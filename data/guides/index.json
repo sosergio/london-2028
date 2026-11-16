@@ -9,6 +9,11 @@
   "wa": "data/guides/wa.json",
   "wt": "data/guides/wt.json",
   "be": "data/guides/be.json",
-  "bh": "data/guides/bh.json"
+  "bh": "data/guides/bh.json",
+  "ed": "data/guides/ed.json",
+  "wk": "data/guides/wk.json",
+  "sa": "data/guides/sa.json",
+  "fg": "data/guides/fg.json",
+  "ly": "data/guides/ly.json"
  }
 }

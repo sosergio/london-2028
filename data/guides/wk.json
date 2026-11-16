@@ -1,0 +1,129 @@
+{
+ "area_id": "wk",
+ "title": "Woking",
+ "updated": "November 2026",
+ "intro": "A Surrey town surrounded by heath, canal and woodland, with Britain's first purpose-built mosque, H. G. Wells's Martians and one of the great gardens of England nearby.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "shah-jahan-mosque",
+   "n": 1,
+   "name": "Shah Jahan Mosque",
+   "kind": "history",
+   "lat": 51.32267,
+   "lon": -0.54455,
+   "km": 1.0,
+   "blurb": "Built in 1889, the first purpose-built mosque in Britain and Grade I listed.",
+   "tip": "Visitors are welcome outside prayer times; dress modestly.",
+   "photo": "data/guides/wk/shah-jahan-mosque.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "RHaworth",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Shah_Jahan_Mosque_TQ0159_214.jpg"
+   }
+  },
+  {
+   "id": "horsell-common",
+   "n": 2,
+   "name": "Horsell Common",
+   "kind": "walk",
+   "lat": 51.335,
+   "lon": -0.565,
+   "km": 1.9,
+   "blurb": "Heathland, pine woods and sandpits on the edge of town, where H. G. Wells landed the Martians in The War of the Worlds.",
+   "tip": "The peaceful Muslim Burial Ground garden is on the common's edge.",
+   "photo": "data/guides/wk/horsell-common.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Mertbiol",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Sandpit,_Horsell_Common,_Woking,_Surrey.jpg"
+   }
+  },
+  {
+   "id": "martian",
+   "n": 3,
+   "name": "The Martian sculpture",
+   "kind": "history",
+   "lat": 51.3196,
+   "lon": -0.5585,
+   "km": 0.2,
+   "blurb": "A seven-metre steel tripod-fighting machine in the town centre, a tribute to H. G. Wells, who wrote The War of the Worlds while living in Woking.",
+   "tip": "It stands in Crown Passage near the station.",
+   "photo": "data/guides/wk/martian.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Colin Smith",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Woking_-_%22The_Martian%22_-_geograph.org.uk_-_8068731.jpg"
+   }
+  },
+  {
+   "id": "basingstoke-canal",
+   "n": 4,
+   "name": "Basingstoke Canal",
+   "kind": "walk",
+   "lat": 51.3205,
+   "lon": -0.555,
+   "km": 0.3,
+   "blurb": "A restored 18th-century canal running right through Woking, with a long towpath for walking and cycling and narrowboats in summer.",
+   "tip": "Walk west towards St John's for the prettiest locks.",
+   "photo": "data/guides/wk/basingstoke-canal.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Colin Smith",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Basingstoke_Canal,_Woking_-_geograph.org.uk_-_2724275.jpg"
+   }
+  },
+  {
+   "id": "rhs-wisley",
+   "n": 5,
+   "name": "RHS Garden Wisley",
+   "kind": "park",
+   "lat": 51.31484,
+   "lon": -0.47494,
+   "km": 5.7,
+   "blurb": "The Royal Horticultural Society's flagship garden, with a great glasshouse, borders, woods and lakes, a short drive from Woking.",
+   "tip": "Members get in free; go early on summer weekends.",
+   "photo": "data/guides/wk/rhs-wisley.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Oscar Taylor",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Glasshouse,_RHS_Wisley_-_geograph.org.uk_-_7179944.jpg"
+   }
+  },
+  {
+   "id": "brookwood-cemetery",
+   "n": 6,
+   "name": "Brookwood Cemetery",
+   "kind": "history",
+   "lat": 51.29822,
+   "lon": -0.6284,
+   "km": 5.5,
+   "blurb": "Opened in 1854 for London's dead, once served by its own railway from Waterloo; now a vast wooded cemetery with grand Victorian tombs.",
+   "tip": "A quiet woodland walk as much as a cemetery.",
+   "photo": "data/guides/wk/brookwood-cemetery.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "SuzanneKn at English Wikipedia",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Avenue_leading_from_Brookwood_cemetery.jpg"
+   }
+  }
+ ]
+}

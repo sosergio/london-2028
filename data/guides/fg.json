@@ -1,0 +1,69 @@
+{
+ "area_id": "fg",
+ "title": "Forest Gate",
+ "updated": "November 2026",
+ "intro": "Victorian streets on the edge of Epping Forest's southern flats, with a City of London park and cemetery and a tidal mill on the River Lea not far away.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "west-ham-park",
+   "n": 1,
+   "name": "West Ham Park",
+   "kind": "park",
+   "lat": 51.53893,
+   "lon": 0.01846,
+   "km": 1.2,
+   "blurb": "A Victorian park looked after by the City of London, with ornamental gardens, a playground and cricket pitches.",
+   "tip": "The ornamental gardens are the prettiest corner.",
+   "photo": "data/guides/fg/west-ham-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Flowers_in_West_Ham_Park_-_geograph.org.uk_-_4132932.jpg"
+   }
+  },
+  {
+   "id": "three-mills",
+   "n": 2,
+   "name": "Three Mills",
+   "kind": "history",
+   "lat": 51.5285,
+   "lon": -0.005,
+   "km": 3.1,
+   "blurb": "A group of historic mills on an island in the River Lea, including the House Mill of 1776, one of the largest tide mills in the world.",
+   "tip": "The House Mill opens on some Sundays for tours.",
+   "photo": "data/guides/fg/three-mills.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Three_Mills_-_England%27s_largest_surviving_tidal_mill_complex_-_geograph.org.uk_-_3867601.jpg"
+   }
+  },
+  {
+   "id": "jubilee-pond",
+   "n": 3,
+   "name": "Jubilee Pond, Wanstead Flats",
+   "kind": "park",
+   "lat": 51.553,
+   "lon": 0.033,
+   "km": 0.7,
+   "blurb": "A restored pond at the southern edge of Wanstead Flats, a short walk from Forest Gate, with open grassland all around.",
+   "tip": "Good for a sunset walk across the flats.",
+   "photo": "data/guides/fg/jubilee-pond.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Jubilee_Pond,_Wanstead_Flats_-_geograph.org.uk_-_4312377.jpg"
+   }
+  }
+ ]
+}

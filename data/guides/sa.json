@@ -1,0 +1,129 @@
+{
+ "area_id": "sa",
+ "title": "St Albans",
+ "updated": "November 2026",
+ "intro": "A Roman city and medieval market town, with a great abbey cathedral, a Roman theatre and a lakeside park over the old city walls.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "cathedral",
+   "n": 1,
+   "name": "St Albans Cathedral",
+   "kind": "history",
+   "lat": 51.75053,
+   "lon": -0.34256,
+   "km": 1.0,
+   "blurb": "The abbey church on the site of Alban's martyrdom, with a Norman tower built partly of Roman bricks and one of the longest naves in England.",
+   "tip": "Free to enter; the Saturday market is a short walk away.",
+   "photo": "data/guides/sa/cathedral.jpg",
+   "w": 1200,
+   "h": 793,
+   "credit": {
+    "author": "Diliff",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:St_Albans_Cathedral_Exterior_from_west,_Herfordshire,_UK_-_Diliff.jpg"
+   }
+  },
+  {
+   "id": "verulamium-park",
+   "n": 2,
+   "name": "Verulamium Park",
+   "kind": "park",
+   "lat": 51.74987,
+   "lon": -0.35453,
+   "km": 1.9,
+   "blurb": "A big lakeside park below the cathedral on the site of the Roman city, with stretches of Roman wall and a hypocaust to see.",
+   "tip": "Walk up from the lake to the cathedral for the classic view.",
+   "photo": "data/guides/sa/verulamium-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Gary Houston",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Verulamium-Park-lake-20040313-002.jpg"
+   }
+  },
+  {
+   "id": "roman-theatre",
+   "n": 3,
+   "name": "Roman Theatre of Verulamium",
+   "kind": "history",
+   "lat": 51.757,
+   "lon": -0.36,
+   "km": 2.4,
+   "blurb": "The only visible Roman theatre in Britain, built around 140 AD, in fields beside the Gorhambury estate.",
+   "tip": "Combine it with the Verulamium Museum across the road.",
+   "photo": "data/guides/sa/roman-theatre.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Przemysław Sakrajda",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:RomanTheatreVerulamium-PS1.jpg"
+   }
+  },
+  {
+   "id": "clock-tower",
+   "n": 4,
+   "name": "Clock Tower",
+   "kind": "history",
+   "lat": 51.75131,
+   "lon": -0.34049,
+   "km": 0.9,
+   "blurb": "A medieval belfry built in the early 1400s, the only surviving town belfry of its kind in England, with views from the top.",
+   "tip": "Open to climb at weekends in summer.",
+   "photo": "data/guides/sa/clock-tower.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Philafrenzy",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Clock_Tower_St_Albans.JPG"
+   }
+  },
+  {
+   "id": "fishpool-street",
+   "n": 5,
+   "name": "Fishpool Street",
+   "kind": "street",
+   "lat": 51.75222,
+   "lon": -0.34832,
+   "km": 1.4,
+   "blurb": "A winding old street of timber-framed and Georgian houses running down from the cathedral to St Michael's and the river.",
+   "tip": "Finish at Ye Olde Fighting Cocks by the lake.",
+   "photo": "data/guides/sa/fishpool-street.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "No Swan So Fine",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:26_Fishpool_Street,_St_Albans,_February_2022.jpg"
+   }
+  },
+  {
+   "id": "st-albans-market",
+   "n": 6,
+   "name": "St Albans Market",
+   "kind": "leisure",
+   "lat": 51.75407,
+   "lon": -0.33679,
+   "km": 0.8,
+   "blurb": "A street market held on Wednesdays and Saturdays along St Peter's Street, a tradition going back to the Middle Ages.",
+   "tip": "Saturday is the bigger market.",
+   "photo": "data/guides/sa/st-albans-market.jpg",
+   "w": 1200,
+   "h": 794,
+   "credit": {
+    "author": "Gary Houston",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:St-Albans-Market-20050409-002.jpg"
+   }
+  }
+ ]
+}

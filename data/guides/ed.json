@@ -1,0 +1,149 @@
+{
+ "area_id": "ed",
+ "title": "East Dulwich & Herne Hill",
+ "updated": "November 2026",
+ "intro": "Green south London at its best: a Victorian park with a boating lake, England's first public art gallery, an Art Deco lido and a fragment of ancient forest with a view.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "dulwich-park",
+   "n": 1,
+   "name": "Dulwich Park",
+   "kind": "park",
+   "lat": 51.44548,
+   "lon": -0.0779,
+   "km": 1.8,
+   "blurb": "A Victorian park with a boating lake, wide lawns, big old trees and a café, at the heart of Dulwich.",
+   "tip": "Hire a recumbent bike for a loop of the park on weekends.",
+   "photo": "data/guides/ed/dulwich-park.jpg",
+   "w": 1200,
+   "h": 798,
+   "credit": {
+    "author": "Helena Hilton",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dulwich_Park_-_geograph.org.uk_-_2545464.jpg"
+   }
+  },
+  {
+   "id": "dulwich-picture-gallery",
+   "n": 2,
+   "name": "Dulwich Picture Gallery",
+   "kind": "history",
+   "lat": 51.44596,
+   "lon": -0.08633,
+   "km": 1.8,
+   "blurb": "Designed by Sir John Soane and opened in 1817 as England's first purpose-built public art gallery, with Old Masters and a lawn for picnics.",
+   "tip": "The garden and café are free; the collection has a ticket.",
+   "photo": "data/guides/ed/dulwich-picture-gallery.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Edwardx",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dulwich_Picture_Gallery_01.JPG"
+   }
+  },
+  {
+   "id": "dulwich-village",
+   "n": 3,
+   "name": "Dulwich Village",
+   "kind": "street",
+   "lat": 51.44996,
+   "lon": -0.08441,
+   "km": 1.3,
+   "blurb": "A quiet high street of Georgian and Victorian buildings, white fences and old trees, with the college and its grounds beyond.",
+   "tip": "Walk down from East Dulwich via Calton Avenue.",
+   "photo": "data/guides/ed/dulwich-village.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Georgian_houses_in_Dulwich_Village_-_geograph.org.uk_-_2609405.jpg"
+   }
+  },
+  {
+   "id": "horniman",
+   "n": 4,
+   "name": "Horniman Museum and Gardens",
+   "kind": "leisure",
+   "lat": 51.44102,
+   "lon": -0.061,
+   "km": 2.6,
+   "blurb": "A free museum of natural history, music and world cultures with an aquarium, a Victorian conservatory and gardens with views across London.",
+   "tip": "The garden's bandstand terrace has one of the best views in south London.",
+   "photo": "data/guides/ed/horniman.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Chris Denny",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Bandstand,_Horniman_Museum_Gardens._-_geograph.org.uk_-_1741818.jpg"
+   }
+  },
+  {
+   "id": "brockwell-park",
+   "n": 5,
+   "name": "Brockwell Park and Lido",
+   "kind": "park",
+   "lat": 51.45053,
+   "lon": -0.10609,
+   "km": 2.2,
+   "blurb": "A hilltop park with views to the City, a walled garden, ponds and Brockwell Lido, an open-air pool from 1937.",
+   "tip": "The lido opens all year for the brave; summer weekends are busy.",
+   "photo": "data/guides/ed/brockwell-park.jpg",
+   "w": 1200,
+   "h": 675,
+   "credit": {
+    "author": "Tommy20000",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Brockwell_Hall.jpg"
+   }
+  },
+  {
+   "id": "sydenham-hill-wood",
+   "n": 6,
+   "name": "Sydenham Hill Wood and Cox's Walk",
+   "kind": "walk",
+   "lat": 51.4335,
+   "lon": -0.0705,
+   "km": 3.2,
+   "blurb": "A remnant of the ancient Great North Wood, with the ruins of a Victorian garden and a footbridge over an old railway cutting.",
+   "tip": "Climb Cox's Walk from the South Circular for the best approach.",
+   "photo": "data/guides/ed/sydenham-hill-wood.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Peter Trimming",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Sydenham_Hill_Woods_-_geograph.org.uk_-_5545035.jpg"
+   }
+  },
+  {
+   "id": "peckham-rye-park",
+   "n": 7,
+   "name": "Peckham Rye Park",
+   "kind": "park",
+   "lat": 51.45645,
+   "lon": -0.06008,
+   "km": 1.5,
+   "blurb": "A park beside the open common of Peckham Rye, with a lake, a Japanese-style garden, woodland and a café.",
+   "tip": "The quiet Sexby Garden is easy to miss: look for it near the lake.",
+   "photo": "data/guides/ed/peckham-rye-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Kate Tierney",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Peckham_Rye.jpg"
+   }
+  }
+ ]
+}

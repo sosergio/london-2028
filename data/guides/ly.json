@@ -1,0 +1,89 @@
+{
+ "area_id": "ly",
+ "title": "Leytonstone",
+ "updated": "November 2026",
+ "intro": "Alfred Hitchcock's birthplace, with Epping Forest's ponds and woods at the end of the road and the Olympic Park a short ride south.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "hollow-ponds",
+   "n": 1,
+   "name": "Hollow Ponds",
+   "kind": "park",
+   "lat": 51.5745,
+   "lon": 0.004,
+   "km": 0.7,
+   "blurb": "Lakes in Epping Forest made from old gravel workings, with rowing boats to hire in summer and woods all around.",
+   "tip": "Boats are usually out on summer weekends.",
+   "photo": "data/guides/ly/hollow-ponds.jpg",
+   "w": 1200,
+   "h": 448,
+   "credit": {
+    "author": "The wub",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hollow_Ponds.jpg"
+   }
+  },
+  {
+   "id": "hitchcock-mosaics",
+   "n": 2,
+   "name": "Leytonstone station and the Hitchcock mosaics",
+   "kind": "history",
+   "lat": 51.5684,
+   "lon": 0.0083,
+   "km": 0.0,
+   "blurb": "Seventeen mosaics in the station's subways showing scenes from the life and films of Alfred Hitchcock, who was born in Leytonstone in 1899.",
+   "tip": "Free to see in the station subways.",
+   "photo": "data/guides/ly/hitchcock-mosaics.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Sunil060902",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Leytonstone_east_entrance.JPG"
+   }
+  },
+  {
+   "id": "bush-wood",
+   "n": 3,
+   "name": "Bush Wood",
+   "kind": "walk",
+   "lat": 51.566,
+   "lon": 0.015,
+   "km": 0.5,
+   "blurb": "A quiet patch of Epping Forest woodland between Leytonstone and Wanstead, with old trees and an ancient avenue.",
+   "tip": "Walk through to Wanstead for coffee.",
+   "photo": "data/guides/ly/bush-wood.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "sludgegulper",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pond_and_Pulhamite_feature,_Knighton_Wood,_Woodford_Green.jpg"
+   }
+  },
+  {
+   "id": "olympic-park",
+   "n": 4,
+   "name": "Queen Elizabeth Olympic Park",
+   "kind": "park",
+   "lat": 51.54496,
+   "lon": -0.01718,
+   "km": 3.1,
+   "blurb": "The 2012 Olympic site, now a park with riverside gardens, wetlands, playgrounds and the London Aquatics Centre.",
+   "tip": "Swim in the Olympic pool: it is open to the public.",
+   "photo": "data/guides/ly/olympic-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Ank Kumar",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Queen_Elizabeth_Olympic_Park_AnkKumar.jpg"
+   }
+  }
+ ]
+}

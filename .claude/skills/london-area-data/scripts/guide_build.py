@@ -6,7 +6,7 @@ Needs Pillow (see guide_photos.py for how to install it into a scratch folder).
 Spec (JSON):
   {"area": "ce", "title": "Crouch End", "station": [51.58, -0.12], "updated": "November 2026", "intro": "...",
    "items": [{"id": "parkland-walk", "name": "Parkland Walk", "kind": "walk",
-              "q": "Parkland Walk Crouch End",           # Commons search words
+              "q": "Parkland Walk Crouch End",           # Commons search words, or "Category:<Commons category>"
               "geo": "Parkland Walk, London",           # Nominatim query (or "lat": .., "lon": ..)
               "blurb": "...", "tip": "..."}, ...]}
 
@@ -44,8 +44,13 @@ def api(**p):
 
 
 def candidates(q, n=4):
-    d = api(action="query", generator="search", gsrnamespace=6, gsrsearch=q + " filetype:bitmap", gsrlimit=30,
-            prop="imageinfo", iiprop="url|size|extmetadata", iiurlwidth=360)
+    # "Category:Name" lists that Commons category (more reliable for specific places); anything else is a text search.
+    if q.startswith("Category:"):
+        d = api(action="query", generator="categorymembers", gcmtitle=q, gcmtype="file", gcmlimit=50,
+                prop="imageinfo", iiprop="url|size|extmetadata", iiurlwidth=360)
+    else:
+        d = api(action="query", generator="search", gsrnamespace=6, gsrsearch=q + " filetype:bitmap", gsrlimit=30,
+                prop="imageinfo", iiprop="url|size|extmetadata", iiurlwidth=360)
     out = []
     for p in d.get("query", {}).get("pages", []):
         ii = p["imageinfo"][0]
