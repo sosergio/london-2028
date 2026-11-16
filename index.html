@@ -201,6 +201,11 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 .facts b{display:block;font-size:13px;font-variant-numeric:tabular-nums}
 .facts span{color:var(--muted)}
 .why{margin:0;font-size:13px}
+.rm-view{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:6px 10px;background:var(--panel);color:var(--fg);border:1px solid var(--border);border-radius:8px;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.rm-view a{color:var(--accent);font-weight:600;text-decoration:none;cursor:pointer}
+.rm-view a:hover{text-decoration:underline}
+.rm-view-label{color:var(--muted)}
+.rm-view.off a{color:var(--muted);cursor:default;text-decoration:none}
 .rm{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
 .rm:hover{text-decoration:underline}
 .list{display:grid;gap:0;border-top:1px solid var(--line)}
@@ -364,7 +369,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
       <p><strong>Sweet spots</strong>: a neighbourhood passes if its price level, its crime rate and the straight-line distance from its middle to the nearest Good or Outstanding primary and secondary on this map are all within the sliders. Being near a school is not the same as being in its catchment, and a low price level can mean smaller or ex-council homes rather than a bargain, so treat it as a shortlist of streets to look at, not an answer.</p>
       <p><strong>Conservation areas</strong>: planning.data.gov.uk (each council's designations, Nov 2026). Inside one, the look of the street is protected, which usually supports prices, but extensions, loft dormers, new windows, cladding and front gardens need more permission, and trees need 6 weeks' notice before work. Some also have an Article 4 direction, which takes away more permitted development: the council's appraisal says. The card's share counts the area's sold homes from the last two years that are inside one, a rough stand-in for the share of homes.</p>
       <p><strong>Crime</strong>: police.uk street-level crime for 12 months. The card's 1-mile count is the same radius everywhere, so it is not per person; the rates per 1,000 residents count every crime inside the area's neighbourhoods (the same Census LSOAs as the prices) and divide by their 2021 population. police.uk moves each crime to the nearest of a fixed set of points (usually the middle of a street), so a point means "on or near this street", never an address. Fraud and some sensitive offences are not published. Shoplifting is left out of "all", as it piles onto shopping streets.</p>
-      <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
+      <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. "This view on Rightmove" (bottom left of the map) searches exactly the part of the map you can see, slightly enlarged, to rent or for sale, with the same filters (no price limit for sale). Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
     </section>
   </aside>
 </div>

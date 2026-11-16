@@ -20,6 +20,29 @@ export const commuteUrl = ([lat, lon]) =>
 export const rightmoveUrl = a => 'https://www.rightmove.co.uk/property-to-rent/map.html?locationIdentifier=' + encodeURIComponent(a.rightmoveId)
   + '&minBedrooms=3&maxPrice=4500&propertyTypes=detached%2Csemi-detached%2Cterraced&mustHave=garden&channel=RENT&viewType=MAP';
 
+// Rightmove search for an exact area: the same "Draw a search" link Rightmove builds itself,
+// USERDEFINEDAREA^{"polylines":"<Google encoded polyline>"}. ring: [[lon, lat], ...], closed.
+function encodePolyline(ring) {
+  let out = '', pLat = 0, pLon = 0;
+  for (const [lon, lat] of ring) {
+    const la = Math.round(lat * 1e5), lo = Math.round(lon * 1e5);
+    for (let d of [la - pLat, lo - pLon]) {
+      d = d < 0 ? ~(d << 1) : d << 1;
+      while (d >= 0x20) { out += String.fromCharCode((0x20 | (d & 0x1f)) + 63); d >>= 5; }
+      out += String.fromCharCode(d + 63);
+    }
+    pLat = la; pLon = lo;
+  }
+  return out;
+}
+// Same filters as the area links: 3+ bedrooms, houses, garden; rents up to £4,500 a month.
+export function rightmoveAreaUrl(ring, rent) {
+  const loc = 'USERDEFINEDAREA^' + JSON.stringify({ polylines: encodePolyline(ring) });
+  return `https://www.rightmove.co.uk/${rent ? 'property-to-rent' : 'property-for-sale'}/map.html?locationIdentifier=${encodeURIComponent(loc)}`
+    + '&minBedrooms=3&propertyTypes=detached%2Csemi-detached%2Cterraced&mustHave=garden&viewType=MAP'
+    + (rent ? '&maxPrice=4500&channel=RENT' : '&channel=BUY');
+}
+
 const ext = (href, text) => href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${text}</a>` : '';
 
 export function schoolPopup(s, area) {

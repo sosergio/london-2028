@@ -8,7 +8,7 @@
 //
 // The panel talks to this module only through the object returned by createMap().
 
-import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml, crimeSubHtml, crimePointHtml, consHtml, consLine } from './format.js';
+import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml, crimeSubHtml, crimePointHtml, consHtml, consLine, rightmoveAreaUrl } from './format.js';
 
 const STYLES = {
   light: 'https://tiles.openfreemap.org/styles/positron',
@@ -57,6 +57,34 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-left');
   map.addControl(new maplibregl.ScaleControl({ unit: 'imperial' }), 'bottom-left');
+
+  // "Open this view on Rightmove": the part of the map you can see (not the part under the filter box),
+  // a touch larger, as a drawn-area search. Links (not buttons) so they can be opened in a new tab or copied.
+  const rmBox = document.createElement('div');
+  rmBox.className = 'maplibregl-ctrl rm-view';
+  rmBox.innerHTML = `<span class="rm-view-label">This view on Rightmove</span>
+    <a id="rm-view-rent" target="_blank" rel="noopener">To rent ↗</a><a id="rm-view-sale" target="_blank" rel="noopener">For sale ↗</a>`;
+  map.addControl({ onAdd: () => rmBox, onRemove: () => rmBox.remove() }, 'bottom-left');
+  const RM_MIN_ZOOM = 10.5;
+  function updateRightmove() {
+    const w = container.clientWidth, h = container.clientHeight;
+    const box = document.getElementById('filters');
+    const right = w >= 700 && box?.open ? w - box.offsetWidth - 20 : w;
+    // Corners of the visible map, 5% further out on each side.
+    const mx = right * 0.05, my = h * 0.05;
+    const ring = [[-mx, -my], [right + mx, -my], [right + mx, h + my], [-mx, h + my]].map(p => map.unproject(p).toArray());
+    ring.push(ring[0]);
+    const ok = map.getZoom() >= RM_MIN_ZOOM;
+    rmBox.classList.toggle('off', !ok);
+    rmBox.title = ok ? '3+ bedrooms, houses with a garden (rent up to £4,500 a month), inside the area you can see' : 'Zoom in to search this view on Rightmove';
+    [['rm-view-rent', true], ['rm-view-sale', false]].forEach(([id, rent]) => {
+      const a = rmBox.querySelector('#' + id);
+      if (ok) a.href = rightmoveAreaUrl(ring, rent); else a.removeAttribute('href');
+    });
+  }
+  map.on('moveend', updateRightmove);
+  map.on('load', updateRightmove);
+  document.getElementById('filters')?.addEventListener('toggle', updateRightmove);
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
