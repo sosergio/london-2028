@@ -234,6 +234,21 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script type="module" src="js/main.js"></script>
+<script>
+// Cache busting. GitHub Pages lets browsers keep files for 10 minutes, so after a deploy a browser could pair
+// the new page with old cached scripts. Every script URL carries the page's Last-Modified time (which changes
+// on each deploy), via an import map for the modules that main.js imports.
+(function () {
+  const v = Date.parse(document.lastModified) || Date.now();
+  const mods = ['data', 'state', 'format', 'map', 'panel'];
+  const map = document.createElement('script');
+  map.type = 'importmap';
+  map.textContent = JSON.stringify({ imports: Object.fromEntries(mods.map(m => [new URL('js/' + m + '.js', location.href).href, './js/' + m + '.js?v=' + v])) });
+  document.currentScript.after(map);
+  const main = document.createElement('script');
+  main.type = 'module'; main.src = 'js/main.js?v=' + v;
+  map.after(main);
+})();
+</script>
 </body>
 </html>

@@ -1,8 +1,9 @@
 // Loads every data file and turns the rows into the shapes the map and panel use.
 // Data files are never changed by the page; edit them and reload.
 
-const getJSON = u => fetch(u).then(r => { if (!r.ok) throw new Error(`${u}: HTTP ${r.status}`); return r.json(); });
-const getCSV = u => fetch(u)
+// cache: 'no-cache' revalidates with the server each time, so an edited CSV shows on the next load.
+const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(`${u}: HTTP ${r.status}`); return r.json(); });
+const getCSV = u => fetch(u, { cache: 'no-cache' })
   .then(r => { if (!r.ok) throw new Error(`${u}: HTTP ${r.status}`); return r.text(); })
   .then(t => Papa.parse(t, { header: true, dynamicTyping: true, skipEmptyLines: true }).data);
 
