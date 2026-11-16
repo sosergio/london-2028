@@ -17,7 +17,7 @@ All paths below are relative to the repo root. Scripts use only the Python stand
 | 2 | Ward outlines | `data/geo/wards.json` | ONS boundaries |
 | 3 | Census: residents, density, ethnicity | `areas.csv` (`msoas`, `residents`, `people_per_km2`, `density_*`, `pct_*`) | Nomis API |
 | 4 | Crime, 12 months within 1 mile | `areas.csv` (`crime_*`) | police.uk API |
-| 5 | Schools: mixed state primaries and secondaries | `schools.csv` (+ single-sex ones in `excluded.json`) | GIAS, Ofsted, council admissions |
+| 5 | Schools: all mixed state primaries and secondaries in the wards, any Ofsted rating | `schools.csv` (+ single-sex ones in `excluded.json`) | `scripts/schools_gias.py` (GIAS + Ofsted), council admissions for catchment |
 | 6 | Shops and places, 5 groups | `shops.csv` | OpenStreetMap (Overpass, Nominatim fallback) |
 | 7 | Sale prices by property type | `areas.csv` (`postcode_sectors`, `price_*`) | Land Registry, `scripts/property_prices.py` |
 | 8 | Rents for 2 and 3 bedrooms | `areas.csv` (`rent_2bed`, `rent_3bed`, `rent_source`) | ONS + asking-rent spot check |

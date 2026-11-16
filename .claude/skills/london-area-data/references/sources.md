@@ -34,6 +34,11 @@ Contents: 1 Wards · 2 Census · 3 Crime · 4 Schools · 5 Shops · 6 Sale price
 
 Scope: state-funded **mixed** primaries, secondaries and all-through schools in or very near the area's wards (the audit flags anything over 3.5 km from the centre). Independent schools are out. Single-sex schools go in `excluded.json` with "(boys)" / "(girls)" when the name does not say.
 
+- **Start with `scripts/schools_gias.py`**: it lists every open, mixed, state-funded mainstream school inside the area's wards that is not yet in `schools.csv` (any Ofsted rating: the site shows weak schools too, so the user can see them), and single-sex ones missing from `excluded.json`. `--write` appends them with Ofsted filled in and catchment left for you. Inputs:
+  - GIAS: `https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldataYYYYMMDD.csv` (today's date; latin-1). It has no Ofsted ratings.
+  - Ofsted: the newest "Management information - state-funded schools - latest inspections as at ..." CSV, listed by `https://www.gov.uk/api/content/government/statistical-data-sets/monthly-management-information-ofsteds-school-inspections-outcomes` (`details.attachments`).
+  - Ofsted pitfalls the script handles: graded inspections from Sept 2024 to Oct 2025 say "Not judged" overall (use the four sub-judgements); report cards (Nov 2025 on) have eight area grades and no headline; schools last graded before 2019 only show the later ungraded outcome ("School remains Good").
+  - Schools just outside the wards but popular with the area (the original list was radius-based) can stay; the audit flags those over 3.5 km away.
 - **GIAS** (DfE Get Information about Schools): the daily "all establishment data" CSV download, or the establishment pages (`https://www.get-information-schools.service.gov.uk/Establishments/Establishment/Details/<URN>`). Gives URN, phase, gender, religious character, age range, pupil numbers, coordinates (easting/northing, convert to lat/lon) and status. Keep only open schools.
 - Columns:
   - `phase`: P, S or A (all-through, e.g. 4-16 or 3-18).
