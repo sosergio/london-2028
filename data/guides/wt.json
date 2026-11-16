@@ -1,0 +1,129 @@
+{
+ "area_id": "wt",
+ "title": "Walthamstow",
+ "updated": "November 2026",
+ "intro": "A creative town with William Morris's family home, a medieval village, one of London's longest street markets and a huge wetland nature reserve.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "william-morris-gallery",
+   "n": 1,
+   "name": "William Morris Gallery and Lloyd Park",
+   "kind": "history",
+   "lat": 51.59129,
+   "lon": -0.0203,
+   "km": 0.9,
+   "blurb": "The Georgian house where William Morris lived as a young man, now a free gallery of his work, with Lloyd Park and its moat behind it.",
+   "tip": "Free entry; the tea room looks onto the park.",
+   "photo": "data/guides/wt/william-morris-gallery.jpg",
+   "w": 1200,
+   "h": 689,
+   "credit": {
+    "author": "ProfDEH",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:William_Morris_Gallery-001.JPG"
+   }
+  },
+  {
+   "id": "walthamstow-wetlands",
+   "n": 2,
+   "name": "Walthamstow Wetlands",
+   "kind": "walk",
+   "lat": 51.58012,
+   "lon": -0.0518,
+   "km": 2.2,
+   "blurb": "Working reservoirs opened to the public as a nature reserve in 2017, with miles of paths, birdlife and an old engine house turned into a visitor centre and café.",
+   "tip": "Free; climb the Coppermill Tower when it is open for the view.",
+   "photo": "data/guides/wt/walthamstow-wetlands.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "tony waldron",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Geograph-3189734-by-tony-waldron-Walthamstow.jpg"
+   }
+  },
+  {
+   "id": "gods-own-junkyard",
+   "n": 3,
+   "name": "God's Own Junkyard",
+   "kind": "leisure",
+   "lat": 51.5938,
+   "lon": -0.0283,
+   "km": 1.3,
+   "blurb": "A warehouse packed with glowing neon signs and film props, with a café inside.",
+   "tip": "Open weekends; free to wander in.",
+   "photo": "data/guides/wt/gods-own-junkyard.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "JRennocks",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:God%27s_Own_Junkyard_10100775327276944.jpg"
+   }
+  },
+  {
+   "id": "walthamstow-stadium",
+   "n": 4,
+   "name": "Walthamstow Stadium",
+   "kind": "history",
+   "lat": 51.604,
+   "lon": -0.0125,
+   "km": 2.4,
+   "blurb": "The Art Deco frontage of the old greyhound stadium, with its famous neon sign, kept and listed when the track closed and the site became homes.",
+   "tip": "Best seen after dark when the neon is lit.",
+   "photo": "data/guides/wt/walthamstow-stadium.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Acabashi",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:2016_Walthamstow_Stadium_from_Walthamstow_Ave_London_England.jpg"
+   }
+  },
+  {
+   "id": "walthamstow-village",
+   "n": 5,
+   "name": "Walthamstow Village",
+   "kind": "street",
+   "lat": 51.58204,
+   "lon": -0.01425,
+   "km": 0.4,
+   "blurb": "The old village around St Mary's church, with the 18th-century Vestry House Museum, the timber-framed Ancient House and cafés on Orford Road.",
+   "tip": "Visit on a Sunday for the farmers' market on Orford Road.",
+   "photo": "data/guides/wt/walthamstow-village.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Half-timbered_house,_Walthamstow_Village_-_geograph.org.uk_-_3815549.jpg"
+   }
+  },
+  {
+   "id": "walthamstow-marshes",
+   "n": 6,
+   "name": "Walthamstow Marshes",
+   "kind": "walk",
+   "lat": 51.57132,
+   "lon": -0.05358,
+   "km": 2.7,
+   "blurb": "Wild grazing marsh in the Lea Valley beside the River Lea, with towpath walks south to Hackney and Springfield Park.",
+   "tip": "Follow the towpath to Springfield Park for coffee by the river.",
+   "photo": "data/guides/wt/walthamstow-marshes.jpg",
+   "w": 1200,
+   "h": 822,
+   "credit": {
+    "author": "Iridescenti",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Walthamstow_Marshes.JPG"
+   }
+  }
+ ]
+}

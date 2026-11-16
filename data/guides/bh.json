@@ -1,0 +1,109 @@
+{
+ "area_id": "bh",
+ "title": "Buckhurst Hill & Loughton",
+ "updated": "November 2026",
+ "intro": "Two towns on the eastern edge of Epping Forest, with ancient hornbeams, Iron Age earthworks and Tudor history within a short walk or drive.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "connaught-water",
+   "n": 1,
+   "name": "Connaught Water",
+   "kind": "park",
+   "lat": 51.6292,
+   "lon": 0.023,
+   "km": 1.7,
+   "blurb": "A lake in Epping Forest with an easy path all the way round, near Chingford Plain.",
+   "tip": "Arrive early at weekends: the car park fills up.",
+   "photo": "data/guides/bh/connaught-water.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Des Blenkinsopp",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ducks_on_a_log,_Connaught_Water_-_geograph.org.uk_-_4036890.jpg"
+   }
+  },
+  {
+   "id": "hunting-lodge",
+   "n": 2,
+   "name": "Queen Elizabeth's Hunting Lodge",
+   "kind": "history",
+   "lat": 51.6393,
+   "lon": 0.0105,
+   "km": 2.9,
+   "blurb": "A timber-framed hunting grandstand built for Henry VIII in 1543, free to visit, at the edge of the forest above Chingford Plain.",
+   "tip": "The View visitor centre next door explains the forest.",
+   "photo": "data/guides/bh/hunting-lodge.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Ethan Doyle White",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Queen_Elizabeth%27s_Hunting_Lodge_exterior.JPG"
+   }
+  },
+  {
+   "id": "loughton-camp",
+   "n": 3,
+   "name": "Loughton Camp",
+   "kind": "history",
+   "lat": 51.656,
+   "lon": 0.057,
+   "km": 3.4,
+   "blurb": "The earth banks of an Iron Age hill fort hidden among old beech trees in the forest above Loughton.",
+   "tip": "Easier to find with a map: it is deep in the trees.",
+   "photo": "data/guides/bh/loughton-camp.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Ethan Doyle White",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Western_bank_and_ditch_at_Loughton_Camp.JPG"
+   }
+  },
+  {
+   "id": "epping-forest-beech",
+   "n": 4,
+   "name": "Epping Forest beech woods",
+   "kind": "walk",
+   "lat": 51.651,
+   "lon": 0.048,
+   "km": 2.7,
+   "blurb": "Old pollarded beech and hornbeam woods running north from Buckhurst Hill and Loughton, part of the City of London's great forest.",
+   "tip": "Autumn colour peaks in late October.",
+   "photo": "data/guides/bh/epping-forest-beech.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Acabashi",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Epping_Forest_High_Beach_Essex_England_-_spring_pond_05.jpg"
+   }
+  },
+  {
+   "id": "roding-valley",
+   "n": 5,
+   "name": "Roding Valley Meadows",
+   "kind": "walk",
+   "lat": 51.6405,
+   "lon": 0.07,
+   "km": 2.2,
+   "blurb": "Wildflower meadows and hedgerows along the River Roding between Buckhurst Hill and Loughton, a Local Nature Reserve.",
+   "tip": "Best in early summer when the meadows flower.",
+   "photo": "data/guides/bh/roding-valley.jpg",
+   "w": 1200,
+   "h": 675,
+   "credit": {
+    "author": "Dudley Miles",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:River_Roding_in_Roding_Valley_Meadows_1.JPG"
+   }
+  }
+ ]
+}

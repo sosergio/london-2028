@@ -4,6 +4,11 @@
   "ef": "data/guides/ef.json",
   "ce": "data/guides/ce.json",
   "bl": "data/guides/bl.json",
-  "ro": "data/guides/ro.json"
+  "ro": "data/guides/ro.json",
+  "fb": "data/guides/fb.json",
+  "wa": "data/guides/wa.json",
+  "wt": "data/guides/wt.json",
+  "be": "data/guides/be.json",
+  "bh": "data/guides/bh.json"
  }
 }

@@ -1,0 +1,89 @@
+{
+ "area_id": "be",
+ "title": "Beckenham",
+ "updated": "November 2026",
+ "intro": "A Kent-edge town with two big parks, a swimming lake in a Georgian estate and the Victorian dinosaurs of Crystal Palace a short ride away.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "kelsey-park",
+   "n": 1,
+   "name": "Kelsey Park",
+   "kind": "park",
+   "lat": 51.40201,
+   "lon": -0.02225,
+   "km": 1.1,
+   "blurb": "A peaceful park close to the High Street, with a long lake, herons and waterfowl, woodland walks and a café.",
+   "tip": "The lakeside path makes a good short loop.",
+   "photo": "data/guides/be/kelsey-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Alan Stanton",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Kelsey_Park_Waterfall_-_1_(17454852414).jpg"
+   }
+  },
+  {
+   "id": "beckenham-place-park",
+   "n": 2,
+   "name": "Beckenham Place Park",
+   "kind": "park",
+   "lat": 51.41875,
+   "lon": -0.0135,
+   "km": 1.2,
+   "blurb": "A huge park with ancient woodland, meadows and a Georgian mansion, and a restored lake where you can swim in summer.",
+   "tip": "Book a swim in the lake on warm days; sessions sell out.",
+   "photo": "data/guides/be/beckenham-place-park.jpg",
+   "w": 1200,
+   "h": 901,
+   "credit": {
+    "author": "Doyle of London",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tree_in_Beckenham_Place_Park.jpg"
+   }
+  },
+  {
+   "id": "crystal-palace-dinosaurs",
+   "n": 3,
+   "name": "Crystal Palace dinosaurs",
+   "kind": "history",
+   "lat": 51.4176,
+   "lon": -0.0673,
+   "km": 3.0,
+   "blurb": "Life-size Victorian sculptures of dinosaurs and other extinct animals, made in the 1850s and Grade I listed, around the lakes of Crystal Palace Park.",
+   "tip": "Children love them: walk the lake path to see them all.",
+   "photo": "data/guides/be/crystal-palace-dinosaurs.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Ian Wright",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mantellodon_in_Crystal_Palace_Park.jpg"
+   }
+  },
+  {
+   "id": "south-norwood-lake",
+   "n": 4,
+   "name": "South Norwood Lake",
+   "kind": "park",
+   "lat": 51.412,
+   "lon": -0.07,
+   "km": 3.1,
+   "blurb": "A Victorian reservoir lake ringed by trees, with sailing and fishing, between South Norwood and Crystal Palace.",
+   "tip": "Combine it with the country park next door.",
+   "photo": "data/guides/be/south-norwood-lake.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:South_Norwood_Lake_-_geograph.org.uk_-_2661614.jpg"
+   }
+  }
+ ]
+}

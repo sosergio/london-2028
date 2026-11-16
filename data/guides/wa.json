@@ -1,0 +1,129 @@
+{
+ "area_id": "wa",
+ "title": "Wanstead & Woodford",
+ "updated": "November 2026",
+ "intro": "A leafy village on the edge of Epping Forest, with the lakes and follies of a vanished great house and a Georgian church in its old grounds.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "wanstead-park",
+   "n": 1,
+   "name": "Wanstead Park",
+   "kind": "park",
+   "lat": 51.55176,
+   "lon": 0.02607,
+   "km": 2.7,
+   "blurb": "The remains of the landscape around Wanstead House, one of the grandest houses in England until it was pulled down in 1825: a chain of lakes, woods, the Temple and the ruined Grotto.",
+   "tip": "The Temple is open some weekends with displays about the park's history.",
+   "photo": "data/guides/wa/wanstead-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Marathon",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Heronry_Pond,_Wanstead_Park_-_geograph.org.uk_-_5080037.jpg"
+   }
+  },
+  {
+   "id": "snaresbrook",
+   "n": 2,
+   "name": "Eagle Pond and Snaresbrook Crown Court",
+   "kind": "history",
+   "lat": 51.5845,
+   "lon": 0.0215,
+   "km": 1.1,
+   "blurb": "A forest pond across the road from Snaresbrook Crown Court, a Gothic building of 1843 built as an orphan asylum and set in parkland.",
+   "tip": "Look across Eagle Pond for the classic view.",
+   "photo": "data/guides/wa/snaresbrook.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "The wub",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Snaresbrook_Crown_Court_-_Dec_2017.jpg"
+   }
+  },
+  {
+   "id": "knighton-wood",
+   "n": 3,
+   "name": "Knighton Wood and Woodford Green",
+   "kind": "walk",
+   "lat": 51.6115,
+   "lon": 0.0355,
+   "km": 4.0,
+   "blurb": "Old woodland with a pond and rhododendrons, once private gardens, now part of Epping Forest near Woodford Green and its statue of Winston Churchill.",
+   "tip": "Walk on to the Churchill statue on the green.",
+   "photo": "data/guides/wa/knighton-wood.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Roger Jones",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:November_sunlight_in_Knighton_Wood_-_geograph.org.uk_-_2699958.jpg"
+   }
+  },
+  {
+   "id": "wanstead-flats",
+   "n": 4,
+   "name": "Wanstead Flats",
+   "kind": "park",
+   "lat": 51.5545,
+   "lon": 0.023,
+   "km": 2.4,
+   "blurb": "The southern tip of Epping Forest: a wide sweep of grassland, ponds and football pitches with big skies over east London.",
+   "tip": "Alexandra Lake is a good spot to watch the birds.",
+   "photo": "data/guides/wa/wanstead-flats.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "David Anstiss",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Alexandra_Lake,_Wanstead_Flats_-_geograph.org.uk_-_3400683.jpg"
+   }
+  },
+  {
+   "id": "st-marys-wanstead",
+   "n": 5,
+   "name": "St Mary's Church, Wanstead",
+   "kind": "history",
+   "lat": 51.57131,
+   "lon": 0.03253,
+   "km": 0.5,
+   "blurb": "A Grade I listed Georgian church of 1790 in the old grounds of Wanstead House, with box pews and a great monument to Sir Josiah Child.",
+   "tip": "The churchyard is a quiet shortcut to Wanstead Park.",
+   "photo": "data/guides/wa/st-marys-wanstead.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "The wub",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:St_Mary_the_Virgin,_Wanstead_(3).jpg"
+   }
+  },
+  {
+   "id": "wanstead-high-street",
+   "n": 6,
+   "name": "Wanstead High Street and Christchurch Green",
+   "kind": "street",
+   "lat": 51.577,
+   "lon": 0.0283,
+   "km": 0.2,
+   "blurb": "The village high street with independent shops, cafés and pubs, and a green with a Victorian church spire in the middle.",
+   "tip": "Saturday mornings are busiest; there is a farmers' market on the green some weekends.",
+   "photo": "data/guides/wa/wanstead-high-street.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Stacey Harris",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:High_Street,_Wanstead_-_geograph.org.uk_-_2383108.jpg"
+   }
+  }
+ ]
+}

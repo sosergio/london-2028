@@ -1,0 +1,109 @@
+{
+ "area_id": "fb",
+ "title": "Friern Barnet & Whetstone",
+ "updated": "November 2026",
+ "intro": "North London's edge, where the suburbs give way to the fields and lanes of Totteridge, with brook-side walks and a Victorian landmark turned into homes.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "darlands-lake",
+   "n": 1,
+   "name": "Darland's Lake",
+   "kind": "walk",
+   "lat": 51.6283,
+   "lon": -0.2163,
+   "km": 2.6,
+   "blurb": "A small lake hidden in woodland below Totteridge, looked after as a nature reserve, with paths along the Folly Brook.",
+   "tip": "Muddy in winter: wear boots.",
+   "photo": "data/guides/fb/darlands-lake.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Dudley Miles",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Darlands_Lake_2.JPG"
+   }
+  },
+  {
+   "id": "dollis-valley",
+   "n": 2,
+   "name": "Dollis Valley Greenwalk",
+   "kind": "walk",
+   "lat": 51.6215,
+   "lon": -0.1935,
+   "km": 1.4,
+   "blurb": "A long footpath that follows the Dollis Brook through meadows and woodland strips from Mill Hill towards Hampstead Garden Suburb.",
+   "tip": "Good for a bike ride with children: it is mostly flat.",
+   "photo": "data/guides/fb/dollis-valley.jpg",
+   "w": 1200,
+   "h": 793,
+   "credit": {
+    "author": "Grim23",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dollis_brook_windsor_open_space.JPG"
+   }
+  },
+  {
+   "id": "totteridge",
+   "n": 3,
+   "name": "Totteridge village and common",
+   "kind": "street",
+   "lat": 51.6337,
+   "lon": -0.2017,
+   "km": 1.6,
+   "blurb": "A green-belt village of big houses, hedges and fields along Totteridge Lane, with an ancient yew in St Andrew's churchyard that is thought to be one of London's oldest trees.",
+   "tip": "Walk the lane west from Totteridge & Whetstone station for the countryside feel.",
+   "photo": "data/guides/fb/totteridge.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Philafrenzy",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Totteridge_village_29_August_2015.JPG"
+   }
+  },
+  {
+   "id": "coppetts-wood",
+   "n": 4,
+   "name": "Coppetts Wood",
+   "kind": "walk",
+   "lat": 51.6005,
+   "lon": -0.15,
+   "km": 3.9,
+   "blurb": "Ancient woodland and meadow by the North Circular, a Local Nature Reserve with the Glebelands next door.",
+   "tip": "A surprisingly wild walk only minutes from the shops.",
+   "photo": "data/guides/fb/coppetts-wood.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Dudley Miles",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Coppett%27s_Wood_2.JPG"
+   }
+  },
+  {
+   "id": "friary-park",
+   "n": 5,
+   "name": "Friary Park",
+   "kind": "park",
+   "lat": 51.61883,
+   "lon": -0.16261,
+   "km": 1.7,
+   "blurb": "Friern Barnet's main park, on the grounds of an old house, with a café, playgrounds and a stream running through.",
+   "tip": "The café and play area are by the main house.",
+   "photo": "data/guides/fb/friary-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Dudley Miles",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Friary_Park_avenue.JPG"
+   }
+  }
+ ]
+}
