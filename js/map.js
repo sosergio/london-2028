@@ -8,7 +8,7 @@
 //
 // The panel talks to this module only through the object returned by createMap().
 
-import { css, ofVar, POI_VAR, schoolPopup, shopPopup, shopTip } from './format.js';
+import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip } from './format.js';
 
 const STYLES = {
   light: 'https://tiles.openfreemap.org/styles/positron',
@@ -34,14 +34,18 @@ function circleRing([lat, lon], metres, steps = 72) {
   return ring;
 }
 
-// A small diamond (rotated square) image per shop group, drawn at 2× for sharp screens.
-function diamondImage(fill, edge) {
-  const px = 2, size = 14 * px, c = document.createElement('canvas');
+// Shop icon: the group's glyph on a coloured disc with a thin edge, drawn at 2× for sharp screens.
+async function poiImage(g, fill, edge) {
+  const px = 2, size = 22 * px, c = document.createElement('canvas');
   c.width = c.height = size;
-  const g = c.getContext('2d'), h = size / 2, r = 6 * px;
-  g.beginPath(); g.moveTo(h, h - r); g.lineTo(h + r, h); g.lineTo(h, h + r); g.lineTo(h - r, h); g.closePath();
-  g.fillStyle = fill; g.fill(); g.lineWidth = 1.5 * px; g.strokeStyle = edge; g.stroke();
-  return { image: g.getImageData(0, 0, size, size), opts: { pixelRatio: px } };
+  const img = new Image();
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(poiSvg(g, edge));
+  await img.decode();
+  const ctx = c.getContext('2d'), h = size / 2;
+  ctx.beginPath(); ctx.arc(h, h, 9.5 * px, 0, 2 * Math.PI);
+  ctx.fillStyle = fill; ctx.fill(); ctx.lineWidth = 1.5 * px; ctx.strokeStyle = edge; ctx.stroke();
+  const gs = 12 * px; ctx.drawImage(img, h - gs / 2, h - gs / 2, gs, gs);
+  return { image: ctx.getImageData(0, 0, size, size), opts: { pixelRatio: px } };
 }
 
 export function createMap(container, DATA, { onReady } = {}) {
@@ -57,7 +61,7 @@ export function createMap(container, DATA, { onReady } = {}) {
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
   let view = { shown: [], area: null, cat: true, poiOn: {} };
-  let ready = false;
+  let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
 
@@ -110,7 +114,13 @@ export function createMap(container, DATA, { onReady } = {}) {
       }
     });
 
-    Object.entries(POI_VAR).forEach(([g, v]) => { const d = diamondImage(css(v), panel); if (!map.hasImage('poi-' + g)) map.addImage('poi-' + g, d.image, d.opts); });
+    // Icons load asynchronously (SVG → canvas); the shop layer fills in once they are ready.
+    const gen = ++styleGen;
+    Promise.all(Object.entries(POI_VAR).map(([g, v]) => poiImage(g, css(v), panel).then(d => [g, d]))).then(list => {
+      if (gen !== styleGen) return; // the style changed meanwhile
+      list.forEach(([g, d]) => { if (map.hasImage('poi-' + g)) map.updateImage('poi-' + g, d.image); else map.addImage('poi-' + g, d.image, d.opts); });
+      map.getSource('shops')?.setData(shopFeatures());
+    }).catch(err => console.error('shop icons', err));
 
     const wards = wardFeatures();
     const tube = fc(geo.tubeLines.features.map(f => ({ ...f, properties: { ...f.properties, emph: f.properties.n === 'Northern' || f.properties.n === 'Central' } })));
@@ -145,7 +155,8 @@ export function createMap(container, DATA, { onReady } = {}) {
       paint: { 'circle-radius': ['get', 'r'], 'circle-color': ['get', 'col'], 'circle-opacity': ['case', ['==', ['get', 'p'], 'P'], 0.8, 0.18],
         'circle-stroke-color': ['get', 'col'], 'circle-stroke-width': ['get', 'w'] } });
     map.addLayer({ id: 'shops', type: 'symbol', source: 'shops',
-      layout: { 'icon-image': ['concat', 'poi-', ['get', 'g']], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
+      layout: { 'icon-image': ['concat', 'poi-', ['get', 'g']], 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.55, 13, 0.8, 15, 1] } });
     map.addLayer({ id: 'station-labels', type: 'symbol', source: 'stations', filter: ['!', ['get', 'big']],
       layout: { 'text-field': ['get', 'label'], 'text-font': FONT_BOLD, 'text-size': 11, 'text-anchor': 'left', 'text-offset': [0.6, 0] },
       paint: { 'text-color': muted, 'text-halo-color': bg, 'text-halo-width': 1.5 } });
@@ -176,7 +187,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   }
 
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
-  map.on('styleimagemissing', e => { if (!map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) }); });
+  map.on('styleimagemissing', e => { if (!e.id.startsWith('poi-') && !map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) }); });
 
   map.on('style.load', () => {
     addOverlays(); ready = true;

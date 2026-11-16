@@ -1,9 +1,9 @@
 // Side panel: filters, area cards, school list and notes. No map library code here;
 // the map is driven through the small API returned by createMap().
 
-import { state, poiOn, saveState, savePoi, isVisible, MAX_PUPILS } from './state.js';
+import { state, poiOn, saveState, savePoi, isVisible } from './state.js';
 import { ETH_KEYS } from './data.js';
-import { fmt, esc, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl } from './format.js';
+import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg } from './format.js';
 
 const ETH = { whiteBritish: ['White British', '#7f9c8f'], whiteOther: ['Other White', '#b9cbbf'], asian: ['Asian', '#d6a84a'],
   black: ['Black', '#8a6bb8'], mixed: ['Mixed', '#e08aa0'], other: ['Other', '#9aa3a0'] };
@@ -73,15 +73,27 @@ export function createPanel(DATA, map) {
       });
     });
   });
-  const fmtMax = v => fmt(v) + (v >= MAX_PUPILS ? '+' : '');
-  const maxEl = document.getElementById('maxpu'), maxOut = document.getElementById('maxpu-out');
-  maxEl.value = state.max; maxOut.textContent = fmtMax(state.max);
-  maxEl.addEventListener('input', () => { state.max = +maxEl.value; maxOut.textContent = fmtMax(state.max); render(); });
+  // Ofsted: independent on/off toggles, so you can show only the good schools or only the weak ones.
+  document.querySelectorAll('#ofseg button').forEach(b => {
+    b.setAttribute('aria-pressed', String(!!state.of[b.dataset.o]));
+    b.addEventListener('click', () => {
+      state.of[b.dataset.o] = !state.of[b.dataset.o];
+      b.setAttribute('aria-pressed', String(state.of[b.dataset.o]));
+      render();
+    });
+  });
   const catEl = document.getElementById('showcat');
   catEl.checked = state.cat;
   catEl.addEventListener('change', () => { state.cat = catEl.checked; render(); });
 
-  // Shop toggles: independent on/off buttons, not radio buttons.
+  // Shop toggles: independent on/off buttons, not radio buttons. Icons match the map.
+  const paintIcons = () => document.querySelectorAll('.ico[data-g]').forEach(i => {
+    i.style.background = `var(${POI_VAR[i.dataset.g]})`; i.innerHTML = poiSvg(i.dataset.g, css('--panel'));
+  });
+  paintIcons();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintIcons);
+  // The floating filters start folded on phones, where they would cover most of the map.
+  if (matchMedia('(max-width: 820px)').matches) document.getElementById('filters').open = false;
   document.querySelectorAll('#poiseg button').forEach(b => {
     b.setAttribute('aria-pressed', String(!!poiOn[b.dataset.c]));
     b.addEventListener('click', () => {
@@ -99,7 +111,7 @@ export function createPanel(DATA, map) {
 
     document.getElementById('list-title').textContent =
       (state.area ? areaById[state.area].name + ': ' : '') + shown.length + ' schools shown, smallest first';
-    listEl.innerHTML = shown.length ? '' : '<p class="empty">No school matches these filters. Raise the maximum pupils or pick "All".</p>';
+    listEl.innerHTML = shown.length ? '' : '<p class="empty">No school matches these filters. Turn on more Ofsted ratings or pick "All".</p>';
     shown.forEach(s => {
       const r = document.createElement('div');
       r.className = 'row'; r.tabIndex = 0; r.setAttribute('role', 'button');
