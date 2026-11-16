@@ -20,6 +20,7 @@ All paths below are relative to the repo root. Scripts use only the Python stand
 | 5 | Schools: all mixed state primaries and secondaries in the wards, any Ofsted rating | `schools.csv` (+ single-sex ones in `excluded.json`) | `scripts/schools_gias.py` (GIAS + Ofsted), council admissions for catchment |
 | 6 | Shops and places, 5 groups | `shops.csv` | OpenStreetMap (Overpass, Nominatim fallback) |
 | 7 | Sale prices: area medians, every sale, sub-area price levels | `areas.csv` (`postcode_sectors`, `price_*`, `price_level`), `sales.csv`, `subareas.csv`, `geo/subareas.json` | Land Registry: `scripts/property_prices.py --write`, then `scripts/price_subareas.py` |
+| 7b | Conservation areas: outlines, count and share of sold homes inside | `geo/conservation_region.json` (kept source), `geo/conservation.json`, `areas.csv` (`conservation_count`, `conservation_sales_pct`) | planning.data.gov.uk, `scripts/conservation_areas.py --write` (after prices) |
 | 8 | Rents for 2 and 3 bedrooms | `areas.csv` (`rent_2bed`, `rent_3bed`, `rent_source`) | ONS + asking-rent spot check |
 | 9 | Estimates: rent band, commute, time to family, lifestyle, green | `areas.csv` (`rent`, `commute`, `family`, `lifestyle`, `green`) | judgement, written as ranges |
 
@@ -39,7 +40,7 @@ It prints, per area, `OK`, `MISSING` (a dimension or required field is empty) or
 1. **Agree the basics with the user**: the name, a two-letter `id` not already used (`ef`, `ro`, `ce`, ...), its `rank` (renumber the others if it slots in between), and the centre point (usually the high street or station).
 2. **Wards** (dimension 2): pick the 2-6 council wards that make up the neighbourhood and add them to `wards.json`. Everything else is measured against these, so get the user to confirm the list.
 3. **MSOAs** (dimension 3): the Census neighbourhoods that best overlap the wards, written like `Haringey 034, Haringey 022`.
-4. Collect dimensions 2-8. `scripts/add_area.py spec.json` does wards, MSOAs, Census, crime, shops and the Rightmove id in one go from a small JSON spec (see its docstring; preview first, then `--write`). Then `scripts/schools_gias.py ... <ids> --write`, `scripts/property_prices.py <ids> --write`, `scripts/price_subareas.py` and then `scripts/crime_subareas.py --write` (it needs the new area's sub-areas). If an area has no secondary inside its wards, add the nearest popular ones just outside and say so in `note`.
+4. Collect dimensions 2-8. `scripts/add_area.py spec.json` does wards, MSOAs, Census, crime, shops and the Rightmove id in one go from a small JSON spec (see its docstring; preview first, then `--write`). Then `scripts/schools_gias.py ... <ids> --write`, `scripts/property_prices.py <ids> --write`, `scripts/price_subareas.py`, then `scripts/crime_subareas.py --write` and `scripts/conservation_areas.py --write` (both need the new area's sub-areas; the second also uses `sales.csv`). If an area has no secondary inside its wards, add the nearest popular ones just outside and say so in `note`.
 5. Write the `why` text and the estimates (dimension 9) last, once the numbers are in, so the text reflects them.
 6. Run the audit, then open the site locally (`python3 -m http.server`, http://localhost:8000) and check the area's card, outline, schools and shops.
 
@@ -70,6 +71,16 @@ python3 .claude/skills/london-area-data/scripts/crime_subareas.py --months 2025-
 ```
 
 It asks police.uk for every street-level crime in each area's sub-areas (the LSOAs in `subareas.csv`), month by month, places each crime in its sub-area by point-in-polygon, and divides by the sub-area's Census 2021 residents (Nomis TS001). It always redoes every area, so rates stay comparable. Writes `data/crime_subareas.csv` (per sub-area: residents, counts in six groups, top 3 streets), `data/crime_points.csv` (per police.uk "on or near" point) and the `crime_rate*` columns of `areas.csv`. "All" leaves out shoplifting, which piles onto shopping streets. Crime locations are anonymised to the nearest of a fixed set of points, so never present a point as an address.
+
+## Conservation areas
+
+```
+python3 .claude/skills/london-area-data/scripts/conservation_areas.py            # preview per area
+python3 .claude/skills/london-area-data/scripts/conservation_areas.py --write    # save
+python3 .claude/skills/london-area-data/scripts/conservation_areas.py --refresh --cache <scratch>/conservation --write   # new national data
+```
+
+`data/geo/conservation_region.json` is kept in the repo: every conservation area in London and the commuter belt, cut from the national file, with tidied names and council names. A new area inside that box needs no download: just run `--write`. If the area is outside the box, widen `REGION` in the script and run with `--refresh` (downloads ~60 MB). `--write` keeps the conservation areas that overlap an area's sub-areas (`geo/conservation.json`, with `areas` ids) and writes `conservation_count` and `conservation_sales_pct` (share of the area's sold homes in `sales.csv` that are inside one). Neighbouring councils sometimes designate the same name on each side of a border (two "Blackheath"s, two "Woodford Green"s): those are separate areas, not duplicates.
 
 ## Area guides (highlights with photos)
 

@@ -2,13 +2,13 @@
 //
 // Layer order, bottom to top:
 //   basemap fills and roads
-//   → boroughs, Tube lines, ward fills/outlines, catchments   (inserted before the basemap's first label layer)
+//   → neighbourhood shading (prices, crime, sweet spots), conservation areas, boroughs, Tube lines, ward fills/outlines, catchments   (inserted before the basemap's first label layer)
 //   → basemap labels: street, place and station names        (so names stay readable over shaded areas)
 //   → stations, schools, shops, then our own text labels
 //
 // The panel talks to this module only through the object returned by createMap().
 
-import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml, crimeSubHtml, crimePointHtml } from './format.js';
+import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml, crimeSubHtml, crimePointHtml, consHtml, consLine } from './format.js';
 
 const STYLES = {
   light: 'https://tiles.openfreemap.org/styles/positron',
@@ -149,6 +149,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addSource('crime-subs', { type: 'geojson', data: crime.subs });
     map.addSource('crime-points', { type: 'geojson', data: crime.points });
     map.addSource('sweet', { type: 'geojson', data: fc(view.sweet?.features || []) });
+    map.addSource('cons', { type: 'geojson', data: view.cons || fc([]) });
     map.addSource('boroughs', { type: 'geojson', data: geo.boroughs });
     map.addSource('tube', { type: 'geojson', data: tube });
     map.addSource('wards', { type: 'geojson', data: wards.polys });
@@ -180,6 +181,11 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addLayer({ id: 'sweet-line', type: 'line', source: 'sweet',
       paint: { 'line-color': ['case', ['get', 'pass'], accent, muted], 'line-width': ['case', ['get', 'pass'], 1.6, 0.5],
         'line-opacity': ['case', ['get', 'pass'], 1, 0.5] } }, firstLabel);
+    // Conservation areas: an outline that sits on top of whichever neighbourhood shading is on.
+    map.addLayer({ id: 'cons-fill', type: 'fill', source: 'cons',
+      paint: { 'fill-color': css('--cons-fill'), 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.3, 15, 0.14] } }, firstLabel);
+    map.addLayer({ id: 'cons-line', type: 'line', source: 'cons', layout: { 'line-join': 'round' },
+      paint: { 'line-color': css('--cons'), 'line-width': ['interpolate', ['linear'], ['zoom'], 11, 1, 15, 2.2] } }, firstLabel);
     map.addLayer({ id: 'boroughs', type: 'line', source: 'boroughs', paint: { 'line-color': border, 'line-width': 1, 'line-dasharray': [2, 3] } }, firstLabel);
     map.addLayer({ id: 'tube', type: 'line', source: 'tube', layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': ['get', 'c'],
@@ -261,6 +267,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.getSource('crime-subs').setData(crime.subs);
     map.getSource('crime-points').setData(crime.points);
     map.getSource('sweet').setData(fc(view.sweet?.features || []));
+    map.getSource('cons').setData(view.cons || fc([]));
   }
 
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
@@ -276,7 +283,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line']
+  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line', 'cons-fill', 'cons-line']
     .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
@@ -288,18 +295,30 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
       || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'crime-points') || hits.find(f => f.layer.id === 'tube')
       || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line')
       || hits.find(f => f.layer.id === 'crime-fill' || f.layer.id === 'crime-line')
-      || hits.find(f => f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line');
+      || hits.find(f => f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line')
+      || hits.find(f => CONS.has(f.layer.id));
+  }
+  const CONS = new Set(['cons-fill', 'cons-line']);
+  // A neighbourhood tip also says when the pointer is inside a conservation area.
+  function consUnder(point) {
+    if (!view.cons) return null;
+    return map.queryRenderedFeatures([point.x, point.y], { layers: ['cons-fill'] })[0] || null;
   }
 
   const CRIME_SUB = new Set(['crime-fill', 'crime-line']), SUB = new Set(['price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line']);
   // Popup or hover text for anything that is not a school, shop or guide dot.
-  function otherHtml(f) {
+  function otherHtml(f, e) {
     const c = view.crime;
     if (f.layer.id === 'sales') return saleHtml(f.properties);
     if (f.layer.id === 'crime-points') return crimePointHtml(f.properties);
-    if (f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line') return view.sweet.html(f.properties);
-    if (CRIME_SUB.has(f.layer.id)) return crimeSubHtml(f.properties, c.kind, c.typical[c.kind], c.period);
-    return subareaHtml(f.properties);
+    if (CONS.has(f.layer.id)) return consHtml(f.properties);
+    if (f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line') return withCons(view.sweet.html(f.properties), e);
+    if (CRIME_SUB.has(f.layer.id)) return withCons(crimeSubHtml(f.properties, c.kind, c.typical[c.kind], c.period), e);
+    return withCons(subareaHtml(f.properties), e);
+  }
+  function withCons(html, e) {
+    const ca = e && consUnder(e.point);
+    return ca ? html.replace(/<\/div>\s*$/, consLine(ca.properties) + '</div>') : html;
   }
   const pointOf = (f, e) => f.geometry.type === 'Point' ? f.geometry.coordinates : e.lngLat;
 
@@ -313,18 +332,18 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     if (SCHOOL_LAYERS.has(f.layer.id)) openSchool(schoolByI.get(f.properties.i));
     else if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); popup.setLngLat(lngLat(p.ll)).setHTML(shopPopup(p)).addTo(map); }
     else if (f.layer.id === 'tube') return;
-    else popup.setLngLat(pointOf(f, e)).setHTML(otherHtml(f)).addTo(map);
+    else popup.setLngLat(pointOf(f, e)).setHTML(otherHtml(f, e)).addTo(map);
   });
   map.on('mousemove', e => {
     if (!ready) return;
     const f = pick(e.point);
-    const sub = f && SUB.has(f.layer.id);
+    const sub = f && (SUB.has(f.layer.id) || CONS.has(f.layer.id));
     map.getCanvas().style.cursor = f && !sub ? 'pointer' : '';
     if (!f || SCHOOL_LAYERS.has(f.layer.id)) { tip.remove(); return; }
     if (f.layer.id === 'guide-dot') { tip.setLngLat(f.geometry.coordinates).setHTML(`<div class="tip">${f.properties.name}<br><span>Highlight · click for the guide</span></div>`).addTo(map); return; }
     if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); tip.setLngLat(lngLat(p.ll)).setHTML(shopTip(p)).addTo(map); }
     else if (f.layer.id === 'tube') tip.setLngLat(e.lngLat).setHTML(`<div class="tip"><i class="line-key" style="background:${f.properties.c}"></i>${f.properties.n}</div>`).addTo(map);
-    else tip.setLngLat(pointOf(f, e)).setHTML(otherHtml(f)).addTo(map);
+    else tip.setLngLat(pointOf(f, e)).setHTML(otherHtml(f, e)).addTo(map);
   });
   map.getCanvas().addEventListener('mouseleave', () => tip.remove());
 
@@ -363,6 +382,8 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     setCrime(crime) { view = { ...view, crime }; tip.remove(); refresh(); },
     // sweet: null, or { features (with properties.pass), html(properties) for hover and click }
     setSweet(sweet) { view = { ...view, sweet }; if (!sweet) tip.remove(); if (ready) map.getSource('sweet').setData(fc(sweet?.features || [])); },
+    // cons: null, or the conservation-area FeatureCollection
+    setConservation(cons) { view = { ...view, cons }; if (!cons) tip.remove(); if (ready) map.getSource('cons').setData(cons || fc([])); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },
     selectArea(id) {
       popup.remove();

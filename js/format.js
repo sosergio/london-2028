@@ -92,6 +92,16 @@ export function crimeSubHtml(p, kind, typical, period) {
     <p class="meta">${fmt(p.residents)} residents · police.uk, ${esc(period)}</p></div>`;
 }
 
+// Conservation area hover / click text.
+export function consHtml(p) {
+  const by = [p.council, p.designated && `designated ${p.designated}`].filter(Boolean).join(', ');
+  return `<div class="pop"><h3>${esc(p.name)}</h3><p>Conservation area${by ? ` · ${esc(by)}` : ''}</p>
+    ${/^https?:\/\//.test(p.url || '') ? `<p><a href="${esc(p.url)}" target="_blank" rel="noopener">Council appraisal or page</a></p>` : ''}
+    <p class="meta">Extensions, lofts, windows, cladding and tree work need more permission here.</p></div>`;
+}
+// One line for a neighbourhood tip when the pointer is also inside a conservation area.
+export const consLine = p => `<p class="meta cons-line"><i class="cons-key" aria-hidden="true"></i>In a conservation area: ${esc(p.name)}</p>`;
+
 export function crimePointHtml(p) {
   return `<div class="pop"><h3>On or near ${esc(p.street)}</h3><p><b>${fmt(p.total)}</b> crime${p.total === 1 ? '' : 's'} in 12 months</p>
     <p class="meta">${groupsLine(p)}</p><p class="meta">police.uk places each crime at the nearest of a fixed set of points, not the exact address.</p></div>`;

@@ -13,7 +13,7 @@ All data is in `data/`. Edit a file, commit, and the page shows the change on th
 | `data/schools.csv` | One row per school: area, phase (P primary, S secondary, A all-through), faith (Catholic, CofE, None), pupils, Ofsted (colour: O outstanding, G good, W needs attention, N not rated), location, catchment distance in miles if known |
 | `data/shops.csv` | Shops and places from OpenStreetMap. `group` is one of: up (Waitrose, M&S, organic), bake (bakeries, delis, butchers), cult (cinemas, theatres, books), gym, disc (Aldi, Lidl, Iceland) |
 | `data/excluded.json` | Boys-only or girls-only schools left out |
-| `data/geo/` | Ward outlines per area (ONS, Dec 2025), borough borders, Tube lines and stations |
+| `data/geo/` | Ward outlines per area (ONS, Dec 2025), borough borders, Tube lines and stations, conservation areas (planning.data.gov.uk: `conservation.json` for the map, `conservation_region.json` for all of London and around) |
 
 The `area_id` in schools.csv and shops.csv must match an `id` in areas.csv, and the same id must exist in `data/geo/wards.json` for the area outline.
 

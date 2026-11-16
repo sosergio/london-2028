@@ -37,6 +37,12 @@ Contents: 1 Wards · 2 Census · 3 Crime · 4 Schools · 5 Shops · 6 Sale price
 - `location.street.name` is "On or near X"; the point is the centre of an anonymised "snap point", not the crime's address. No postcodes, no LSOA in the API (the bulk downloads have LSOA, but point-in-polygon against our own outlines is simpler).
 - Residents per LSOA: Nomis TS001 `NM_2021_1`, `geography=<LSOA codes, up to ~100 per call>&c2021_restype_3=0&measures=20100`.
 
+### Conservation areas → `geo/conservation_region.json`, `geo/conservation.json`, `conservation_*`
+
+- National file: `https://files.planning.data.gov.uk/dataset/conservation-area.geojson` (~60 MB, ~9,800 areas, rebuilt daily). Properties: `name`, `reference`, `organisation-entity`, `start-date` (designation date, often blank), `documentation-url` (appraisal PDF or council page, ~75% filled). `[lon, lat]`.
+- Council names: `https://www.planning.data.gov.uk/entity.json?dataset=local-authority&limit=500&field=entity&field=name`, matched on `organisation-entity`.
+- Quirks: some councils (Bromley, Bexley, Sutton) also send unnamed pieces, mostly inside a named area: the script drops those and calls the rest "Unnamed conservation area". Some names are ALL CAPS (Enfield) or end in "Conservation Area": tidied. Coverage depends on each council's upload; the site notes say the council's appraisal is the authority, including for Article 4 directions (a separate dataset, `article-4-direction-area`, not used yet).
+
 ## 4. Schools → `schools.csv`, `excluded.json`
 
 Scope: state-funded **mixed** primaries, secondaries and all-through schools in or very near the area's wards (the audit flags anything over 3.5 km from the centre). Independent schools are out. Single-sex schools go in `excluded.json` with "(boys)" / "(girls)" when the name does not say.

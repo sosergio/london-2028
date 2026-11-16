@@ -22,7 +22,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
 ### Features to keep (all present in the prototype)
 
 - **Side panel and map:** the map fills the left and a scrolling side panel sits on the right. On phones they stack, map on top.
-- **Filters float on the map** in a collapsible box (top right), folded by default on phones. It has sections for Schools, Shops and places, Highlights, Transport, Sweet spots, Sold prices and Crime, each with an on/off switch that hides the whole group on the map and folds the section while keeping the choices inside it.
+- **Filters float on the map** in a collapsible box (top right), folded by default on phones. It has sections for Schools, Shops and places, Highlights, Transport, Conservation areas, Sweet spots, Sold prices and Crime, each with an on/off switch that hides the whole group on the map and folds the section while keeping the choices inside it.
 - **Filters:**
   - Phase: All, Primary or Secondary. All-through schools always show.
   - Faith: All, Catholic, CofE or None.
@@ -55,7 +55,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - a crime bar: crimes a year per 1,000 residents (shoplifting left out), with violence, burglary and anti-social rates against the middle of the shortlist, the quietest and busiest neighbourhood, and the 1-mile count;
   - shop counts;
   - a Rightmove link.
-- **Compare areas** (button under the intro): a dialog with a sortable table, one row per area, columns grouped as Schools (count, % Good or better, Outstanding, below good, under 400 pupils, smallest secondary), Getting about (Moorgate, family), Housing (price level, median flat / terraced / semi, rent) and Neighbourhood (crime, violence and burglary per 1,000 residents, density, green, lifestyle, grocers, bakeries). Each heading says which direction is better; cells are tinted green from worst to best within the column; clicking a row selects that area. Code in `js/compare.js`.
+- **Compare areas** (button under the intro): a dialog with a sortable table, one row per area, columns grouped as Schools (count, % Good or better, Outstanding, below good, under 400 pupils, smallest secondary), Getting about (Moorgate, family), Housing (price level, median flat / terraced / semi, rent) and Neighbourhood (crime, violence and burglary per 1,000 residents, share of sold homes in a conservation area (not shaded: it is a trade-off), density, green, lifestyle, grocers, bakeries). Each heading says which direction is better; cells are tinted green from worst to best within the column; clicking a row selects that area. Code in `js/compare.js`.
 - **Area guides** (Gidea Park so far): numbered highlight markers on the map (switch "Highlights" in the filter box) and a photo guide dialog opened from the area card, a marker or the filter box; each highlight has a photo with its credit, a short description, a tip, "Show on the map" and a Google Maps link. Data in `data/guides/`; code in `js/guide.js`.
 - **Picking an area card:**
   - zooms to its wards and filters the school list to it;
@@ -69,6 +69,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - Popup: name, group, type, and Google Maps / Street View links.
 - **Sold prices layer** (off by default, remembered): neighbourhoods (ONS LSOAs) shaded by a mix-adjusted price level, 100 = typical for the shortlist, in a one-hue plum ramp with a legend; hover or click for medians by type; each sale shows as a dot from zoom 14. Area cards show median flat / terraced / semi prices and the area's price level.
 - **Sweet spots** (button "Find sweet spots" under the intro, or the filter section; off by default, sliders remembered): neighbourhoods that pass four tests at once, each on a slider: price level up to 100, crime up to 75 per 1,000 residents (shoplifting left out), a Good or Outstanding primary within 0.6 km and secondary within 1.5 km (straight line from the middle of the neighbourhood), with "Count faith schools". Passing neighbourhoods are filled in the accent colour; hover any neighbourhood for ✓/✗ on each test with the nearest schools. The section lists how many pass in each area (click to select the area). Only one of Sweet spots, Sold prices and Crime is on at a time. Code in `js/sweet.js`.
+- **Conservation areas** (off by default, remembered; works alongside every other layer): conservation-area outlines in ochre (`--cons`, `--cons-fill`) with a light fill, loaded on first use from `data/geo/conservation.json`; hover or click for the name, council, year designated and a link to the council appraisal; a neighbourhood tip (prices, crime, sweet spots) adds "In a conservation area: …" when the pointer is inside one. The card has a Conservation bar: share of the area's sold homes (last 2 years) inside one, and how many touch its neighbourhoods. Code in `js/map.js` (`cons-*` layers) and `js/panel.js`.
 - **Crime layer** (off by default, remembered; switching it on turns the price layer off, as both shade the neighbourhoods): neighbourhoods shaded by crimes a year per 1,000 residents, for All (except shoplifting), Violence (incl. robbery), Burglary or Anti-social behaviour, in a one-hue red ramp whose bands are multiples (½, ¾, 1, 1.5, 2.5) of the typical shortlist neighbourhood; hover for the breakdown and the streets with most reports; from zoom 14 the police.uk "on or near" points show as dots sized by count. Code in `js/map.js` (`crime-*` layers) and `js/panel.js`.
 - **Context layers:**
   - Tube, Overground, DLR and Elizabeth lines in their colours, with the Northern and Central lines emphasised (Northern drawn light grey in dark mode). Hover a line for its name.
@@ -93,6 +94,8 @@ All CSV files have a header row and are UTF-8. Ids must match across files.
 | `data/sales.csv` | ~14,000 | `area_id`, `date`, `price`, `type` (flat / terraced / semi / detached), `street`, `postcode`, `lat`, `lon`, `lsoa` (HM Land Registry, standard sales, 2 years; no house numbers) |
 | `data/subareas.csv` | ~500 | `area_id`, `id` (LSOA 2021 code), `name`, `sales`, `median_<type>`, `level`, `band` (0-5) |
 | `data/crime_subareas.csv` | ~700 | `area_id`, `id` (LSOA 2021), `residents` (Census 2021), `total`, `asb`, `violent` (incl. robbery), `burglary`, `vehicle` (incl. bikes), `shoplifting`, `other`, `top_streets` (police.uk, 12 months) |
+| `data/geo/conservation.json` | ~200 | GeoJSON of the conservation areas that touch an area's neighbourhoods: `name`, `ref`, `council`, `designated` (year), `url` (appraisal or council page), `areas` (comma-separated area ids). Built from `conservation_region.json` |
+| `data/geo/conservation_region.json` | ~1,550 | Every conservation area in London and the commuter belt (same properties, no `areas`); the kept source, not loaded by the site, so a new area needs no download |
 | `data/crime_points.csv` | ~8,800 | `area_id`, `lsoa`, `lat`, `lon`, `street`, `n`, then the same six groups: one row per police.uk "on or near" point |
 | `data/geo/subareas.json` | | GeoJSON LSOA outlines, `properties.id`, **lon, lat** |
 | `data/geo/wards.json` | | `{ "<area id>": [ ["Ward name", [[lat, lon], ...]], ... ] }`, with one ring per ward and coordinates as **lat, lon** |
@@ -112,6 +115,7 @@ Watch the coordinate order: `wards.json` and `stations.json` are lat, lon, but t
   - Ethnicity: TS021 = `NM_2041_1`.
   - Density: TS006 = `NM_2026_1`.
   - The density for an area is total population divided by total area, not an average of the MSOA densities.
+- **Conservation areas:** planning.data.gov.uk `conservation-area` dataset (each council's designations, England, ~9,800), cut to the region and then to the areas (`conservation_areas.py` in the skill; also writes `conservation_count` and `conservation_sales_pct` in `areas.csv`).
 - **Crime:** data.police.uk street-level crimes, Oct 2025 to Sep 2026: within 1 mile of the area centre (`crime_*` counts), and per neighbourhood (LSOA) inside each area's sub-areas, divided by Census 2021 residents (`crime_rate*`, `crime_subareas.csv`, `crime_points.csv`; script `crime_subareas.py` in the skill).
 - **Shops:**
   - OpenStreetMap, within about 2 km of the centre.

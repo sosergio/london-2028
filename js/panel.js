@@ -2,7 +2,7 @@
 // the map is driven through the small API returned by createMap().
 
 import { state, poiOn, saveState, savePoi, isVisible } from './state.js';
-import { ETH_KEYS, loadPrices, PRICE_BANDS, loadCrime, CRIME_KINDS } from './data.js';
+import { ETH_KEYS, loadPrices, PRICE_BANDS, loadCrime, CRIME_KINDS, loadConservation } from './data.js';
 import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money, crimePeriod } from './format.js';
 
 const ETH = { whiteBritish: ['White British', '#7f9c8f'], whiteOther: ['Other White', '#b9cbbf'], asian: ['Asian', '#d6a84a'],
@@ -42,10 +42,18 @@ export function createPanel(DATA, map, { openGuide } = {}) {
       <div class="amen">People per km²: ${fmt(a.densMin)}–${fmt(a.densMax)} across these neighbourhoods; London average 5,598</div>
       <div class="stat-row"><span>Ethnicity</span><div class="bar" aria-label="Ethnic groups">${eb}</div><b>${a.eth.whiteBritish}% WB</b></div>
       ${crimeHtml(a)}
+      ${consCardHtml(a)}
       <div class="amen">${shopCounts(a.id)}</div>
       ${a.priceLevel ? `<div class="stat-row"><span>Price level</span><div class="bar" title="100 = typical for the shortlist"><i style="width:${(a.priceLevel / maxLevel * 100).toFixed(0)}%;background:var(--price-4)"></i></div><b>${a.priceLevel}</b></div>
       <div class="amen">Median sold, ${esc(a.pricePeriod)}: flat ${money(a.price.flat)} · terraced ${money(a.price.terraced)} · semi ${money(a.price.semi)} (${fmt(a.priceSales)} sales; 100 = typical for the shortlist)</div>` : ''}
     </div>`;
+  }
+
+  function consCardHtml(a) {
+    if (a.consCount === null || a.consCount === '') return '';
+    const pct = a.consPct === null || a.consPct === '' ? '' : ` · ${a.consPct}% of homes sold in the last 2 years were inside one`;
+    return `<div class="stat-row"><span>Conservation</span><div class="bar" title="Share of sold homes inside a conservation area"><i style="width:${Math.min(100, +a.consPct || 0)}%;background:var(--cons)"></i></div><b>${a.consPct ?? '–'}%</b></div>
+      <div class="amen">${fmt(a.consCount)} conservation area${a.consCount === 1 ? '' : 's'} touch these neighbourhoods${pct}</div>`;
   }
 
   function crimeHtml(a) {
@@ -197,6 +205,21 @@ export function createPanel(DATA, map, { openGuide } = {}) {
   if (state.price && state.crime) state.crime = false;
   if (state.price) applyPrices();
   if (state.crime) applyCrime(); else if (crimeSubs) crimeLegendText();
+
+  // Conservation areas: an outline layer that works alongside the others; the file loads on first use.
+  const consEl = document.getElementById('showcons');
+  let cons = null;
+  async function applyCons() {
+    if (state.cons && !cons) {
+      consEl.disabled = true;
+      try { cons = await loadConservation(); } catch (err) { console.error(err); state.cons = false; consEl.checked = false; }
+      consEl.disabled = false;
+    }
+    map.setConservation(state.cons && cons ? cons : null);
+  }
+  consEl.checked = state.cons;
+  consEl.addEventListener('change', () => { state.cons = consEl.checked; saveState(); applyCons(); });
+  if (state.cons) applyCons();
 
   const linesEl = document.getElementById('showlines');
   linesEl.checked = state.lines; map.setLines(state.lines);

@@ -26,6 +26,7 @@ AREA_DIMENSIONS = {
               "crime_vehicle-crime", "crime_violent-crime", "crime_shoplifting",
               "crime_rate", "crime_rate_burglary", "crime_rate_violent", "crime_rate_asb", "crime_rate_period"],
     "prices": ["postcode_sectors", "price_flat", "price_terraced", "price_semi", "price_sales", "price_period"],
+    "conservation": ["conservation_count", "conservation_sales_pct"],
     "rents": ["rent_2bed", "rent_3bed", "rent_source"],
 }
 SCHOOL_REQUIRED = ["area_id", "name", "short_name", "phase", "faith", "ages", "pupils", "ofsted",

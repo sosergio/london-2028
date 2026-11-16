@@ -20,6 +20,7 @@
   /* Sold-price level: one hue, cheap → expensive (validated with the dataviz ordinal checks) */
   --price-0:#dba0c7; --price-1:#c97faf; --price-2:#b46298; --price-3:#9a4a82; --price-4:#7d346a; --price-5:#5d2251;
   /* Crime level: one hue, fewer → more crimes per resident (OKLab lightness in even steps) */
+  --cons:#93640f; --cons-fill:#e9c77a;
   --crime-0:#f4b39e; --crime-1:#e8866b; --crime-2:#d45f45; --crime-3:#b5412d; --crime-4:#8e2c1f; --crime-5:#641a14;
   --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
@@ -32,7 +33,7 @@
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
   --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
   --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de;
-  --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}}
+  --cons:#e3ad4c; --cons-fill:#a9781c; --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141917; --panel:#1b211e; --fg:#e6ece8; --muted:#9aa8a0; --line:#2c3530;
   --land:#1e2622; --land-london:#25302a; --border:#3e4b44;
@@ -41,7 +42,7 @@
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
   --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
   --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de;
-  --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}
+  --cons:#e3ad4c; --cons-fill:#a9781c; --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}
 [hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0}
@@ -97,6 +98,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .checks li>span:first-child{font-weight:700;display:inline-block;width:1em}
 .checks li.y>span:first-child{color:var(--of-o)}
 .checks li.n>span:first-child{color:var(--poi-disc)}
+.cons-key{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px;border:2px solid var(--cons);background:color-mix(in srgb,var(--cons-fill) 35%,transparent);border-radius:2px}
 .ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;margin:-2px 6px -2px -4px;vertical-align:-4px}
 .ico svg{width:11px;height:11px}
 .seg button[aria-pressed="false"] .ico,.seg button[aria-pressed="false"] .dot{opacity:.55}
@@ -296,6 +298,10 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
           <div class="fhead"><span class="label">Transport</span><label class="switch"><input type="checkbox" id="showlines" checked aria-label="Show Tube, Overground, DLR and Elizabeth line"><span aria-hidden="true"></span></label></div>
           <div class="fbody"><p class="hint">Tube, Overground, DLR and Elizabeth line, with stations. Hover a line for its name. Moorgate is always shown.</p></div>
         </section>
+        <section class="fsec" id="cons-sec">
+          <div class="fhead"><span class="label">Conservation areas</span><label class="switch"><input type="checkbox" id="showcons" aria-label="Show conservation areas"><span aria-hidden="true"></span></label></div>
+          <div class="fbody"><p class="hint"><i class="cons-key" aria-hidden="true"></i>Streets protected for their character: extensions, lofts, windows and trees need more permission. Hover one for its council and appraisal. Works with the other layers.</p></div>
+        </section>
         <section class="fsec" id="sweet-sec">
           <div class="fhead"><span class="label">Sweet spots</span><label class="switch"><input type="checkbox" id="showsweet" aria-label="Show sweet-spot neighbourhoods"><span aria-hidden="true"></span></label></div>
           <div class="fbody" id="sweet-body" hidden>
@@ -356,6 +362,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
       <p><strong>Not shown, because they are boys or girls only:</strong> <span id="excluded"></span>.</p>
       <p><strong>Sold prices</strong>: HM Land Registry Price Paid Data, standard sales over the last two years in each area's postcode sectors. It does not record bedrooms, so flats (mostly 1–2 bed) and houses (mostly 2–4 bed) are shown separately. The price level compares each neighbourhood (an ONS Census LSOA, about 650 homes) with the shortlist median for the same property type, so 100 is typical and 150 is half as dear again.</p>
       <p><strong>Sweet spots</strong>: a neighbourhood passes if its price level, its crime rate and the straight-line distance from its middle to the nearest Good or Outstanding primary and secondary on this map are all within the sliders. Being near a school is not the same as being in its catchment, and a low price level can mean smaller or ex-council homes rather than a bargain, so treat it as a shortlist of streets to look at, not an answer.</p>
+      <p><strong>Conservation areas</strong>: planning.data.gov.uk (each council's designations, Nov 2026). Inside one, the look of the street is protected, which usually supports prices, but extensions, loft dormers, new windows, cladding and front gardens need more permission, and trees need 6 weeks' notice before work. Some also have an Article 4 direction, which takes away more permitted development: the council's appraisal says. The card's share counts the area's sold homes from the last two years that are inside one, a rough stand-in for the share of homes.</p>
       <p><strong>Crime</strong>: police.uk street-level crime for 12 months. The card's 1-mile count is the same radius everywhere, so it is not per person; the rates per 1,000 residents count every crime inside the area's neighbourhoods (the same Census LSOAs as the prices) and divide by their 2021 population. police.uk moves each crime to the nearest of a fixed set of points (usually the middle of a street), so a point means "on or near this street", never an address. Fraud and some sensitive offences are not published. Shoplifting is left out of "all", as it piles onto shopping streets.</p>
       <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
     </section>

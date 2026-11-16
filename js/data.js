@@ -30,6 +30,8 @@ export async function loadData() {
       // Per 1,000 residents a year, over all of the area's neighbourhoods (police.uk street-level crime).
       crimeRate: { all: r.crime_rate, violent: r.crime_rate_violent, burglary: r.crime_rate_burglary, asb: r.crime_rate_asb },
       crimePeriod: r.crime_rate_period || '',
+      // Conservation areas touching the area's neighbourhoods, and the share of its sold homes inside one.
+      consCount: r.conservation_count ?? null, consPct: r.conservation_sales_pct ?? null,
     };
   });
 
@@ -90,6 +92,12 @@ export async function loadPrices() {
   };
   return { subareas, sales };
 }
+
+// ---------- conservation areas ----------
+// planning.data.gov.uk, only the ones touching an area (about 900 kB): loaded when the layer is first switched on.
+// Properties: name, ref, council, designated (year), url (council appraisal or page), areas ("be,ed").
+let consP = null;
+export const loadConservation = () => consP || (consP = getJSON('data/geo/conservation.json').catch(e => { consP = null; throw e; }));
 
 // ---------- crime by neighbourhood ----------
 // police.uk street-level crime, 12 months, placed in the same Census neighbourhoods (LSOAs) as the sold prices.
