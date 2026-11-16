@@ -55,6 +55,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - a crime bar with violent, burglary and robbery counts;
   - shop counts;
   - a Rightmove link.
+- **Compare areas** (button under the intro): a dialog with a sortable table, one row per area, columns grouped as Schools (count, % Good or better, Outstanding, below good, under 400 pupils, smallest secondary), Getting about (Moorgate, family), Housing (price level, median flat / terraced / semi, rent) and Neighbourhood (crime, violent crime, density, green, lifestyle, grocers, bakeries). Each heading says which direction is better; cells are tinted green from worst to best within the column; clicking a row selects that area. Code in `js/compare.js`.
 - **Picking an area card:**
   - zooms to its wards and filters the school list to it;
   - clicking the same card again clears the selection.

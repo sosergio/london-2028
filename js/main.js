@@ -1,11 +1,13 @@
 import { loadData } from './data.js';
 import { createMap } from './map.js';
 import { createPanel } from './panel.js';
+import { createCompare } from './compare.js';
 
 try {
   const DATA = await loadData();
   const map = createMap(document.getElementById('map'), DATA);
-  createPanel(DATA, map);
+  const panel = createPanel(DATA, map);
+  createCompare(DATA, { onPick: id => panel.pickArea(id) });
 } catch (err) {
   console.error(err);
   const p = document.createElement('p');

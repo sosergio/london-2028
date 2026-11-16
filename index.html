@@ -115,6 +115,35 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 .area-pick:hover .area-name{text-decoration:underline}
 .area-pick:focus-visible,.area-toggle:focus-visible,.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .areas-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.compare-btn{margin-top:10px;font:inherit;font-weight:600;font-size:13px;color:var(--panel);background:var(--accent);border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.compare-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#compare{width:min(1280px, calc(100vw - 32px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);box-shadow:0 10px 40px rgb(0 0 0 / .3);display:none;flex-direction:column}
+#compare[open]{display:flex}
+#compare::backdrop{background:rgb(0 0 0 / .35)}
+.dlg-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px 4px}
+.dlg-head h2{font-family:var(--font-display);font-size:20px;margin:0}
+.dlg-close{font-size:24px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 8px;border-radius:6px}
+.dlg-close:focus-visible{outline:2px solid var(--accent)}
+.dlg-note{margin:0;padding:0 18px 10px;font-size:12px;color:var(--muted);max-width:110ch}
+.tbl-wrap{overflow:auto;border-top:1px solid var(--line);min-height:0}
+.cmp{border-collapse:separate;border-spacing:0;font-size:13px;font-variant-numeric:tabular-nums;width:max-content;min-width:100%}
+.cmp th,.cmp td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.cmp thead th{position:sticky;top:0;background:var(--panel);z-index:2;vertical-align:bottom;font-weight:600}
+.cmp thead tr:nth-child(2) th{top:31px}
+.cmp th.grp{text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-left:1px solid var(--line)}
+.cmp thead button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit;display:inline-flex;flex-direction:column;align-items:flex-end}
+.cmp thead button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cmp thead small{font-size:10px;font-weight:400;color:var(--muted)}
+.cmp .sort{font-size:9px;color:var(--accent);margin-left:3px}
+.cmp .area-col{position:sticky;left:0;z-index:1;background:var(--panel);text-align:left;font-weight:600;border-right:1px solid var(--line)}
+.cmp thead .area-col{z-index:3}
+.cmp thead .area-col button{align-items:flex-start;width:100%}
+.cmp .area-col .rank{font-size:14px;margin-right:4px}
+.cmp tbody tr{cursor:pointer}
+.cmp tbody tr:hover th,.cmp tbody tr:hover td{box-shadow:inset 0 0 0 999px color-mix(in srgb, var(--fg) 5%, transparent)}
+.cmp tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.cmp td.shade{background:color-mix(in srgb, var(--accent) calc(var(--s) * 34%), transparent)}
+.cmp td:not(.shade){color:var(--fg)}
 .linkbtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .area[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .area-head{display:flex;align-items:stretch}
@@ -234,6 +263,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
     <header>
       <h1>London School Map</h1>
       <p class="lede">Shortlisted areas and all their mixed state schools for September 2028. Pin size shows the number of pupils; zoom in to see school names.</p>
+      <button type="button" class="compare-btn" id="open-compare">Compare areas side by side</button>
     </header>
 
     <section>
@@ -258,6 +288,15 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
   </aside>
 </div>
 
+<dialog id="compare" aria-labelledby="compare-title">
+  <div class="dlg-head">
+    <h2 id="compare-title">Compare areas</h2>
+    <button type="button" class="dlg-close" aria-label="Close">×</button>
+  </div>
+  <p class="dlg-note">Click a heading to sort (the first click puts the better end on top); click an area to show it on the map. Shading runs from the weakest value in each column (none) to the best (strongest green); the number of schools is not shaded, as it mostly reflects how big the area is. Commute, family time, rent, green and lifestyle are estimates; prices are Land Registry medians for the last 2 years; crime counts everything within 1 mile of each centre.</p>
+  <div class="tbl-wrap"><table class="cmp"></table></div>
+</dialog>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
@@ -266,7 +305,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 // on each deploy), via an import map for the modules that main.js imports.
 (function () {
   const v = Date.parse(document.lastModified) || Date.now();
-  const mods = ['data', 'state', 'format', 'map', 'panel'];
+  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare'];
   const map = document.createElement('script');
   map.type = 'importmap';
   map.textContent = JSON.stringify({ imports: Object.fromEntries(mods.map(m => [new URL('js/' + m + '.js', location.href).href, './js/' + m + '.js?v=' + v])) });

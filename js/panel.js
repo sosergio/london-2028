@@ -68,15 +68,19 @@ export function createPanel(DATA, map) {
     el.querySelector('.area-toggle').addEventListener('click', () => {
       setOpen(el, el.querySelector('.area-toggle').getAttribute('aria-expanded') !== 'true'); syncExpandAll();
     });
-    el.querySelector('.area-pick').addEventListener('click', () => {
-      state.area = state.area === a.id ? null : a.id;
-      if (state.area) setOpen(el, true);
-      syncExpandAll();
-      render();
-      if (state.area) map.selectArea(a.id); else map.fitAll();
-    });
+    el.querySelector('.area-pick').addEventListener('click', () => pickArea(a.id, true));
     areasEl.appendChild(el);
   });
+  // Select an area: zoom to it, filter the school list and open its card. With toggle, picking the
+  // selected area again clears the selection.
+  function pickArea(id, toggle = false) {
+    state.area = toggle && state.area === id ? null : id;
+    const el = areasEl.querySelector(`.area[data-id="${id}"]`);
+    if (state.area) { setOpen(el, true); if (!toggle) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+    syncExpandAll();
+    render();
+    if (state.area) map.selectArea(id); else map.fitAll();
+  }
   const expandAll = document.getElementById('expand-all');
   function syncExpandAll() {
     const all = [...areasEl.querySelectorAll('.area-toggle')].every(b => b.getAttribute('aria-expanded') === 'true');
@@ -201,5 +205,5 @@ export function createPanel(DATA, map) {
 
   applyShops();
   render();
-  return { render };
+  return { render, pickArea };
 }
