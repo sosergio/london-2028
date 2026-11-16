@@ -1,0 +1,169 @@
+{
+ "area_id": "ef",
+ "title": "East Finchley & Fortis Green",
+ "updated": "November 2026",
+ "intro": "Two ancient woods within a short walk, one of Britain's oldest cinemas on the High Road, and Hampstead Garden Suburb and Kenwood just over the hill.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "highgate-wood",
+   "n": 1,
+   "name": "Highgate Wood",
+   "kind": "park",
+   "lat": 51.58235,
+   "lon": -0.15192,
+   "km": 1.1,
+   "blurb": "Ancient oak and hornbeam woodland looked after by the City of London since 1886, with shady paths, a playground, a cricket field and a café.",
+   "tip": "The café by the playing field has outdoor tables under the trees.",
+   "photo": "data/guides/ef/highgate-wood.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "TheFrog001",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Highgate_Wood,_August_2020.jpg"
+   }
+  },
+  {
+   "id": "kenwood",
+   "n": 2,
+   "name": "Kenwood House",
+   "kind": "history",
+   "lat": 51.57155,
+   "lon": -0.16734,
+   "km": 1.8,
+   "blurb": "An 18th-century villa remodelled by Robert Adam on the edge of Hampstead Heath, with an art collection including Rembrandt and Vermeer and lawns sweeping down to a lake.",
+   "tip": "Entry to the house is free; book ahead at busy times.",
+   "photo": "data/guides/ef/kenwood.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Mikegr",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Kenwood_House.jpg"
+   }
+  },
+  {
+   "id": "coldfall-wood",
+   "n": 3,
+   "name": "Coldfall Wood",
+   "kind": "walk",
+   "lat": 51.59717,
+   "lon": -0.159,
+   "km": 1.2,
+   "blurb": "Ancient hornbeam woodland on the Fortis Green side, a Local Nature Reserve with a stream running through it.",
+   "tip": "The paths get muddy after rain: boots help.",
+   "photo": "data/guides/ef/coldfall-wood.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Mark Kobayashi-Hillary",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Shadows_in_Coldfall_wood.jpg"
+   }
+  },
+  {
+   "id": "phoenix-cinema",
+   "n": 4,
+   "name": "Phoenix Cinema",
+   "kind": "leisure",
+   "lat": 51.58851,
+   "lon": -0.16371,
+   "km": 0.2,
+   "blurb": "Opened in 1910 and one of the oldest cinemas in Britain still showing films, with a 1930s auditorium. It is run as a charity.",
+   "tip": "Book ahead for weekend evenings.",
+   "photo": "data/guides/ef/phoenix-cinema.jpg",
+   "w": 1200,
+   "h": 798,
+   "credit": {
+    "author": "Basil Jradeh",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Phoenix_Cinema_frontage_at_night.jpg"
+   }
+  },
+  {
+   "id": "hampstead-garden-suburb",
+   "n": 5,
+   "name": "Hampstead Garden Suburb",
+   "kind": "street",
+   "lat": 51.5807,
+   "lon": -0.19034,
+   "km": 1.9,
+   "blurb": "A garden suburb begun in 1907 and planned by Raymond Unwin, with Arts and Crafts houses, hedged lanes and Edwin Lutyens' churches on Central Square.",
+   "tip": "Central Square and the lanes around it are the best part for a stroll.",
+   "photo": "data/guides/ef/hampstead-garden-suburb.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "David Howard",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Central_Square,_Hampstead_Garden_Suburb_-_geograph.org.uk_-_5145422.jpg"
+   }
+  },
+  {
+   "id": "queens-wood",
+   "n": 6,
+   "name": "Queen's Wood",
+   "kind": "walk",
+   "lat": 51.58124,
+   "lon": -0.14305,
+   "km": 1.7,
+   "blurb": "A steep, wild ancient wood across the road from Highgate Wood, with a community café and organic garden at its edge.",
+   "tip": "Combine it with Highgate Wood for a longer woodland loop.",
+   "photo": "data/guides/ef/queens-wood.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "ElectricRay at English Wikipedia",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:060729_Queen%27s_Wood_Oaks.JPG"
+   }
+  },
+  {
+   "id": "cherry-tree-wood",
+   "n": 7,
+   "name": "Cherry Tree Wood",
+   "kind": "park",
+   "lat": 51.58565,
+   "lon": -0.15979,
+   "km": 0.4,
+   "blurb": "A small ancient wood right next to East Finchley station, with a playground, tennis courts and woodland paths.",
+   "tip": "Ideal for a short walk on the way to or from the Tube.",
+   "photo": "data/guides/ef/cherry-tree-wood.jpg",
+   "w": 1200,
+   "h": 801,
+   "credit": {
+    "author": "Martin Addison",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Footpath_Through_Cherry_Tree_Wood_-_geograph.org.uk_-_3299865.jpg"
+   }
+  },
+  {
+   "id": "east-finchley-station",
+   "n": 8,
+   "name": "The Archer, East Finchley station",
+   "kind": "history",
+   "lat": 51.58667,
+   "lon": -0.16421,
+   "km": 0.1,
+   "blurb": "The station was rebuilt by Charles Holden in the late 1930s and is crowned by Eric Aumonier's statue of an archer aiming towards central London.",
+   "tip": "The Northern line from here runs straight to Moorgate.",
+   "photo": "data/guides/ef/east-finchley-station.jpg",
+   "w": 1200,
+   "h": 803,
+   "credit": {
+    "author": "Chris Sampson",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:EAST_FINCHLEY-05_240710_CPS_(4837726024).jpg"
+   }
+  }
+ ]
+}

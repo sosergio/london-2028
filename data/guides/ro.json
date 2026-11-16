@@ -1,0 +1,129 @@
+{
+ "area_id": "ro",
+ "title": "Rotherhithe & Surrey Docks",
+ "updated": "November 2026",
+ "intro": "A riverside village of old warehouses, docks and churchyards, with the Thames Path on the doorstep and views to Tower Bridge and Canary Wharf.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "stave-hill",
+   "n": 1,
+   "name": "Stave Hill and Russia Dock Woodland",
+   "kind": "walk",
+   "lat": 51.50109,
+   "lon": -0.04046,
+   "km": 0.8,
+   "blurb": "Woodland and an ecology park on the filled-in Surrey Docks, with a small man-made hill that looks out over Canary Wharf and the City.",
+   "tip": "Climb Stave Hill at sunset for the skyline.",
+   "photo": "data/guides/ro/stave-hill.jpg",
+   "w": 1200,
+   "h": 604,
+   "credit": {
+    "author": "Diliff",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Stave_Hill_and_Canary_Wharf,_London_-_March_2008.jpg"
+   }
+  },
+  {
+   "id": "greenland-dock",
+   "n": 2,
+   "name": "Greenland Dock",
+   "kind": "walk",
+   "lat": 51.49465,
+   "lon": -0.0396,
+   "km": 1.1,
+   "blurb": "The oldest of the Surrey Docks, now a wide sheet of water ringed by homes and a watersports centre, with the Thames Path close by.",
+   "tip": "Walk round the dock and out to the river for a circular stroll.",
+   "photo": "data/guides/ro/greenland-dock.jpg",
+   "w": 1200,
+   "h": 675,
+   "credit": {
+    "author": "The wub",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Greenland_Dock,_October_2021_-_01.jpg"
+   }
+  },
+  {
+   "id": "st-marys-mayflower",
+   "n": 3,
+   "name": "St Mary's and the Mayflower",
+   "kind": "history",
+   "lat": 51.50135,
+   "lon": -0.05215,
+   "km": 0.0,
+   "blurb": "Rotherhithe's 18th-century parish church and, next door, the Mayflower pub near where the Mayflower set out in 1620; her captain, Christopher Jones, is buried here.",
+   "tip": "The pub's small jetty terrace looks straight onto the river.",
+   "photo": "data/guides/ro/st-marys-mayflower.jpg",
+   "w": 1200,
+   "h": 931,
+   "credit": {
+    "author": "Doyle of London",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Church_of_Saint_Mary,_Rotherhithe_(South_Face_-_01).jpg"
+   }
+  },
+  {
+   "id": "southwark-park",
+   "n": 4,
+   "name": "Southwark Park",
+   "kind": "park",
+   "lat": 51.49519,
+   "lon": -0.05627,
+   "km": 0.7,
+   "blurb": "A Victorian park opened in 1869, with a boating lake, a bandstand, a rose garden and an art gallery in the middle.",
+   "tip": "The lake and bandstand are the prettiest corner.",
+   "photo": "data/guides/ro/southwark-park.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Augustine Lim",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Southwark_Park_Sporting_Green.JPG"
+   }
+  },
+  {
+   "id": "brunel-museum",
+   "n": 5,
+   "name": "Brunel Museum",
+   "kind": "history",
+   "lat": 51.5019,
+   "lon": -0.0523,
+   "km": 0.1,
+   "blurb": "The engine house of the Thames Tunnel, the first tunnel built under a navigable river, begun by Marc Brunel with his son Isambard and opened in 1843.",
+   "tip": "Check the listings for talks and events in the old shaft.",
+   "photo": "data/guides/ro/brunel-museum.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Flickr user: RJW1 https://www.flickr.com/photos/rjw1/",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Brunel_Museum_Rotherhithe.jpg"
+   }
+  },
+  {
+   "id": "edward-iii-manor",
+   "n": 6,
+   "name": "King Edward III's manor house",
+   "kind": "history",
+   "lat": 51.5015,
+   "lon": -0.0603,
+   "km": 0.6,
+   "blurb": "The excavated foundations of a moated manor house built for Edward III in the 1350s, on the riverside by Cherry Garden Pier.",
+   "tip": "Free and always open: it's a quick stop on the Thames Path.",
+   "photo": "data/guides/ro/edward-iii-manor.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Photograph by Mike Peel (www.mikepeel.net).",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:King_Edward_III_Manor_House,_Bermondsey_1.jpg"
+   }
+  }
+ ]
+}

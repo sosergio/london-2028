@@ -1,0 +1,129 @@
+{
+ "area_id": "bl",
+ "title": "Blackheath & Lee",
+ "updated": "November 2026",
+ "intro": "A Georgian village on an open heath, with Greenwich Park and the river a short walk away and the gardens of Lee to the south.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "blackheath-heath",
+   "n": 1,
+   "name": "Blackheath and All Saints'",
+   "kind": "park",
+   "lat": 51.46824,
+   "lon": 0.00776,
+   "km": 0.3,
+   "blurb": "The wide open heath that gives the village its name, with the spire of All Saints' church standing alone on the grass.",
+   "tip": "Come in spring for the kite-flying and the views across London.",
+   "photo": "data/guides/bl/blackheath-heath.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Alan Hughes",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:All_Saints_Church,_Blackheath_-_geograph.org.uk_-_8209030.jpg"
+   }
+  },
+  {
+   "id": "greenwich-park",
+   "n": 2,
+   "name": "Greenwich Park",
+   "kind": "park",
+   "lat": 51.47724,
+   "lon": 0.00092,
+   "km": 1.4,
+   "blurb": "A royal park on a hill, home to the Royal Observatory, with a famous view over the Queen's House and the river to Canary Wharf.",
+   "tip": "Enter through the gate on the Blackheath side and walk to the Observatory for the view.",
+   "photo": "data/guides/bl/greenwich-park.jpg",
+   "w": 1200,
+   "h": 795,
+   "credit": {
+    "author": "Txllxt TxllxT",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Greenwich_Park_-_View_North.jpg"
+   }
+  },
+  {
+   "id": "the-paragon",
+   "n": 3,
+   "name": "The Paragon",
+   "kind": "street",
+   "lat": 51.46935,
+   "lon": 0.01367,
+   "km": 0.5,
+   "blurb": "A crescent of grand Georgian houses linked by colonnades, built around 1800 and one of the finest set pieces in south London.",
+   "tip": "It's a private road, but the crescent is best seen from South Row.",
+   "photo": "data/guides/bl/the-paragon.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Reading Tom from Reading, UK",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Paragon_(9175928271).jpg"
+   }
+  },
+  {
+   "id": "blackheath-village",
+   "n": 4,
+   "name": "Blackheath Village",
+   "kind": "street",
+   "lat": 51.4658,
+   "lon": 0.00892,
+   "km": 0.0,
+   "blurb": "The village centre around Tranquil Vale, with independent shops, cafés and a Sunday farmers' market by the station.",
+   "tip": "The Sunday farmers' market is the best time to visit.",
+   "photo": "data/guides/bl/blackheath-village.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Reading Tom from Reading, UK",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tranquil_Vale_(9178127380).jpg"
+   }
+  },
+  {
+   "id": "rangers-house",
+   "n": 5,
+   "name": "Ranger's House",
+   "kind": "history",
+   "lat": 51.47343,
+   "lon": -0.00159,
+   "km": 1.1,
+   "blurb": "An 18th-century villa on the edge of Greenwich Park, run by English Heritage, with the Wernher Collection of art and jewels inside.",
+   "tip": "Check opening days before you go: it is not open every day.",
+   "photo": "data/guides/bl/rangers-house.jpg",
+   "w": 1200,
+   "h": 800,
+   "credit": {
+    "author": "Katie Chan",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:EH1218679_The_Ranger%27s_House.JPG"
+   }
+  },
+  {
+   "id": "eltham-palace",
+   "n": 6,
+   "name": "Eltham Palace",
+   "kind": "history",
+   "lat": 51.4471,
+   "lon": 0.04859,
+   "km": 3.4,
+   "blurb": "A medieval royal palace with a great hall, joined in the 1930s to an Art Deco house, set in moated gardens.",
+   "tip": "The Art Deco entrance hall is the highlight; book ahead.",
+   "photo": "data/guides/bl/eltham-palace.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Edwardx",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Eltham_Palace_London_01.JPG"
+   }
+  }
+ ]
+}

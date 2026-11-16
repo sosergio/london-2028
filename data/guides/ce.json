@@ -1,0 +1,89 @@
+{
+ "area_id": "ce",
+ "title": "Crouch End & Hornsey",
+ "updated": "November 2026",
+ "intro": "A Victorian village in a valley below Alexandra Palace and Highgate, with an old railway turned into a woodland walk and a 1930s town hall.",
+ "station_name": "the station",
+ "items": [
+  {
+   "id": "clock-tower",
+   "n": 1,
+   "name": "Crouch End Clock Tower",
+   "kind": "history",
+   "lat": 51.57975,
+   "lon": -0.12367,
+   "km": 0.0,
+   "blurb": "The red-brick clock tower of 1895 at the heart of the Broadway, surrounded by Victorian and Edwardian shopping parades.",
+   "tip": "Saturday mornings are the liveliest time on the Broadway.",
+   "photo": "data/guides/ce/clock-tower.jpg",
+   "w": 1200,
+   "h": 803,
+   "credit": {
+    "author": "Robert Lamb",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:View_of_Crouch_End_Clock_Tower_from_The_Broadway_-_geograph.org.uk_-_6272612.jpg"
+   }
+  },
+  {
+   "id": "priory-park",
+   "n": 2,
+   "name": "Priory Park",
+   "kind": "park",
+   "lat": 51.58549,
+   "lon": -0.12621,
+   "km": 0.6,
+   "blurb": "A neat park on Middle Lane with formal gardens, a fountain, a paddling pool, tennis courts and a café.",
+   "tip": "Good for small children on a summer afternoon.",
+   "photo": "data/guides/ce/priory-park.jpg",
+   "w": 1200,
+   "h": 644,
+   "credit": {
+    "author": "Jim Osley",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dog_in_Priory_Park,_Hornsey_-_geograph.org.uk_-_2852137.jpg"
+   }
+  },
+  {
+   "id": "parkland-walk",
+   "n": 3,
+   "name": "Parkland Walk",
+   "kind": "walk",
+   "lat": 51.57039,
+   "lon": -0.10682,
+   "km": 1.6,
+   "blurb": "A disused railway line turned into London's longest local nature reserve, running through cuttings and over bridges towards Highgate and Finsbury Park.",
+   "tip": "Look for the spriggan sculpture in an old arch near the Crouch End end.",
+   "photo": "data/guides/ce/parkland-walk.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Dudley Miles",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Parkland_Walk_Haringey.jpg"
+   }
+  },
+  {
+   "id": "hornsey-town-hall",
+   "n": 4,
+   "name": "Hornsey Town Hall",
+   "kind": "history",
+   "lat": 51.57879,
+   "lon": -0.12255,
+   "km": 0.1,
+   "blurb": "A modernist town hall of the 1930s, Grade II* listed, with a square in front that hosts markets and events.",
+   "tip": "Look out for the farmers' and craft markets on the square.",
+   "photo": "data/guides/ce/hornsey-town-hall.jpg",
+   "w": 1200,
+   "h": 900,
+   "credit": {
+    "author": "Philafrenzy",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hornsey_Town_Hall_01.jpg"
+   }
+  }
+ ]
+}

@@ -1,5 +1,9 @@
 {
  "guides": {
-  "gp": "data/guides/gp.json"
+  "gp": "data/guides/gp.json",
+  "ef": "data/guides/ef.json",
+  "ce": "data/guides/ce.json",
+  "bl": "data/guides/bl.json",
+  "ro": "data/guides/ro.json"
  }
 }
