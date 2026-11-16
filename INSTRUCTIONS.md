@@ -4,7 +4,7 @@ This file is the brief for Claude Code. Read it fully before changing anything.
 
 ## 1. Goal
 
-A public, static website on GitHub Pages (`https://sosergio.github.io/london-2028/`) that helps one family choose where to live in London from September 2028. It shows 12 shortlisted areas, their mixed state schools and local amenities on an interactive map. The family cares most about:
+A public, static website on GitHub Pages (`https://sosergio.github.io/london-2028/`) that helps one family choose where to live in London from September 2028. It shows the shortlisted areas, all their mixed state schools (any Ofsted rating) and local amenities on an interactive map. The family cares most about:
 
 1. School quality and size: smaller schools are better, and Ofsted rating matters.
 2. Neighbourhood lifestyle: independent shops, green space, low crime, not too crowded.
@@ -22,10 +22,11 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
 ### Features to keep (all present in the prototype)
 
 - **Side panel and map:** the map fills the left and a scrolling side panel sits on the right. On phones they stack, map on top.
+- **Filters float on the map** in a collapsible box (top right), folded by default on phones.
 - **Filters:**
   - Phase: All, Primary or Secondary. All-through schools always show.
   - Faith: All, Catholic, CofE or None.
-  - Maximum pupils: a slider from 200 to 1,800.
+  - Ofsted: four independent toggles, Outstanding (O), Good (G), Below good (W), Not rated (N), all on by default.
   - Show catchment circles.
   - Filter settings are remembered in `localStorage`, wrapped in try/catch.
 - **School markers:**
@@ -60,7 +61,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
 - **Rightmove link:** opens the map view with these settings: `locationIdentifier=<rightmove_id>`, `minBedrooms=3`, `maxPrice=4500`, `propertyTypes=detached,semi-detached,terraced`, `mustHave=garden`, `channel=RENT`, `viewType=MAP`.
 - **School list:** sorted smallest first. Clicking a row flies to the school and opens its popup.
 - **Shops and places layer:**
-  - Small diamonds, coloured by group, with five toggle buttons. The toggles are independent multi-select, not radio buttons.
+  - Small icons on discs coloured by group (basket, bread, book, dumbbell, tag), with five toggle buttons showing the same icons. The toggles are independent multi-select, not radio buttons.
   - Groups: `up` (Waitrose, M&S, organic), `bake` (bakeries, delis, butchers), `cult` (cinemas, theatres, books), `gym` (gyms, pools, lidos), `disc` (Aldi, Lidl, Iceland).
   - Default on: `up` and `bake`.
   - Popup: name, group, type, and Google Maps / Street View links.
