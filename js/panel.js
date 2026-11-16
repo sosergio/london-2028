@@ -2,8 +2,8 @@
 // the map is driven through the small API returned by createMap().
 
 import { state, poiOn, saveState, savePoi, isVisible } from './state.js';
-import { ETH_KEYS } from './data.js';
-import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg } from './format.js';
+import { ETH_KEYS, loadPrices, PRICE_BANDS } from './data.js';
+import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money } from './format.js';
 
 const ETH = { whiteBritish: ['White British', '#7f9c8f'], whiteOther: ['Other White', '#b9cbbf'], asian: ['Asian', '#d6a84a'],
   black: ['Black', '#8a6bb8'], mixed: ['Mixed', '#e08aa0'], other: ['Other', '#9aa3a0'] };
@@ -17,6 +17,7 @@ export function createPanel(DATA, map) {
   const { areas, schools, shops, areaById } = DATA;
   const maxDens = Math.max(...areas.map(a => a.dens));
   const maxCrime = Math.max(...areas.map(a => a.crimeTotal));
+  const maxLevel = Math.max(...areas.map(a => +a.priceLevel || 0));
   const shopsByArea = {}; shops.forEach(p => (shopsByArea[p.a] ||= []).push(p));
 
   function shopCounts(id) {
@@ -36,6 +37,8 @@ export function createPanel(DATA, map) {
       <div class="stat-row"><span>Crime, 12 mo</span><div class="bar"><i style="width:${(a.crimeTotal / maxCrime * 100).toFixed(0)}%;background:var(--of-w)"></i></div><b>${fmt(a.crimeTotal)}</b></div>
       <div class="amen">Within 1 mile of the centre: ${fmt(a.crime['violent-crime'])} violent, ${fmt(a.crime.burglary)} burglaries, ${fmt(a.crime.robbery)} robberies (Oct 2025–Sep 2026)</div>
       <div class="amen">${shopCounts(a.id)}</div>
+      ${a.priceLevel ? `<div class="stat-row"><span>Price level</span><div class="bar" title="100 = typical for the shortlist"><i style="width:${(a.priceLevel / maxLevel * 100).toFixed(0)}%;background:var(--price-4)"></i></div><b>${a.priceLevel}</b></div>
+      <div class="amen">Median sold, ${esc(a.pricePeriod)}: flat ${money(a.price.flat)} · terraced ${money(a.price.terraced)} · semi ${money(a.price.semi)} (${fmt(a.priceSales)} sales; 100 = typical for the shortlist)</div>` : ''}
     </div>`;
   }
 
@@ -82,6 +85,24 @@ export function createPanel(DATA, map) {
       render();
     });
   });
+  // Sold prices: data loads on first use, then stays in memory.
+  const priceEl = document.getElementById('showprice'), legendEl = document.getElementById('price-legend');
+  document.getElementById('price-ticks').innerHTML = ['<' + PRICE_BANDS[0], ...PRICE_BANDS.slice(0, -1).map((b, i) => `${b}–${PRICE_BANDS[i + 1]}`), PRICE_BANDS.at(-1) + '+']
+    .map(t => `<span>${t}</span>`).join('');
+  let prices = null;
+  async function applyPrices() {
+    legendEl.hidden = !state.price;
+    if (state.price && !prices) {
+      priceEl.disabled = true;
+      try { prices = await loadPrices(); } catch (err) { console.error(err); state.price = false; priceEl.checked = false; legendEl.hidden = true; }
+      priceEl.disabled = false;
+    }
+    map.setPrices(state.price ? prices : null);
+  }
+  priceEl.checked = state.price;
+  priceEl.addEventListener('change', () => { state.price = priceEl.checked; saveState(); applyPrices(); });
+  if (state.price) applyPrices();
+
   const catEl = document.getElementById('showcat');
   catEl.checked = state.cat;
   catEl.addEventListener('change', () => { state.cat = catEl.checked; render(); });

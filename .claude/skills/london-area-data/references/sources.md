@@ -69,7 +69,7 @@ Within about 2 km of the area centre. Columns: `area_id, name, group, type, lat,
 - **Nominatim fallback** (`https://nominatim.openstreetmap.org/search?q=<brand or type> near <area>&format=jsonv2`): 1 request per second, a descriptive User-Agent, and it misses places, which is why the audit flags areas with under 15 shops or an empty group. Prefer re-running Overpass over topping up by hand.
 - Remove duplicates (same name within ~50 m) and chains that don't fit the group.
 
-## 6. Sale prices → `postcode_sectors`, `price_flat`, `price_terraced`, `price_semi`, `price_sales`, `price_period`
+## 6. Sale prices → `postcode_sectors`, `price_*`, `price_level`, `sales.csv`, `subareas.csv`, `geo/subareas.json`
 
 Run `scripts/property_prices.py` (see SKILL.md). What it does, in case it needs fixing:
 
@@ -80,6 +80,7 @@ Run `scripts/property_prices.py` (see SKILL.md). What it does, in case it needs 
   - Property types: `flat-maisonette`, `terraced`, `semi-detached`, `detached`.
 - **No bedrooms in Price Paid.** For a closer "2-3 bed" figure, the EPC register (`https://epc.opendatacommunities.org/`, free with registration, gives an API key) has `number-habitable-rooms` and floor area per address; joining it to Price Paid by address gives £ per m² and room counts. Only worth it if the type medians are not enough.
 - Price Paid runs about 1-2 months behind; very recent months are incomplete.
+- **Sub-areas** (`scripts/price_subareas.py`): each sale's LSOA comes from postcodes.io (`codes.lsoa21`); outlines from the ONS FeatureServer `LSOA_2021_EW_BFE_V10_RUC/FeatureServer/3` (layer 3, not 0), queried by `LSOA21CD IN (...)` with `maxAllowableOffset=0.00003` (~3 m) to keep the file under 1 MB. Postcode sectors have no free official outlines, which is why LSOAs are used; each is named by its main sector and street. Price level = 100 × median of (sale price ÷ shortlist median for that property type); under 8 sales → no level. Bands 80/95/110/130/160 are duplicated in `js/data.js` (`PRICE_BANDS`).
 
 ## 7. Rents → `rent_2bed`, `rent_3bed`, `rent_source`
 

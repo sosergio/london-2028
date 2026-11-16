@@ -65,6 +65,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - Groups: `up` (Waitrose, M&S, organic), `bake` (bakeries, delis, butchers), `cult` (cinemas, theatres, books), `gym` (gyms, pools, lidos), `disc` (Aldi, Lidl, Iceland).
   - Default on: `up` and `bake`.
   - Popup: name, group, type, and Google Maps / Street View links.
+- **Sold prices layer** (off by default, remembered): neighbourhoods (ONS LSOAs) shaded by a mix-adjusted price level, 100 = typical for the shortlist, in a one-hue plum ramp with a legend; hover or click for medians by type; each sale shows as a dot from zoom 14. Area cards show median flat / terraced / semi prices and the area's price level.
 - **Context layers:**
   - Tube lines, with the Northern and Central lines emphasised.
   - Stations, with Moorgate highlighted as "Moorgate (office)".
@@ -84,6 +85,9 @@ All CSV files have a header row and are UTF-8. Ids must match across files.
 | `data/schools.csv` | 92 | `area_id`, `name`, `short_name`, `phase` (P / S / A), `faith` (Catholic / CofE / None), `ages`, `pupils`, `ofsted`, `ofsted_colour` (O / G / W / N), `ofsted_detail`, `ofsted_url`, `lat`, `lon`, `catchment_miles` (blank if unknown), `catchment_text`, `source_url`, `note` |
 | `data/shops.csv` | ~380 | `area_id`, `name`, `group` (up / bake / cult / gym / disc), `type` (OSM tag), `lat`, `lon` |
 | `data/excluded.json` | | `{ "excluded": [names of single-sex schools left out] }` |
+| `data/sales.csv` | ~14,000 | `area_id`, `date`, `price`, `type` (flat / terraced / semi / detached), `street`, `postcode`, `lat`, `lon`, `lsoa` (HM Land Registry, standard sales, 2 years; no house numbers) |
+| `data/subareas.csv` | ~500 | `area_id`, `id` (LSOA 2021 code), `name`, `sales`, `median_<type>`, `level`, `band` (0-5) |
+| `data/geo/subareas.json` | | GeoJSON LSOA outlines, `properties.id`, **lon, lat** |
 | `data/geo/wards.json` | | `{ "<area id>": [ ["Ward name", [[lat, lon], ...]], ... ] }`, with one ring per ward and coordinates as **lat, lon** |
 | `data/geo/boroughs.json` | | GeoJSON FeatureCollection of local authority borders, with `properties.n` = name. GeoJSON order, **lon, lat** |
 | `data/geo/tube-lines.json` | | GeoJSON lines with `properties.n` (line name) and `properties.c` (colour) |

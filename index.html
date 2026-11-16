@@ -17,6 +17,8 @@
   --cath:#7a3db8; --cofe:#c4572b; --none:#2a6fb0;
   --of-o:#0f7a3f; --of-g:#5aa9d6; --of-w:#d98a1c; --of-n:#9aa3a0;
   --poi-up:#0b6e4f; --poi-bake:#b5651d; --poi-cult:#8e3b8e; --poi-gym:#2f5fb3; --poi-disc:#c23b3b;
+  /* Sold-price level: one hue, cheap → expensive (validated with the dataviz ordinal checks) */
+  --price-0:#dba0c7; --price-1:#c97faf; --price-2:#b46298; --price-3:#9a4a82; --price-4:#7d346a; --price-5:#5d2251;
   --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
 }
@@ -26,14 +28,16 @@
   --accent:#5cc3a6; --accent-soft:#1f3a32;
   --cath:#b48cf0; --cofe:#f08a5d; --none:#6fb0f0;
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
-  --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a; color-scheme:dark}}
+  --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
+  --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141917; --panel:#1b211e; --fg:#e6ece8; --muted:#9aa8a0; --line:#2c3530;
   --land:#1e2622; --land-london:#25302a; --border:#3e4b44;
   --accent:#5cc3a6; --accent-soft:#1f3a32;
   --cath:#b48cf0; --cofe:#f08a5d; --none:#6fb0f0;
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
-  --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a; color-scheme:dark}
+  --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
+  --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de; color-scheme:dark}
 html,body{height:100%}
 body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.45}
@@ -54,6 +58,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .floating .seg button{font-size:12px;padding:4px 9px}
 .floating .toggle{font-size:12px}
 .floating summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.price-legend{margin-top:6px}
+.ramp{display:grid;grid-template-columns:repeat(6,1fr);gap:2px}
+.ramp i{display:block;height:10px}
+.ramp i:first-child{border-radius:4px 0 0 4px}.ramp i:last-child{border-radius:0 4px 4px 0}
+.ticks{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;font-size:10px;color:var(--muted);text-align:center;margin-top:2px;font-variant-numeric:tabular-nums}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--fg);margin-top:2px}
+.muted{color:var(--muted);font-weight:400}
 .hint{margin:6px 0 0;font-size:11px;color:var(--muted)}
 .ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;margin:-2px 6px -2px -4px;vertical-align:-4px}
 .ico svg{width:11px;height:11px}
@@ -165,6 +176,16 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
         </div>
         <label class="toggle"><input type="checkbox" id="showcat" checked> Catchment circles (last distance offered)</label>
         <div>
+          <p class="label">Sold prices</p>
+          <label class="toggle"><input type="checkbox" id="showprice"> Price level by neighbourhood</label>
+          <div class="price-legend" id="price-legend" hidden>
+            <div class="ramp" aria-hidden="true"><i style="background:var(--price-0)"></i><i style="background:var(--price-1)"></i><i style="background:var(--price-2)"></i><i style="background:var(--price-3)"></i><i style="background:var(--price-4)"></i><i style="background:var(--price-5)"></i></div>
+            <div class="ticks" id="price-ticks"></div>
+            <div class="ends"><span>cheaper</span><span>100 = typical</span><span>pricier</span></div>
+            <p class="hint">Median sale price against the shortlist median for the same type (flat, terraced, semi, detached), last 2 years. Grey outline = too few sales. Zoom in to see each sale.</p>
+          </div>
+        </div>
+        <div>
           <p class="label">Shops and places</p>
           <div class="seg" id="poiseg">
             <button type="button" data-c="up" aria-pressed="true"><i class="ico" data-g="up"></i>Waitrose, M&amp;S, organic</button>
@@ -199,6 +220,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
       <p><strong>Catchment circles</strong> show how far from the school the last child was offered a place in the normal admissions round (Reception for primaries, Year 7 for secondaries). London schools mostly have no fixed boundary, so the distance changes every year.</p>
       <p>Faith schools rank baptised, practising families first, so their non-faith distance says little about your chances with a priest's reference.</p>
       <p><strong>Not shown, because they are boys or girls only:</strong> <span id="excluded"></span>.</p>
+      <p><strong>Sold prices</strong>: HM Land Registry Price Paid Data, standard sales over the last two years in each area's postcode sectors. It does not record bedrooms, so flats (mostly 1–2 bed) and houses (mostly 2–4 bed) are shown separately. The price level compares each neighbourhood (an ONS Census LSOA, about 650 homes) with the shortlist median for the same property type, so 100 is typical and 150 is half as dear again.</p>
       <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
     </section>
   </aside>

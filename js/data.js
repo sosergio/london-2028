@@ -24,6 +24,8 @@ export async function loadData() {
       rightmoveId: String(r.rightmove_id), why: r.why,
       msoas: r.msoas, pop: r.residents, dens: r.people_per_km2, densMin: r.density_min, densMax: r.density_max,
       eth, crimeTotal: r.crime_total, crime,
+      price: { flat: r.price_flat, terraced: r.price_terraced, semi: r.price_semi }, priceLevel: r.price_level,
+      priceSales: r.price_sales, pricePeriod: r.price_period || '',
     };
   });
 
@@ -41,4 +43,36 @@ export async function loadData() {
     areaById: Object.fromEntries(areas.map(a => [a.id, a])),
     geo: { boroughs, tubeLines, stations, wards },
   };
+}
+
+// Sold prices: loaded only when the price layer is first switched on (about 2 MB in all).
+// Bands must match BANDS in .claude/skills/london-area-data/scripts/price_subareas.py.
+export const PRICE_BANDS = [80, 95, 110, 130, 160];
+export const priceBand = level => PRICE_BANDS.filter(b => level >= b).length;
+
+export async function loadPrices() {
+  const [subCsv, subGeo, salesCsv] = await Promise.all([
+    getCSV('data/subareas.csv'), getJSON('data/geo/subareas.json'), getCSV('data/sales.csv'),
+  ]);
+  const byId = Object.fromEntries(subCsv.map(r => [r.id, r]));
+  const subareas = {
+    type: 'FeatureCollection',
+    features: subGeo.features.filter(f => byId[f.properties.id]).map(f => {
+      const r = byId[f.properties.id];
+      return { ...f, properties: { id: r.id, area: r.area_id, name: r.name, sales: r.sales, level: r.level ?? null,
+        band: r.band === null || r.band === '' ? -1 : r.band, flat: r.median_flat, terraced: r.median_terraced,
+        semi: r.median_semi, detached: r.median_detached } };
+    }),
+  };
+  // Each sale is coloured by the same price level, against the shortlist median for its type.
+  const med = arr => { const s = [...arr].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  const types = [...new Set(salesCsv.map(s => s.type))];
+  const base = Object.fromEntries(types.map(t => [t, med(salesCsv.filter(s => s.type === t).map(s => s.price))]));
+  const sales = {
+    type: 'FeatureCollection',
+    features: salesCsv.map(s => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lon, s.lat] },
+      properties: { price: s.price, type: s.type, date: String(s.date), street: s.street || '', pc: s.postcode,
+        band: priceBand(100 * s.price / base[s.type]) } })),
+  };
+  return { subareas, sales };
 }

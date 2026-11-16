@@ -8,7 +8,7 @@
 //
 // The panel talks to this module only through the object returned by createMap().
 
-import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip } from './format.js';
+import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml } from './format.js';
 
 const STYLES = {
   light: 'https://tiles.openfreemap.org/styles/positron',
@@ -60,7 +60,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
-  let view = { shown: [], area: null, cat: true, poiOn: {} };
+  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null };
   let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
@@ -126,6 +126,8 @@ export function createMap(container, DATA, { onReady } = {}) {
     const tube = fc(geo.tubeLines.features.map(f => ({ ...f, properties: { ...f.properties, emph: f.properties.n === 'Northern' || f.properties.n === 'Central' } })));
     const stations = fc(geo.stations.map(([n, lat, lon]) => point([lat, lon], { label: n === 'Moorgate' ? 'Moorgate (office)' : n, big: n === 'Moorgate' })));
 
+    map.addSource('subareas', { type: 'geojson', data: view.prices?.subareas || fc([]) });
+    map.addSource('sales', { type: 'geojson', data: view.prices?.sales || fc([]) });
     map.addSource('boroughs', { type: 'geojson', data: geo.boroughs });
     map.addSource('tube', { type: 'geojson', data: tube });
     map.addSource('wards', { type: 'geojson', data: wards.polys });
@@ -136,7 +138,14 @@ export function createMap(container, DATA, { onReady } = {}) {
     map.addSource('schools', { type: 'geojson', data: schoolFeatures() });
     map.addSource('shops', { type: 'geojson', data: shopFeatures() });
 
-    // Below the basemap labels
+    // Below the basemap labels. Sold-price sub-areas go lowest, so wards and catchments draw over them.
+    const ramp = [0, 1, 2, 3, 4, 5].flatMap(b => [b, css('--price-' + b)]);
+    map.addLayer({ id: 'price-fill', type: 'fill', source: 'subareas', filter: ['>=', ['get', 'band'], 0],
+      paint: { 'fill-color': ['match', ['get', 'band'], ...ramp, 'rgba(0,0,0,0)'],
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 12, 0.62, 16, 0.32] } }, firstLabel);
+    map.addLayer({ id: 'price-line', type: 'line', source: 'subareas',
+      paint: { 'line-color': ['case', ['>=', ['get', 'band'], 0], panel, muted], 'line-width': ['case', ['>=', ['get', 'band'], 0], 0.8, 0.6],
+        'line-opacity': ['case', ['>=', ['get', 'band'], 0], 0.9, 0.6] } }, firstLabel);
     map.addLayer({ id: 'boroughs', type: 'line', source: 'boroughs', paint: { 'line-color': border, 'line-width': 1, 'line-dasharray': [2, 3] } }, firstLabel);
     map.addLayer({ id: 'tube', type: 'line', source: 'tube', layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': ['get', 'c'], 'line-width': ['case', ['get', 'emph'], 2.6, 1.4], 'line-opacity': ['case', ['get', 'emph'], 0.85, 0.35] } }, firstLabel);
@@ -149,6 +158,9 @@ export function createMap(container, DATA, { onReady } = {}) {
     // Above the basemap labels
     map.addLayer({ id: 'stations', type: 'circle', source: 'stations',
       paint: { 'circle-radius': ['case', ['get', 'big'], 5, 2.5], 'circle-color': panel, 'circle-stroke-color': fg, 'circle-stroke-width': ['case', ['get', 'big'], 2, 1] } });
+    map.addLayer({ id: 'sales', type: 'circle', source: 'sales', minzoom: 14,
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 2.5, 17, 5], 'circle-color': ['match', ['get', 'band'], ...ramp, muted],
+        'circle-stroke-color': panel, 'circle-stroke-width': 1 } });
     map.addLayer({ id: 'school-ring', type: 'circle', source: 'schools', filter: ['==', ['get', 'p'], 'A'],
       paint: { 'circle-radius': ['get', 'ring'], 'circle-opacity': 0, 'circle-stroke-color': ['get', 'col'], 'circle-stroke-width': 2 } });
     map.addLayer({ id: 'schools', type: 'circle', source: 'schools',
@@ -184,6 +196,8 @@ export function createMap(container, DATA, { onReady } = {}) {
     map.getSource('catchments').setData(catchmentFeatures());
     map.getSource('schools').setData(schoolFeatures());
     map.getSource('shops').setData(shopFeatures());
+    map.getSource('subareas').setData(view.prices?.subareas || fc([]));
+    map.getSource('sales').setData(view.prices?.sales || fc([]));
   }
 
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
@@ -197,23 +211,35 @@ export function createMap(container, DATA, { onReady } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['schools', 'school-ring', 'shops'].filter(id => map.getLayer(id));
+  const hitLayers = () => ['schools', 'school-ring', 'shops', 'sales', 'price-fill', 'price-line'].filter(id => map.getLayer(id));
+  const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
+  // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
+  function pick(point) {
+    const hits = map.queryRenderedFeatures(point, { layers: hitLayers() });
+    return hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
+      || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line');
+  }
 
   function openSchool(s) { popup.setLngLat(lngLat(s.ll)).setHTML(schoolPopup(s, areaById[s.a])).addTo(map); }
 
   map.on('click', e => {
-    const layers = hitLayers(); if (!layers.length) return;
-    const hits = map.queryRenderedFeatures(e.point, { layers });
-    const school = hits.find(f => f.layer.id !== 'shops'), shop = hits.find(f => f.layer.id === 'shops');
-    if (school) { tip.remove(); openSchool(schoolByI.get(school.properties.i)); }
-    else if (shop) { tip.remove(); const p = shopByI.get(shop.properties.i); popup.setLngLat(lngLat(p.ll)).setHTML(shopPopup(p)).addTo(map); }
+    if (!ready) return;
+    const f = pick(e.point); if (!f) return;
+    tip.remove();
+    if (SCHOOL_LAYERS.has(f.layer.id)) openSchool(schoolByI.get(f.properties.i));
+    else if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); popup.setLngLat(lngLat(p.ll)).setHTML(shopPopup(p)).addTo(map); }
+    else if (f.layer.id === 'sales') popup.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
+    else popup.setLngLat(e.lngLat).setHTML(subareaHtml(f.properties)).addTo(map);
   });
   map.on('mousemove', e => {
-    const layers = hitLayers(); if (!layers.length) return;
-    const hits = map.queryRenderedFeatures(e.point, { layers });
-    map.getCanvas().style.cursor = hits.length ? 'pointer' : '';
-    const shop = hits.length && hits[0].layer.id === 'shops' ? shopByI.get(hits[0].properties.i) : null;
-    if (shop) tip.setLngLat(lngLat(shop.ll)).setHTML(shopTip(shop)).addTo(map); else tip.remove();
+    if (!ready) return;
+    const f = pick(e.point);
+    const sub = f && (f.layer.id === 'price-fill' || f.layer.id === 'price-line');
+    map.getCanvas().style.cursor = f && !sub ? 'pointer' : '';
+    if (!f || SCHOOL_LAYERS.has(f.layer.id)) { tip.remove(); return; }
+    if (f.layer.id === 'shops') { const p = shopByI.get(f.properties.i); tip.setLngLat(lngLat(p.ll)).setHTML(shopTip(p)).addTo(map); }
+    else if (f.layer.id === 'sales') tip.setLngLat(f.geometry.coordinates).setHTML(saleHtml(f.properties)).addTo(map);
+    else tip.setLngLat(e.lngLat).setHTML(subareaHtml(f.properties)).addTo(map);
   });
   map.getCanvas().addEventListener('mouseleave', () => tip.remove());
 
@@ -233,6 +259,7 @@ export function createMap(container, DATA, { onReady } = {}) {
   return {
     render(shown, { area, cat }) { view = { ...view, shown, area, cat }; refresh(); },
     setPoi(poiOn) { view = { ...view, poiOn: { ...poiOn } }; refresh(); },
+    setPrices(prices) { view = { ...view, prices }; if (!prices) tip.remove(); refresh(); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },
     selectArea(id) {
       popup.remove();

@@ -52,3 +52,22 @@ export const POI_ICON = {
 };
 export const poiSvg = (g, colour) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${colour}" color="${colour}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${POI_ICON[g]}</svg>`;
+
+// ---------- sold prices ----------
+export const money = v => v === null || v === undefined || v === '' ? '–'
+  : v >= 995000 ? '£' + (v / 1e6).toFixed(v >= 9.95e6 ? 1 : 2).replace(/\.?0+$/, '') + 'm' : '£' + Math.round(v / 1000) + 'k';
+const TYPE_NAME = { flat: 'Flat', terraced: 'Terraced house', semi: 'Semi-detached', detached: 'Detached' };
+const levelText = l => l === null || l === undefined || l === '' ? 'too few sales for a price level'
+  : `price level <b>${l}</b> <span class="muted">(100 = typical for the shortlist)</span>`;
+
+export function subareaHtml(p) {
+  const meds = ['flat', 'terraced', 'semi', 'detached'].filter(k => p[k] !== null && p[k] !== '' && p[k] !== undefined)
+    .map(k => `${k === 'semi' ? 'semi' : k} ${money(p[k])}`).join(' · ');
+  return `<div class="pop"><h3>${esc(p.name)}</h3><p>${levelText(p.level)}</p>
+    <p class="meta">Median sold: ${meds || '–'}</p><p class="meta">${fmt(p.sales)} sales, last 2 years · HM Land Registry</p></div>`;
+}
+
+export function saleHtml(p) {
+  return `<div class="pop"><h3>${money(p.price)} <span class="muted">· ${TYPE_NAME[p.type] || esc(p.type)}</span></h3>
+    <p>${esc(p.street)}${p.street ? ', ' : ''}${esc(p.pc)}</p><p class="meta">Sold ${esc(p.date)} · HM Land Registry</p></div>`;
+}

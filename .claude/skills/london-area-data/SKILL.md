@@ -19,7 +19,7 @@ All paths below are relative to the repo root. Scripts use only the Python stand
 | 4 | Crime, 12 months within 1 mile | `areas.csv` (`crime_*`) | police.uk API |
 | 5 | Schools: all mixed state primaries and secondaries in the wards, any Ofsted rating | `schools.csv` (+ single-sex ones in `excluded.json`) | `scripts/schools_gias.py` (GIAS + Ofsted), council admissions for catchment |
 | 6 | Shops and places, 5 groups | `shops.csv` | OpenStreetMap (Overpass, Nominatim fallback) |
-| 7 | Sale prices by property type | `areas.csv` (`postcode_sectors`, `price_*`) | Land Registry, `scripts/property_prices.py` |
+| 7 | Sale prices: area medians, every sale, sub-area price levels | `areas.csv` (`postcode_sectors`, `price_*`, `price_level`), `sales.csv`, `subareas.csv`, `geo/subareas.json` | Land Registry: `scripts/property_prices.py --write`, then `scripts/price_subareas.py` |
 | 8 | Rents for 2 and 3 bedrooms | `areas.csv` (`rent_2bed`, `rent_3bed`, `rent_source`) | ONS + asking-rent spot check |
 | 9 | Estimates: rent band, commute, time to family, lifestyle, green | `areas.csv` (`rent`, `commute`, `family`, `lifestyle`, `green`) | judgement, written as ranges |
 
@@ -57,6 +57,8 @@ python3 .claude/skills/london-area-data/scripts/property_prices.py ce fg --write
 ```
 
 The script works out the area's postcode sectors from its ward outlines (or uses `postcode_sectors` if already filled), then takes median standard-sale prices for the last 24 months. Show the user the preview first; if a sector clearly belongs to the next neighbourhood, rerun with `--sectors "N8 8,N8 9"` and save. Medians from fewer than 10 sales are flagged as rough.
+
+`--write` also saves every sale (street and postcode, no house numbers) to `data/sales.csv`. Then run `scripts/price_subareas.py` to rebuild the sub-area dataset behind the map's "Price level by neighbourhood" layer: one row per ONS LSOA (about 650 homes) with medians by type and a mix-adjusted **price level** (100 = typical for the shortlist), plus `price_level` per area. Always rerun it after adding or refreshing an area, because the level is relative to all areas' sales.
 
 Rents: see `references/sources.md`, "Rents". There is no free official source at neighbourhood level, so record where each figure came from in `rent_source`.
 
