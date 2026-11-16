@@ -16,7 +16,9 @@ Steps:
 3. Medians by type: flat (flat-maisonette), terraced, semi (semi-detached). Detached is printed but not
    stored. Price Paid has no bedroom count: treat flats as roughly 1-2 bed and terraced/semi as 2-4 bed.
 
-Writes columns: postcode_sectors, price_flat, price_terraced, price_semi, price_sales, price_period.
+With --write: columns postcode_sectors, price_flat, price_terraced, price_semi, price_sales, price_period in
+data/areas.csv, and every sale (date, price, type, street, postcode, lat/lon of the postcode; no house
+numbers) in data/sales.csv, which drives the sold-price heat map. Rows for other areas are kept.
 Standard library only.
 """
 import argparse, csv, io, json, statistics, sys, time, urllib.parse, urllib.request
@@ -89,26 +91,77 @@ def districts_for(sectors):
     return sorted(out)
 
 
+_district_rows = {}
+
+
+def district_rows(district, since):
+    """All standard sales in a council district since a date (cached: neighbouring areas share districts)."""
+    key = (district, since)
+    if key not in _district_rows:
+        q = f"""PREFIX lrppi: <http://landregistry.data.gov.uk/def/ppi/>
+PREFIX lrcommon: <http://landregistry.data.gov.uk/def/common/>
+SELECT ?pc ?price ?type ?date ?street WHERE {{
+  ?addr lrcommon:district "{district}" ; lrcommon:postcode ?pc .
+  OPTIONAL {{ ?addr lrcommon:street ?street }}
+  ?tx lrppi:propertyAddress ?addr ; lrppi:pricePaid ?price ; lrppi:transactionDate ?date ; lrppi:propertyType ?type ;
+      lrppi:transactionCategory lrppi:standardPricePaidTransaction .
+  FILTER(?date >= "{since}"^^<http://www.w3.org/2001/XMLSchema#date>)
+}}"""
+        text = http(SPARQL, urllib.parse.urlencode({"query": q}).encode(), {"Accept": "text/csv"})
+        _district_rows[key] = list(csv.DictReader(io.StringIO(text)))
+    return _district_rows[key]
+
+
 def sales(sectors, since):
     # Filtering on postcode prefixes across the whole register times out (503), so query whole
     # council districts (about 1-2 s each) and keep the sectors' sales in Python.
     want = tuple(sectors)  # "N8 9" matches "N8 9RX"; the space after the outcode keeps N1 apart from N10
     out = []
     for district in districts_for(sectors):
-        q = f"""PREFIX lrppi: <http://landregistry.data.gov.uk/def/ppi/>
-PREFIX lrcommon: <http://landregistry.data.gov.uk/def/common/>
-SELECT ?pc ?price ?type WHERE {{
-  ?addr lrcommon:district "{district}" ; lrcommon:postcode ?pc .
-  ?tx lrppi:propertyAddress ?addr ; lrppi:pricePaid ?price ; lrppi:transactionDate ?date ; lrppi:propertyType ?type ;
-      lrppi:transactionCategory lrppi:standardPricePaidTransaction .
-  FILTER(?date >= "{since}"^^<http://www.w3.org/2001/XMLSchema#date>)
-}}"""
-        text = http(SPARQL, urllib.parse.urlencode({"query": q}).encode(), {"Accept": "text/csv"})
-        for row in csv.DictReader(io.StringIO(text)):
+        for row in district_rows(district, since):
             t = TYPES.get(row["type"].rsplit("/", 1)[-1])
             if t and row["pc"].startswith(want):
-                out.append((t, int(float(row["price"]))))
+                # Street and postcode only: no house numbers, so the public file does not list individual homes.
+                out.append({"type": t, "price": int(float(row["price"])), "pc": row["pc"], "date": row["date"][:10],
+                            "street": (row.get("street") or "").title()})
     return out
+
+
+def locate(postcodes):
+    """(lat, lon, LSOA 2021 code) per postcode via postcodes.io (100 per request)."""
+    out, pcs = {}, sorted(set(postcodes))
+    for i in range(0, len(pcs), 100):
+        body = json.dumps({"postcodes": pcs[i:i + 100]}).encode()
+        for item in json.loads(http("https://api.postcodes.io/postcodes", body, {"Content-Type": "application/json"}))["result"]:
+            if item["result"]:
+                r = item["result"]
+                out[item["query"]] = (round(r["latitude"], 5), round(r["longitude"], 5), r["codes"].get("lsoa21") or r["codes"].get("lsoa") or "")
+    return out
+
+
+SALES_COLS = ["area_id", "date", "price", "type", "street", "postcode", "lat", "lon", "lsoa"]
+
+
+def write_sales(by_area):
+    """Replace these areas' rows in data/sales.csv (other areas are kept)."""
+    path = DATA / "sales.csv"
+    keep = []
+    if path.exists():
+        with open(path, newline="", encoding="utf-8") as f:
+            keep = [r for r in csv.DictReader(f) if r["area_id"] not in by_area]
+    where = locate(s["pc"] for tx in by_area.values() for s in tx)
+    rows = []
+    for aid, tx in by_area.items():
+        for s in tx:
+            if s["pc"] in where:
+                lat, lon, lsoa = where[s["pc"]]
+                rows.append({"area_id": aid, "date": s["date"], "price": s["price"], "type": s["type"], "street": s["street"],
+                             "postcode": s["pc"], "lat": lat, "lon": lon, "lsoa": lsoa})
+    rows = keep + sorted(rows, key=lambda r: (r["area_id"], r["date"]))
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=SALES_COLS, lineterminator="\n")
+        w.writeheader(); w.writerows(rows)
+    print(f"Wrote {len(rows)} sales to {path.relative_to(Path.cwd())}")
 
 
 def months_ago(n):
@@ -132,6 +185,7 @@ def main():
     byid = {r["id"]: r for r in rows}
     since = months_ago(args.months)
     period = f"{since:%b %Y}–{date.today():%b %Y}"
+    all_sales = {}
 
     for aid in args.areas:
         r = byid.get(aid)
@@ -145,7 +199,8 @@ def main():
             sectors, n = derive_sectors(aid)
             note = f"derived from wards ({n} sample points)"
         tx = sales(sectors, since)
-        med = {t: (int(statistics.median(p)), len(p)) for t in TYPES.values() if (p := [v for k, v in tx if k == t])}
+        all_sales[aid] = tx
+        med = {t: (int(statistics.median(p)), len(p)) for t in TYPES.values() if (p := [s["price"] for s in tx if s["type"] == t])}
         print(f"\n{aid} {r['name']}  sectors {', '.join(sectors)} ({note}), {period}, {len(tx)} sales")
         for t in TYPES.values():
             if t in med:
@@ -170,6 +225,7 @@ def main():
             for r in rows:
                 w.writerow({k: r.get(k, "") for k in fields})
         print(f"\nWrote {', '.join(PRICE_COLS)} to {path.relative_to(Path.cwd())}")
+        write_sales(all_sales)
 
 
 if __name__ == "__main__":
