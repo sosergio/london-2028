@@ -104,10 +104,11 @@ export const CRIME_MULT = [0.5, 0.75, 1, 1.5, 2.5];
 export async function loadCrimeSubs() {
   const [crimeCsv, subCsv] = await Promise.all([getCSV('data/crime_subareas.csv'), getCSV('data/subareas.csv')]);
   const names = Object.fromEntries(subCsv.map(r => [r.id, r.name]));
+  const levels = Object.fromEntries(subCsv.map(r => [r.id, r.level === '' ? null : r.level]));
   const rows = crimeCsv.filter(r => r.residents > 0).map(r => {
     const rate = {};
     for (const k of Object.keys(CRIME_KINDS)) rate[k] = 1000 * kindCount(r, k) / r.residents;
-    return { ...r, name: names[r.id] || r.id, top: r.top_streets || '', rate };
+    return { ...r, name: names[r.id] || r.id, top: r.top_streets || '', rate, level: levels[r.id] ?? null };
   });
   const med = arr => { const s = [...arr].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
   const typical = Object.fromEntries(Object.keys(CRIME_KINDS).map(k => [k, med(rows.map(r => r.rate[k]))]));
@@ -115,9 +116,13 @@ export async function loadCrimeSubs() {
   return { rows, typical, cuts, band: (k, v) => cuts[k].filter(c => v >= c).length };
 }
 
+// Neighbourhood outlines, fetched once and shared by the crime and sweet-spot layers.
+let shapes = null;
+export const subareaShapes = () => (shapes ||= getJSON('data/geo/subareas.json'));
+
 // The map layer: outlines (shared with the price layer) and the "on or near" points. Loaded on first use.
 export async function loadCrime(subs) {
-  const [geo, pts] = await Promise.all([getJSON('data/geo/subareas.json'), getCSV('data/crime_points.csv')]);
+  const [geo, pts] = await Promise.all([subareaShapes(), getCSV('data/crime_points.csv')]);
   const byId = Object.fromEntries(subs.rows.map(r => [r.id, r]));
   const subareas = geo.features.filter(f => byId[f.properties.id]).map(f => {
     const r = byId[f.properties.id];

@@ -60,7 +60,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
-  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, crime: null, lines: true, guides: true };
+  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, crime: null, sweet: null, lines: true, guides: true };
   let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
@@ -148,6 +148,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     const crime = crimeFeatures();
     map.addSource('crime-subs', { type: 'geojson', data: crime.subs });
     map.addSource('crime-points', { type: 'geojson', data: crime.points });
+    map.addSource('sweet', { type: 'geojson', data: fc(view.sweet?.features || []) });
     map.addSource('boroughs', { type: 'geojson', data: geo.boroughs });
     map.addSource('tube', { type: 'geojson', data: tube });
     map.addSource('wards', { type: 'geojson', data: wards.polys });
@@ -172,6 +173,13 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
       paint: { 'fill-color': ['match', ['get', 'band'], ...cramp, 'rgba(0,0,0,0)'],
         'fill-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.55, 13, 0.42, 15, 0.2] } }, firstLabel);
     map.addLayer({ id: 'crime-line', type: 'line', source: 'crime-subs', paint: { 'line-color': panel, 'line-width': 0.8, 'line-opacity': 0.9 } }, firstLabel);
+    // Sweet spots: passing neighbourhoods in the accent colour with a firm outline; the rest only a faint wash.
+    map.addLayer({ id: 'sweet-fill', type: 'fill', source: 'sweet',
+      paint: { 'fill-color': ['case', ['get', 'pass'], accent, muted],
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 11, ['case', ['get', 'pass'], 0.55, 0.08], 15, ['case', ['get', 'pass'], 0.28, 0.06]] } }, firstLabel);
+    map.addLayer({ id: 'sweet-line', type: 'line', source: 'sweet',
+      paint: { 'line-color': ['case', ['get', 'pass'], accent, muted], 'line-width': ['case', ['get', 'pass'], 1.6, 0.5],
+        'line-opacity': ['case', ['get', 'pass'], 1, 0.5] } }, firstLabel);
     map.addLayer({ id: 'boroughs', type: 'line', source: 'boroughs', paint: { 'line-color': border, 'line-width': 1, 'line-dasharray': [2, 3] } }, firstLabel);
     map.addLayer({ id: 'tube', type: 'line', source: 'tube', layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': ['get', 'c'],
@@ -252,6 +260,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     const crime = crimeFeatures();
     map.getSource('crime-subs').setData(crime.subs);
     map.getSource('crime-points').setData(crime.points);
+    map.getSource('sweet').setData(fc(view.sweet?.features || []));
   }
 
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
@@ -267,7 +276,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line']
+  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line']
     .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
@@ -278,15 +287,17 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     return hits.find(f => f.layer.id === 'guide-dot') || hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
       || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'crime-points') || hits.find(f => f.layer.id === 'tube')
       || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line')
-      || hits.find(f => f.layer.id === 'crime-fill' || f.layer.id === 'crime-line');
+      || hits.find(f => f.layer.id === 'crime-fill' || f.layer.id === 'crime-line')
+      || hits.find(f => f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line');
   }
 
-  const CRIME_SUB = new Set(['crime-fill', 'crime-line']), SUB = new Set(['price-fill', 'price-line', 'crime-fill', 'crime-line']);
+  const CRIME_SUB = new Set(['crime-fill', 'crime-line']), SUB = new Set(['price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line']);
   // Popup or hover text for anything that is not a school, shop or guide dot.
   function otherHtml(f) {
     const c = view.crime;
     if (f.layer.id === 'sales') return saleHtml(f.properties);
     if (f.layer.id === 'crime-points') return crimePointHtml(f.properties);
+    if (f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line') return view.sweet.html(f.properties);
     if (CRIME_SUB.has(f.layer.id)) return crimeSubHtml(f.properties, c.kind, c.typical[c.kind], c.period);
     return subareaHtml(f.properties);
   }
@@ -350,6 +361,8 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     setPrices(prices) { view = { ...view, prices }; if (!prices) tip.remove(); refresh(); },
     // crime: null, or { data: loadCrime() result, kind, typical, period }
     setCrime(crime) { view = { ...view, crime }; tip.remove(); refresh(); },
+    // sweet: null, or { features (with properties.pass), html(properties) for hover and click }
+    setSweet(sweet) { view = { ...view, sweet }; if (!sweet) tip.remove(); if (ready) map.getSource('sweet').setData(fc(sweet?.features || [])); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },
     selectArea(id) {
       popup.remove();

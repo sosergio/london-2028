@@ -3,6 +3,7 @@ import { createMap } from './map.js';
 import { createPanel } from './panel.js';
 import { createCompare } from './compare.js';
 import { createGuide } from './guide.js';
+import { createSweet } from './sweet.js';
 
 try {
   const DATA = await loadData();
@@ -16,6 +17,7 @@ try {
     if (b && !b.classList.contains('guide-btn')) guide.open(b.dataset.guide, b.dataset.item);
   });
   createCompare(DATA, { onPick: id => panel.pickArea(id) });
+  createSweet(DATA, map, { onPickArea: id => panel.pickArea(id) });
 } catch (err) {
   console.error(err);
   const p = document.createElement('p');

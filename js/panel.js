@@ -152,7 +152,7 @@ export function createPanel(DATA, map, { openGuide } = {}) {
   // Prices and crime both colour the neighbourhoods, so only one is shown at a time.
   priceEl.addEventListener('change', () => {
     state.price = priceEl.checked;
-    if (state.price && state.crime) { state.crime = false; crimeEl.checked = false; applyCrime(); }
+    if (state.price) document.dispatchEvent(new CustomEvent('nbhd-layer', { detail: 'price' }));
     saveState(); applyPrices();
   });
 
@@ -184,10 +184,16 @@ export function createPanel(DATA, map, { openGuide } = {}) {
   crimeEl.checked = state.crime;
   crimeEl.addEventListener('change', () => {
     state.crime = crimeEl.checked;
-    if (state.crime && state.price) { state.price = false; priceEl.checked = false; applyPrices(); }
+    if (state.crime) document.dispatchEvent(new CustomEvent('nbhd-layer', { detail: 'crime' }));
     saveState(); applyCrime();
   });
   crimeSeg.forEach(b => b.addEventListener('click', () => { state.crimeKind = b.dataset.k; saveState(); applyCrime(); }));
+  // Prices, crime and sweet spots all shade the neighbourhoods, so switching one on turns the others off.
+  document.addEventListener('nbhd-layer', e => {
+    if (e.detail !== 'price' && state.price) { state.price = false; priceEl.checked = false; applyPrices(); }
+    if (e.detail !== 'crime' && state.crime) { state.crime = false; crimeEl.checked = false; applyCrime(); }
+    saveState();
+  });
   if (state.price && state.crime) state.crime = false;
   if (state.price) applyPrices();
   if (state.crime) applyCrime(); else if (crimeSubs) crimeLegendText();

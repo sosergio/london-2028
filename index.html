@@ -83,6 +83,20 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .muted{color:var(--muted);font-weight:400}
 .line-key{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:2px}
 .hint{margin:6px 0 0;font-size:11px;color:var(--muted)}
+.sweet-intro{margin:0}
+.sliders{display:grid;gap:8px}
+.slider{display:grid;gap:2px;font-size:12px}
+.slider-head{display:flex;justify-content:space-between;gap:8px}
+.slider-head b{font-variant-numeric:tabular-nums}
+.slider input{width:100%;margin:2px 0;accent-color:var(--accent)}
+.slider .hint{margin:0}
+.sweet-result{margin:0;font-size:12px;line-height:1.55}
+.sweet-result .linkbtn{font-size:12px}
+.checks{list-style:none;margin:6px 0;padding:0;display:grid;gap:3px}
+.checks li{font-size:12px}
+.checks li>span:first-child{font-weight:700;display:inline-block;width:1em}
+.checks li.y>span:first-child{color:var(--of-o)}
+.checks li.n>span:first-child{color:var(--poi-disc)}
 .ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;margin:-2px 6px -2px -4px;vertical-align:-4px}
 .ico svg{width:11px;height:11px}
 .seg button[aria-pressed="false"] .ico,.seg button[aria-pressed="false"] .dot{opacity:.55}
@@ -121,6 +135,8 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 .areas-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .compare-btn{margin-top:10px;font:inherit;font-weight:600;font-size:13px;color:var(--panel);background:var(--accent);border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
 .compare-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.head-actions .compare-btn{margin-top:0}
+.compare-btn.alt{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 #compare{width:min(1280px, calc(100vw - 32px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);box-shadow:0 10px 40px rgb(0 0 0 / .3);display:none;flex-direction:column}
 #compare[open]{display:flex}
 #compare::backdrop{background:rgb(0 0 0 / .35)}
@@ -280,6 +296,16 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
           <div class="fhead"><span class="label">Transport</span><label class="switch"><input type="checkbox" id="showlines" checked aria-label="Show Tube, Overground, DLR and Elizabeth line"><span aria-hidden="true"></span></label></div>
           <div class="fbody"><p class="hint">Tube, Overground, DLR and Elizabeth line, with stations. Hover a line for its name. Moorgate is always shown.</p></div>
         </section>
+        <section class="fsec" id="sweet-sec">
+          <div class="fhead"><span class="label">Sweet spots</span><label class="switch"><input type="checkbox" id="showsweet" aria-label="Show sweet-spot neighbourhoods"><span aria-hidden="true"></span></label></div>
+          <div class="fbody" id="sweet-body" hidden>
+            <p class="hint sweet-intro">Neighbourhoods that pass every test at once: affordable, safe and close to good schools. Hover any neighbourhood to see which tests it passes.</p>
+            <div class="sliders" id="sweet-sliders"></div>
+            <label class="toggle"><input type="checkbox" id="sweet-faith" checked> Count faith schools</label>
+            <p class="sweet-result" id="sweet-result" aria-live="polite"></p>
+            <p class="hint">Good = Ofsted Good or Outstanding. Distances are straight lines from the middle of each neighbourhood, not catchments. <button type="button" class="linkbtn" id="sweet-reset">Reset</button></p>
+          </div>
+        </section>
         <section class="fsec">
           <div class="fhead"><span class="label">Sold prices</span><label class="switch"><input type="checkbox" id="showprice" aria-label="Show price level by neighbourhood"><span aria-hidden="true"></span></label></div>
           <div class="fbody" id="price-legend" hidden>
@@ -308,7 +334,8 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
     <header>
       <h1>London School Map</h1>
       <p class="lede">Shortlisted areas and all their mixed state schools for September 2028. Pin size shows the number of pupils; zoom in to see school names.</p>
-      <button type="button" class="compare-btn" id="open-compare">Compare areas side by side</button>
+      <div class="head-actions"><button type="button" class="compare-btn" id="open-compare">Compare areas side by side</button>
+        <button type="button" class="compare-btn alt" id="open-sweet">Find sweet spots</button></div>
     </header>
 
     <section>
@@ -328,6 +355,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
       <p>Faith schools rank baptised, practising families first, so their non-faith distance says little about your chances with a priest's reference.</p>
       <p><strong>Not shown, because they are boys or girls only:</strong> <span id="excluded"></span>.</p>
       <p><strong>Sold prices</strong>: HM Land Registry Price Paid Data, standard sales over the last two years in each area's postcode sectors. It does not record bedrooms, so flats (mostly 1–2 bed) and houses (mostly 2–4 bed) are shown separately. The price level compares each neighbourhood (an ONS Census LSOA, about 650 homes) with the shortlist median for the same property type, so 100 is typical and 150 is half as dear again.</p>
+      <p><strong>Sweet spots</strong>: a neighbourhood passes if its price level, its crime rate and the straight-line distance from its middle to the nearest Good or Outstanding primary and secondary on this map are all within the sliders. Being near a school is not the same as being in its catchment, and a low price level can mean smaller or ex-council homes rather than a bargain, so treat it as a shortlist of streets to look at, not an answer.</p>
       <p><strong>Crime</strong>: police.uk street-level crime for 12 months. The card's 1-mile count is the same radius everywhere, so it is not per person; the rates per 1,000 residents count every crime inside the area's neighbourhoods (the same Census LSOAs as the prices) and divide by their 2021 population. police.uk moves each crime to the nearest of a fixed set of points (usually the middle of a street), so a point means "on or near this street", never an address. Fraud and some sensitive offences are not published. Shoplifting is left out of "all", as it piles onto shopping streets.</p>
       <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
     </section>
@@ -359,7 +387,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 // on each deploy), via an import map for the modules that main.js imports.
 (function () {
   const v = Date.parse(document.lastModified) || Date.now();
-  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare', 'guide'];
+  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare', 'guide', 'sweet'];
   const map = document.createElement('script');
   map.type = 'importmap';
   map.textContent = JSON.stringify({ imports: Object.fromEntries(mods.map(m => [new URL('js/' + m + '.js', location.href).href, './js/' + m + '.js?v=' + v])) });

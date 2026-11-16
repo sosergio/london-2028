@@ -22,7 +22,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
 ### Features to keep (all present in the prototype)
 
 - **Side panel and map:** the map fills the left and a scrolling side panel sits on the right. On phones they stack, map on top.
-- **Filters float on the map** in a collapsible box (top right), folded by default on phones. It has sections for Schools, Shops and places, Highlights, Transport, Sold prices and Crime, each with an on/off switch that hides the whole group on the map and folds the section while keeping the choices inside it.
+- **Filters float on the map** in a collapsible box (top right), folded by default on phones. It has sections for Schools, Shops and places, Highlights, Transport, Sweet spots, Sold prices and Crime, each with an on/off switch that hides the whole group on the map and folds the section while keeping the choices inside it.
 - **Filters:**
   - Phase: All, Primary or Secondary. All-through schools always show.
   - Faith: All, Catholic, CofE or None.
@@ -68,6 +68,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - Default on: `up` and `bake`.
   - Popup: name, group, type, and Google Maps / Street View links.
 - **Sold prices layer** (off by default, remembered): neighbourhoods (ONS LSOAs) shaded by a mix-adjusted price level, 100 = typical for the shortlist, in a one-hue plum ramp with a legend; hover or click for medians by type; each sale shows as a dot from zoom 14. Area cards show median flat / terraced / semi prices and the area's price level.
+- **Sweet spots** (button "Find sweet spots" under the intro, or the filter section; off by default, sliders remembered): neighbourhoods that pass four tests at once, each on a slider: price level up to 100, crime up to 75 per 1,000 residents (shoplifting left out), a Good or Outstanding primary within 0.6 km and secondary within 1.5 km (straight line from the middle of the neighbourhood), with "Count faith schools". Passing neighbourhoods are filled in the accent colour; hover any neighbourhood for ✓/✗ on each test with the nearest schools. The section lists how many pass in each area (click to select the area). Only one of Sweet spots, Sold prices and Crime is on at a time. Code in `js/sweet.js`.
 - **Crime layer** (off by default, remembered; switching it on turns the price layer off, as both shade the neighbourhoods): neighbourhoods shaded by crimes a year per 1,000 residents, for All (except shoplifting), Violence (incl. robbery), Burglary or Anti-social behaviour, in a one-hue red ramp whose bands are multiples (½, ¾, 1, 1.5, 2.5) of the typical shortlist neighbourhood; hover for the breakdown and the streets with most reports; from zoom 14 the police.uk "on or near" points show as dots sized by count. Code in `js/map.js` (`crime-*` layers) and `js/panel.js`.
 - **Context layers:**
   - Tube, Overground, DLR and Elizabeth lines in their colours, with the Northern and Central lines emphasised (Northern drawn light grey in dark mode). Hover a line for its name.
