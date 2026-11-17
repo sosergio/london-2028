@@ -9,7 +9,7 @@ import { esc, fmt } from './format.js';
 export const SWEET_DEFAULT = { price: 100, crime: 75, pri: 0.6, sec: 1.5, faith: true };
 const SLIDERS = [
   { key: 'price', label: 'Price level up to', min: 60, max: 160, step: 5, show: v => `${v}`, note: '100 = typical for the shortlist' },
-  { key: 'crime', label: 'Crime up to', min: 20, max: 200, step: 5, show: v => `${v}`, note: 'a year per 1,000 residents, no shoplifting; typical 73' },
+  { key: 'crime', label: 'Crime up to', min: 20, max: 200, step: 5, show: v => `${v}`, note: 'a year per 1,000 residents, no shoplifting; typical {typ}' },
   { key: 'pri', label: 'Good primary within', min: 0.2, max: 2, step: 0.1, show: v => `${(+v).toFixed(1)} km` },
   { key: 'sec', label: 'Good secondary within', min: 0.5, max: 4, step: 0.25, show: v => `${(+v).toFixed(2).replace(/0$/, '')} km` },
 ];
@@ -33,7 +33,7 @@ export function createSweet(DATA, map, { onPickArea }) {
   document.getElementById('sweet-sliders').innerHTML = SLIDERS.map(s => `
     <label class="slider"><span class="slider-head"><span>${s.label}</span><b id="sweet-v-${s.key}"></b></span>
       <input type="range" data-k="${s.key}" min="${s.min}" max="${s.max}" step="${s.step}" value="${crit[s.key]}" aria-label="${s.label}">
-      ${s.note ? `<span class="hint">${s.note}</span>` : ''}</label>`).join('');
+      ${s.note ? `<span class="hint">${s.note.replace('{typ}', Math.round(crimeSubs.typical.all))}</span>` : ''}</label>`).join('');
   const sliders = [...document.querySelectorAll('#sweet-sliders input')];
   const showValues = () => SLIDERS.forEach(s => { document.getElementById('sweet-v-' + s.key).textContent = s.show(crit[s.key]); });
   faithEl.checked = crit.faith;
