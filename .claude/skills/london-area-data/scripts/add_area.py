@@ -70,7 +70,8 @@ def ring_area(ring):
 def fetch_wards(wards):
     out = []
     for lad, name in wards:
-        q = {"where": f"LAD25NM='{lad}' AND WD25NM='{name}'", "outFields": "WD25NM", "outSR": 4326, "f": "geojson"}
+        sql = lambda v: v.replace("'", "''")      # St Ann's, King's Park
+        q = {"where": f"LAD25NM='{sql(lad)}' AND WD25NM='{sql(name)}'", "outFields": "WD25NM", "outSR": 4326, "f": "geojson"}
         fs = get(WARDS_URL + "?" + urllib.parse.urlencode(q))["features"]
         if not fs:
             sys.exit(f"ward not found: {lad} / {name}")

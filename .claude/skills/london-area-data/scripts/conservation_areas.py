@@ -108,7 +108,11 @@ def refresh(cache):
     keep = [k for k in keep if k["properties"]["name"]
             or not any(c == k["properties"]["council"] and in_geom(centre(k), polys) for polys, c in named)]
     for k in keep:
-        k["properties"]["name"] = k["properties"]["name"] or "Unnamed conservation area"
+        p = k["properties"]
+        council = p["council"].replace("London Borough of ", "").replace("Royal Borough of ", "")
+        if p["name"].isdigit():                     # Haringey numbers some areas: "20"
+            p["name"] = f"{council} conservation area {p['name']}"
+        p["name"] = p["name"] or "Unnamed conservation area"
     keep.sort(key=lambda k: (k["properties"]["council"], k["properties"]["name"]))
     REGION_FILE.write_text(json.dumps({"type": "FeatureCollection", "source": NATIONAL, "features": keep}, separators=(",", ":")))
     print(f"wrote {REGION_FILE}: {len(keep)} conservation areas")

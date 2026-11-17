@@ -5,6 +5,7 @@ Usage (from the repo root):
     python3 .claude/skills/london-area-data/scripts/schools_gias.py GIAS.csv OFSTED.csv           # report
     python3 .claude/skills/london-area-data/scripts/schools_gias.py GIAS.csv OFSTED.csv --write   # append
     python3 .claude/skills/london-area-data/scripts/schools_gias.py GIAS.csv OFSTED.csv ce fg      # some areas
+    ... --nearby cl:134693,135835   # also add schools just outside an area's wards (say, its nearest secondaries)
 
 Inputs (download first, see references/sources.md "Schools"):
     GIAS.csv    DfE "all establishment data" (edubasealldataYYYYMMDD.csv, latin-1)
@@ -145,7 +146,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("gias"); ap.add_argument("ofsted"); ap.add_argument("areas", nargs="*")
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--nearby", action="append", default=[], metavar="AREA:URN,URN",
+                    help="also add these schools to AREA although they are outside its wards (e.g. the nearest secondaries)")
     a = ap.parse_args()
+    nearby = {u: aid for spec in a.nearby for aid, urns in [spec.split(":", 1)] for u in urns.split(",") if u}
 
     wards = json.loads((DATA / "geo" / "wards.json").read_text(encoding="utf-8"))
     with open(DATA / "schools.csv", newline="", encoding="utf-8") as f:
@@ -188,7 +192,7 @@ def main():
         ll = where.get(r["Postcode"])
         if not ll:
             continue
-        aid = next((k for k in areas if any(inside(ll, ring) for _, ring in wards.get(k, []))), None)
+        aid = nearby.get(r["URN"]) or next((k for k in areas if any(inside(ll, ring) for _, ring in wards.get(k, []))), None)
         if not aid:
             continue
         r["_ll"] = ll
@@ -214,7 +218,8 @@ def main():
                 "lat": round(r["_ll"][0], 6), "lon": round(r["_ll"][1], 6), "catchment_miles": "",
                 "catchment_text": "Not checked yet: see the council's admissions pages",
                 "source_url": f"https://www.get-information-schools.service.gov.uk/Establishments/Establishment/Details/{r['URN']}",
-                "note": fnote, "urn": r["URN"],
+                "note": "; ".join(x for x in [fnote, "Just outside the area's wards" if r["URN"] in nearby else ""] if x),
+                "urn": r["URN"],
             })
         for r in sx:
             label = r["EstablishmentName"] + ("" if re.search(r"boys|girls", r["EstablishmentName"], re.I) else f" ({r['Gender (name)'].lower()})")

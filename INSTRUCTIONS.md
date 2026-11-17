@@ -88,8 +88,8 @@ All CSV files have a header row and are UTF-8. Ids must match across files.
 
 | File | Rows | Key columns |
 |---|---|---|
-| `data/areas.csv` | 20 | `id` (ef, ro, ce, bl, fb, wa, wt, be, bh, ed, wk, sa, fg, ly, hp, pg, ap, sn, gp, bw), `rank`, `name`, `sub`, `lat`, `lon`, `rent`, `commute`, `family`, `lifestyle`, `green`, `rightmove_id` (e.g. `REGION^1474`), `why`, `msoas`, `residents`, `people_per_km2`, `density_min`, `density_max`, `pct_whiteBritish`…`pct_other`, `crime_total`, `crime_<category>` |
-| `data/schools.csv` | ~210 | `area_id`, `name`, `short_name`, `phase` (P / S / A), `faith` (Catholic / CofE / None), `ages`, `pupils`, `ofsted`, `ofsted_colour` (O / G / W / N), `ofsted_detail`, `ofsted_url`, `lat`, `lon`, `catchment_miles` (blank if unknown), `catchment_text`, `source_url`, `note` |
+| `data/areas.csv` | 24 | `id` (ef, ro, ce, bl, fb, wa, wt, be, bh, ed, wk, sa, fg, ly, hp, pg, ap, sn, gp, bw, hg, le, cl, bo), `rank`, `name`, `sub`, `lat`, `lon`, `rent`, `commute`, `family`, `lifestyle`, `green`, `rightmove_id` (e.g. `REGION^1474`), `why`, `msoas`, `residents`, `people_per_km2`, `density_min`, `density_max`, `pct_whiteBritish`…`pct_other`, `crime_total`, `crime_<category>` |
+| `data/schools.csv` | ~242 | `area_id`, `name`, `short_name`, `phase` (P / S / A), `faith` (Catholic / CofE / None), `ages`, `pupils`, `ofsted`, `ofsted_colour` (O / G / W / N), `ofsted_detail`, `ofsted_url`, `lat`, `lon`, `catchment_miles` (blank if unknown), `catchment_text`, `source_url`, `note` |
 | `data/shops.csv` | ~380 | `area_id`, `name`, `group` (up / bake / cult / gym / disc), `type` (OSM tag), `lat`, `lon` |
 | `data/excluded.json` | | `{ "excluded": [names of single-sex schools left out] }` |
 | `data/sales.csv` | ~14,000 | `area_id`, `date`, `price`, `type` (flat / terraced / semi / detached), `street`, `postcode`, `lat`, `lon`, `lsoa` (HM Land Registry, standard sales, 2 years; no house numbers) |
