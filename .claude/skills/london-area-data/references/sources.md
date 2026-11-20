@@ -37,6 +37,11 @@ Contents: 1 Wards · 2 Census · 3 Crime · 4 Schools · 5 Shops · 6 Sale price
 - `location.street.name` is "On or near X"; the point is the centre of an anonymised "snap point", not the crime's address. No postcodes, no LSOA in the API (the bulk downloads have LSOA, but point-in-polygon against our own outlines is simpler).
 - Residents per LSOA: Nomis TS001 `NM_2021_1`, `geography=<LSOA codes, up to ~100 per call>&c2021_restype_3=0&measures=20100`.
 
+### New developments → `developments.csv`, `geo/developments.json`
+
+- **GLA Planning London Datahub**: `POST https://planningdata.london.gov.uk/api-guest/applications/_search` with header `X-API-AllowRequest: be2rmRnt&` (the public guest key the Datahub's own site uses). Elasticsearch: filter with `geo_bounding_box` on `centroid`, `range` on `application_details.residential_details.total_no_proposed_residential_units`, and `terms` on **`status.raw`** (plain `status` matches nothing). Statuses: Approved, Commenced, Completed, Superseded, Lapsed, Refused. Useful fields: `site_name`, `street_name`, `postcode`, `lpa_app_no`, `lpa_name`, `actual_commencement_date` / `actual_completion_date` (dd/mm/yyyy), `wgs84_polygon`, and `residential_details` (`total_no_proposed_residential_units_<tenure>`, `residential_units[].no_bedrooms`). Variations re-submit the same site: merge applications within ~60 m. Some old schemes are "Commenced" forever: ignore starts before 2020. London only.
+- **Land Registry new builds**: the Price Paid SPARQL query with `lrppi:newBuild true`, per council district; `lrcommon:paon` holds the building name ("POCHARD HEIGHTS, 5"). Sales under ~£250k are usually shared-ownership shares.
+
 ### Conservation areas → `geo/conservation_region.json`, `geo/conservation.json`, `conservation_*`
 
 - National file: `https://files.planning.data.gov.uk/dataset/conservation-area.geojson` (~60 MB, ~9,800 areas, rebuilt daily). Properties: `name`, `reference`, `organisation-entity`, `start-date` (designation date, often blank), `documentation-url` (appraisal PDF or council page, ~75% filled). `[lon, lat]`.

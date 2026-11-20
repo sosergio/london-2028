@@ -21,6 +21,7 @@ All paths below are relative to the repo root. Scripts use only the Python stand
 | 6 | Shops and places, 5 groups | `shops.csv` | OpenStreetMap (Overpass, Nominatim fallback) |
 | 7 | Sale prices: area medians, every sale, sub-area price levels | `areas.csv` (`postcode_sectors`, `price_*`, `price_level`), `sales.csv`, `subareas.csv`, `geo/subareas.json` | Land Registry: `scripts/property_prices.py --write`, then `scripts/price_subareas.py` |
 | 7b | Conservation areas: outlines, count and share of sold homes inside | `geo/conservation_region.json` (kept source), `geo/conservation.json`, `areas.csv` (`conservation_count`, `conservation_sales_pct`) | planning.data.gov.uk, `scripts/conservation_areas.py --write` (after prices) |
+| 7c | New developments: schemes being built, selling or just sold | `developments.csv`, `geo/developments.json` | GLA Planning London Datahub + Land Registry new builds, `scripts/new_developments.py --write` (after prices) |
 | 8 | Rents for 2 and 3 bedrooms | `areas.csv` (`rent_2bed`, `rent_3bed`, `rent_source`) | ONS + asking-rent spot check |
 | 9 | Estimates: rent band, commute, time to family, lifestyle, green | `areas.csv` (`rent`, `commute`, `family`, `lifestyle`, `green`) | judgement, written as ranges |
 
@@ -71,6 +72,15 @@ python3 .claude/skills/london-area-data/scripts/crime_subareas.py --months 2025-
 ```
 
 It asks police.uk for every street-level crime in each area's sub-areas (the LSOAs in `subareas.csv`), month by month, places each crime in its sub-area by point-in-polygon, and divides by the sub-area's Census 2021 residents (Nomis TS001). It always redoes every area, so rates stay comparable. Writes `data/crime_subareas.csv` (per sub-area: residents, counts in six groups, top 3 streets), `data/crime_points.csv` (per police.uk "on or near" point) and the `crime_rate*` columns of `areas.csv`. "All" leaves out shoplifting, which piles onto shopping streets. Crime locations are anonymised to the nearest of a fixed set of points, so never present a point as an address.
+
+## New developments
+
+```
+python3 .claude/skills/london-area-data/scripts/new_developments.py le bo     # preview some areas
+python3 .claude/skills/london-area-data/scripts/new_developments.py --write   # rebuild for all areas
+```
+
+Joins approved schemes of 20+ homes from the GLA Planning London Datahub (inside the area's sub-areas; finished since 2023, started since 2020, approved since 2022) to Land Registry new-build sales since 2023 in the area's postcode sectors, grouped into buildings. Status: Selling (a sale in the last 6 months of Land Registry data), Sold, Being built, Finished (no sales: rented or affordable), Approved. Areas outside London have Land Registry buildings only. It needs `postcode_sectors`, so run it after `property_prices.py`; rerun it every few months, as it is the most time-sensitive dataset. Planning names are often addresses: the script prefers the Land Registry building name when a scheme has 3+ sales.
 
 ## Conservation areas
 

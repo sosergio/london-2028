@@ -115,6 +115,43 @@ export function crimeSubHtml(p, kind, typical, period) {
     <p class="meta">${fmt(p.residents)} residents · police.uk, ${esc(period)}</p></div>`;
 }
 
+// New development hover / click text. d: a row of data/developments.csv.
+const DEV_NOTE = {
+  'Selling': 'new-build sales in the last 6 months', 'Sold': 'new-build sales, none in the last 6 months',
+  'Being built': 'started, no sales recorded yet', 'Finished': 'finished, no sales: usually rented or affordable homes',
+  'Approved': 'approved, not started',
+};
+// About 250 m each way around a point, as a closed [lon, lat] ring.
+const boxAround = d => { const dy = 0.00225, dx = 0.0036, la = +d.lat, lo = +d.lon;
+  return [[lo - dx, la - dy], [lo + dx, la - dy], [lo + dx, la + dy], [lo - dx, la + dy], [lo - dx, la - dy]]; };
+const shortDate = s => s ? new Date(s).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : '';
+export function devHtml(d) {
+  const homes = d.homes ? `${fmt(d.homes)} homes` : '';
+  const ten = [d.for_sale && `${fmt(d.for_sale)} for sale`, d.for_rent && `${fmt(d.for_rent)} to rent`,
+    d.shared && `${fmt(d.shared)} shared ownership`, d.affordable_rent && `${fmt(d.affordable_rent)} affordable or social rent`].filter(Boolean).join(' · ');
+  const sales = d.sold ? `<p><b>${fmt(d.sold)}</b> new-build sale${d.sold === 1 ? '' : 's'}, ${shortDate(d.first_sale)}–${shortDate(d.last_sale)}`
+    + (d.price_median ? `: median ${money(d.price_median)} (${money(d.price_min)}–${money(d.price_max)})` : '')
+    + (d.sold_shared ? `; ${fmt(d.sold_shared)} under £250k, probably shared-ownership shares` : '')
+    + (d.sold_houses ? `; ${fmt(d.sold_houses)} houses` : '') + '</p>' : '';
+  const dates = [d.approved && `approved ${shortDate(d.approved)}`, d.started && `started ${shortDate(d.started)}`, d.finished && `finished ${shortDate(d.finished)}`].filter(Boolean).join(' · ');
+  const q = encodeURIComponent;
+  const planning = d.planning_ref ? (d.planning_url && /^https?:/.test(d.planning_url)
+    ? `<a href="${esc(d.planning_url)}" target="_blank" rel="noopener">Planning ${esc(d.planning_ref)}</a>`
+    : `<a href="https://www.google.com/search?q=${q(`${d.council} planning ${d.planning_ref}`)}" target="_blank" rel="noopener">Planning ${esc(d.planning_ref)}</a>`) : '';
+  const reviews = `<a href="https://www.google.com/search?q=${q(`"${d.buildings.split(';')[0] || d.name}" ${String(d.postcode).split(' ')[0]} HomeViews`)}" target="_blank" rel="noopener">Reviews</a>`;
+  return `<div class="pop dev-pop"><h3>${esc(d.name)}</h3>
+    <p><span class="dev-key" data-s="${esc(d.status)}" aria-hidden="true"></span><b>${esc(d.status)}</b> <span class="muted">· ${DEV_NOTE[d.status] || ''}</span></p>
+    ${homes || ten ? `<p>${homes}${ten ? ` <span class="muted">(${ten})</span>` : ''}</p>` : ''}
+    ${d.beds ? `<p class="meta">Planned: ${esc(d.beds)}</p>` : ''}
+    ${sales}
+    ${d.buildings && d.buildings !== d.name ? `<p class="meta">Buildings: ${esc(d.buildings)}</p>` : ''}
+    ${d.address && d.address !== d.name ? `<p class="meta">${esc(d.address)}</p>` : ''}
+    ${dates ? `<p class="meta">${dates}</p>` : ''}
+    <p class="links">${[planning, reviews].filter(Boolean).join(' · ')}</p>
+    <p class="links">Rightmove around it: <a href="${esc(rightmoveAreaUrl(boxAround(d), true))}" target="_blank" rel="noopener">to rent</a> ·
+      <a href="${esc(rightmoveAreaUrl(boxAround(d), false))}" target="_blank" rel="noopener">for sale</a></p></div>`;
+}
+
 // Conservation area hover / click text.
 export function consHtml(p) {
   const by = [p.council, p.designated && `designated ${p.designated}`].filter(Boolean).join(', ');

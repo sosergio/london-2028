@@ -2,8 +2,8 @@
 // the map is driven through the small API returned by createMap().
 
 import { state, poiOn, saveState, savePoi, isVisible } from './state.js';
-import { ETH_KEYS, loadPrices, PRICE_BANDS, loadCrime, CRIME_KINDS, loadConservation } from './data.js';
-import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money, crimePeriod } from './format.js';
+import { ETH_KEYS, loadPrices, PRICE_BANDS, loadCrime, CRIME_KINDS, loadConservation, DEV_STATUS, loadDevelopmentShapes } from './data.js';
+import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money, crimePeriod, devHtml } from './format.js';
 
 const ETH = { whiteBritish: ['White British', '#7f9c8f'], whiteOther: ['Other White', '#b9cbbf'], asian: ['Asian', '#d6a84a'],
   black: ['Black', '#8a6bb8'], mixed: ['Mixed', '#e08aa0'], other: ['Other', '#9aa3a0'] };
@@ -43,10 +43,26 @@ export function createPanel(DATA, map, { openGuide } = {}) {
       <div class="stat-row"><span>Ethnicity</span><div class="bar" aria-label="Ethnic groups">${eb}</div><b>${a.eth.whiteBritish}% WB</b></div>
       ${crimeHtml(a)}
       ${consCardHtml(a)}
+      ${devCardHtml(a)}
       <div class="amen">${shopCounts(a.id)}</div>
       ${a.priceLevel ? `<div class="stat-row"><span>Price level</span><div class="bar" title="100 = typical for the shortlist"><i style="width:${(a.priceLevel / maxLevel * 100).toFixed(0)}%;background:var(--price-4)"></i></div><b>${a.priceLevel}</b></div>
       <div class="amen">Median sold, ${esc(a.pricePeriod)}: flat ${money(a.price.flat)} · terraced ${money(a.price.terraced)} · semi ${money(a.price.semi)} (${fmt(a.priceSales)} sales; 100 = typical for the shortlist)</div>` : ''}
     </div>`;
+  }
+
+  // New developments on the card: counts by status and the active ones by name (click to show on the map).
+  const devsByArea = {};
+  (DATA.devs || []).forEach(d => (devsByArea[d.area_id] ||= []).push(d));
+  const devById = new Map((DATA.devs || []).map(d => [d.id, d]));
+  function devCardHtml(a) {
+    const ds = devsByArea[a.id] || [];
+    if (!ds.length) return '';
+    const n = s => ds.filter(d => d.status === s).length;
+    const counts = DEV_STATUS.filter(n).map(s => `${n(s)} ${s.toLowerCase()}`).join(' · ');
+    const active = ds.filter(d => d.status === 'Selling' || d.status === 'Being built')
+      .sort((x, y) => (x.status === 'Selling' ? 0 : 1) - (y.status === 'Selling' ? 0 : 1) || (+y.homes || +y.sold) - (+x.homes || +x.sold)).slice(0, 4);
+    return `<div class="stat-row"><span>New builds</span><div class="amen">${counts}</div><b></b></div>
+      ${active.length ? `<ul class="dev-list amen">${active.map(d => `<li><span class="dev-key" data-s="${esc(d.status)}" aria-hidden="true"></span><button type="button" class="linkbtn" data-dev="${esc(d.id)}">${esc(d.name)}</button> <span class="muted">${d.homes ? fmt(d.homes) + ' homes' : fmt(d.sold) + ' sold'}${d.price_median ? ', median ' + money(d.price_median) : ''}</span></li>`).join('')}</ul>` : ''}`;
   }
 
   function consCardHtml(a) {
@@ -205,6 +221,37 @@ export function createPanel(DATA, map, { openGuide } = {}) {
   if (state.price && state.crime) state.crime = false;
   if (state.price) applyPrices();
   if (state.crime) applyCrime(); else if (crimeSubs) crimeLegendText();
+
+  // New developments: dots and outlines alongside the other layers; the shapes load on first use.
+  const devEl = document.getElementById('showdevs');
+  let devGeo = null;
+  if (!(DATA.devs || []).length) document.getElementById('dev-sec').hidden = true;
+  document.getElementById('dev-legend').innerHTML = DEV_STATUS.map(s => `<li><span class="dev-key" data-s="${s}" aria-hidden="true"></span>${s} (${(DATA.devs || []).filter(d => d.status === s).length})</li>`).join('');
+  const devHtmlById = id => devHtml(devById.get(String(id)));
+  async function applyDevs() {
+    if (state.devs && !devGeo) {
+      devEl.disabled = true;
+      try {
+        const g = await loadDevelopmentShapes();
+        devGeo = { ...g, features: g.features.filter(f => devById.has(f.properties.id)).map(f => {
+          const d = devById.get(f.properties.id);
+          return { ...f, properties: { ...f.properties, size: +d.homes || +d.sold || 20 } };
+        }) };
+      } catch (err) { console.error(err); state.devs = false; devEl.checked = false; }
+      devEl.disabled = false;
+    }
+    map.setDevelopments(state.devs && devGeo ? { geo: devGeo, html: devHtmlById } : null);
+  }
+  devEl.checked = state.devs;
+  devEl.addEventListener('change', () => { state.devs = devEl.checked; saveState(); applyDevs(); });
+  if (state.devs) applyDevs();
+  // A development named on an area card: switch the layer on and fly there.
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-dev]'); if (!b) return;
+    const d = devById.get(b.dataset.dev); if (!d) return;
+    if (!state.devs) { state.devs = true; devEl.checked = true; saveState(); await applyDevs(); }
+    map.showDevelopment(d, devHtml(d));
+  });
 
   // Conservation areas: an outline layer that works alongside the others; the file loads on first use.
   const consEl = document.getElementById('showcons');

@@ -9,6 +9,7 @@
 // The panel talks to this module only through the object returned by createMap().
 
 import { css, ofVar, POI_VAR, poiSvg, schoolPopup, shopPopup, shopTip, subareaHtml, saleHtml, crimeSubHtml, crimePointHtml, consHtml, consLine, rightmoveAreaUrl } from './format.js';
+import { DEV_STATUS } from './data.js';
 
 const STYLES = {
   light: 'https://tiles.openfreemap.org/styles/positron',
@@ -178,6 +179,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addSource('crime-points', { type: 'geojson', data: crime.points });
     map.addSource('sweet', { type: 'geojson', data: fc(view.sweet?.features || []) });
     map.addSource('cons', { type: 'geojson', data: view.cons || fc([]) });
+    map.addSource('devs', { type: 'geojson', data: view.devs?.geo || fc([]) });
     map.addSource('boroughs', { type: 'geojson', data: geo.boroughs });
     map.addSource('tube', { type: 'geojson', data: tube });
     map.addSource('wards', { type: 'geojson', data: wards.polys });
@@ -214,6 +216,10 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
       paint: { 'fill-color': css('--cons-fill'), 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.3, 15, 0.14] } }, firstLabel);
     map.addLayer({ id: 'cons-line', type: 'line', source: 'cons', layout: { 'line-join': 'round' },
       paint: { 'line-color': css('--cons'), 'line-width': ['interpolate', ['linear'], ['zoom'], 11, 1, 15, 2.2] } }, firstLabel);
+    // New developments: scheme outlines when zoomed in, and a dot per scheme coloured by status.
+    const devColour = ['match', ['get', 'status'], ...DEV_STATUS.flatMap((s, i) => [s, css(`--dev-${i}`)]), muted];
+    map.addLayer({ id: 'dev-outline', type: 'line', source: 'devs', minzoom: 13, filter: ['has', 'outline'],
+      paint: { 'line-color': devColour, 'line-width': 1.6, 'line-dasharray': [2, 1.5] } }, firstLabel);
     map.addLayer({ id: 'boroughs', type: 'line', source: 'boroughs', paint: { 'line-color': border, 'line-width': 1, 'line-dasharray': [2, 3] } }, firstLabel);
     map.addLayer({ id: 'tube', type: 'line', source: 'tube', layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: { 'line-color': ['get', 'c'],
@@ -237,6 +243,10 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addLayer({ id: 'crime-points', type: 'circle', source: 'crime-points', minzoom: 14,
       paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, ['min', 14, ['+', 2, ['*', 1.1, ['sqrt', ['get', 'c']]]]], 17, ['min', 22, ['+', 3, ['*', 1.8, ['sqrt', ['get', 'c']]]]]],
         'circle-color': css('--crime-4'), 'circle-opacity': 0.75, 'circle-stroke-color': panel, 'circle-stroke-width': 1 } });
+    map.addLayer({ id: 'dev-dot', type: 'circle', source: 'devs', filter: ['!', ['has', 'outline']],
+      paint: { 'circle-color': ['case', ['==', ['get', 'status'], 'Approved'], panel, devColour],
+        'circle-stroke-color': ['case', ['==', ['get', 'status'], 'Approved'], devColour, panel], 'circle-stroke-width': 2,
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, ['+', 3, ['/', ['sqrt', ['get', 'size']], 4]], 15, ['+', 6, ['/', ['sqrt', ['get', 'size']], 2]]] } });
     map.addLayer({ id: 'school-ring', type: 'circle', source: 'schools', filter: ['==', ['get', 'p'], 'A'],
       paint: { 'circle-radius': ['get', 'ring'], 'circle-opacity': 0, 'circle-stroke-color': ['get', 'col'], 'circle-stroke-width': 2 } });
     map.addLayer({ id: 'schools', type: 'circle', source: 'schools',
@@ -296,6 +306,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.getSource('crime-points').setData(crime.points);
     map.getSource('sweet').setData(fc(view.sweet?.features || []));
     map.getSource('cons').setData(view.cons || fc([]));
+    map.getSource('devs').setData(view.devs?.geo || fc([]));
   }
 
   // OpenFreeMap styles reference a few sprite icons that are not in their sprite sheet; fill them with a blank.
@@ -311,7 +322,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['guide-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line', 'cons-fill', 'cons-line']
+  const hitLayers = () => ['guide-dot', 'dev-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line', 'cons-fill', 'cons-line']
     .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
@@ -319,7 +330,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     // A few pixels of slack so thin lines and small dots are easy to hit.
     const box = [[point.x - 4, point.y - 4], [point.x + 4, point.y + 4]];
     const hits = map.queryRenderedFeatures(box, { layers: hitLayers() });
-    return hits.find(f => f.layer.id === 'guide-dot') || hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
+    return hits.find(f => f.layer.id === 'guide-dot') || hits.find(f => f.layer.id === 'dev-dot') || hits.find(f => SCHOOL_LAYERS.has(f.layer.id)) || hits.find(f => f.layer.id === 'shops')
       || hits.find(f => f.layer.id === 'sales') || hits.find(f => f.layer.id === 'crime-points') || hits.find(f => f.layer.id === 'tube')
       || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line')
       || hits.find(f => f.layer.id === 'crime-fill' || f.layer.id === 'crime-line')
@@ -339,6 +350,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     const c = view.crime;
     if (f.layer.id === 'sales') return saleHtml(f.properties);
     if (f.layer.id === 'crime-points') return crimePointHtml(f.properties);
+    if (f.layer.id === 'dev-dot') return view.devs.html(f.properties.id);
     if (CONS.has(f.layer.id)) return consHtml(f.properties);
     if (f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line') return withCons(view.sweet.html(f.properties), e);
     if (CRIME_SUB.has(f.layer.id)) return withCons(crimeSubHtml(f.properties, c.kind, c.typical[c.kind], c.period), e);
@@ -410,6 +422,13 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     setCrime(crime) { view = { ...view, crime }; tip.remove(); refresh(); },
     // sweet: null, or { features (with properties.pass), html(properties) for hover and click }
     setSweet(sweet) { view = { ...view, sweet }; if (!sweet) tip.remove(); if (ready) map.getSource('sweet').setData(fc(sweet?.features || [])); },
+    // devs: null, or { geo: FeatureCollection (properties id, status, size; outlines have outline: true), html(id) }
+    setDevelopments(devs) { view = { ...view, devs }; if (!devs) tip.remove(); if (ready) map.getSource('devs').setData(devs?.geo || fc([])); },
+    // Fly to a development and open its card.
+    showDevelopment(d, html) {
+      map.flyTo({ center: [+d.lon, +d.lat], zoom: Math.max(map.getZoom(), 15), duration: 700 });
+      popup.setLngLat([+d.lon, +d.lat]).setHTML(html).addTo(map);
+    },
     // cons: null, or the conservation-area FeatureCollection
     setConservation(cons) { view = { ...view, cons }; if (!cons) tip.remove(); if (ready) map.getSource('cons').setData(cons || fc([])); },
     fitAll() { popup.remove(); map.fitBounds(boundsOf(schools.map(s => s.ll)), { padding: padding(), duration: 600 }); },

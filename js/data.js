@@ -51,11 +51,14 @@ export async function loadData() {
     await Promise.all(Object.entries(idx.guides || {}).map(async ([id, path]) => { guides[id] = await getJSON(path); }));
   } catch (e) { console.warn('No area guides loaded', e); }
 
+  let devs = [];
+  try { devs = await loadDevelopments(); } catch (e) { console.warn('No new developments loaded', e); }
+
   let crimeSubs = null;
   try { crimeSubs = await loadCrimeSubs(); } catch (e) { console.warn('No crime by neighbourhood loaded', e); }
 
   return {
-    areas, schools, shops, guides, crimeSubs, excluded: extra.excluded,
+    areas, schools, shops, guides, crimeSubs, devs, excluded: extra.excluded,
     areaById: Object.fromEntries(areas.map(a => [a.id, a])),
     geo: { boroughs, tubeLines, stations, wards },
   };
@@ -92,6 +95,18 @@ export async function loadPrices() {
   };
   return { subareas, sales };
 }
+
+// ---------- new developments ----------
+// GLA Planning London Datahub schemes and Land Registry new-build sales (scripts/new_developments.py).
+// The table (about 90 kB) loads with the page for the area cards; the map points and outlines on first use.
+export const DEV_STATUS = ['Selling', 'Being built', 'Sold', 'Finished', 'Approved'];
+export async function loadDevelopments() {
+  const rows = await getCSV('data/developments.csv');
+  return rows.map(r => ({ ...r, id: String(r.id), name: String(r.name || r.address || 'Unnamed scheme'),
+    planning_ref: String(r.planning_ref || ''), postcode: String(r.postcode || '') }));
+}
+let devGeoP = null;
+export const loadDevelopmentShapes = () => devGeoP || (devGeoP = getJSON('data/geo/developments.json').catch(e => { devGeoP = null; throw e; }));
 
 // ---------- conservation areas ----------
 // planning.data.gov.uk, only the ones touching an area (about 900 kB): loaded when the layer is first switched on.
