@@ -102,8 +102,14 @@ export async function loadPrices() {
 export const DEV_STATUS = ['Selling', 'Being built', 'Sold', 'Finished', 'Approved'];
 export async function loadDevelopments() {
   const rows = await getCSV('data/developments.csv');
-  return rows.map(r => ({ ...r, id: String(r.id), name: String(r.name || r.address || 'Unnamed scheme'),
-    planning_ref: String(r.planning_ref || ''), postcode: String(r.postcode || '') }));
+  // Empty CSV cells arrive as null: text fields become '' so the popup can treat them as strings.
+  const TEXT = ['address', 'buildings', 'status', 'beds', 'first_sale', 'last_sale', 'started', 'finished', 'approved',
+    'planning_ref', 'other_refs', 'council', 'planning_url', 'postcode', 'description'];
+  return rows.map(r => {
+    const d = { ...r, id: String(r.id), name: String(r.name || r.address || 'Unnamed scheme') };
+    TEXT.forEach(k => { d[k] = r[k] === null || r[k] === undefined ? '' : String(r[k]); });
+    return d;
+  });
 }
 let devGeoP = null;
 export const loadDevelopmentShapes = () => devGeoP || (devGeoP = getJSON('data/geo/developments.json').catch(e => { devGeoP = null; throw e; }));
