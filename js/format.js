@@ -124,6 +124,14 @@ const DEV_NOTE = {
 // About 250 m each way around a point, as a closed [lon, lat] ring.
 const boxAround = d => { const dy = 0.00225, dx = 0.0036, la = +d.lat, lo = +d.lon;
   return [[lo - dx, la - dy], [lo + dx, la - dy], [lo + dx, la + dy], [lo - dx, la + dy], [lo - dx, la - dy]]; };
+// The useful part of a planning description: from "erection of" / "redevelopment" / "construction of" on,
+// skipping the legal preamble of variation applications. About 170 characters.
+function planSummary(text) {
+  const t = String(text || ''); if (!t) return '';
+  const m = t.match(/(redevelopment|erection|construction|demolition|conversion|provision)\b.*/i);
+  const s = (m ? m[0] : t).replace(/\s+/g, ' ');
+  return s.length > 170 ? s.slice(0, 167).replace(/\s\S*$/, '') + '…' : s;
+}
 const shortDate = s => s ? new Date(s).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : '';
 export function devHtml(d) {
   const homes = d.homes ? `${fmt(d.homes)} homes` : '';
@@ -143,6 +151,7 @@ export function devHtml(d) {
     <p><span class="dev-key" data-s="${esc(d.status)}" aria-hidden="true"></span><b>${esc(d.status)}</b> <span class="muted">· ${DEV_NOTE[d.status] || ''}</span></p>
     ${homes || ten ? `<p>${homes}${ten ? ` <span class="muted">(${ten})</span>` : ''}</p>` : ''}
     ${d.beds ? `<p class="meta">Planned: ${esc(d.beds)}</p>` : ''}
+    ${planSummary(d.description) ? `<p class="meta">Plan: ${esc(planSummary(d.description))}</p>` : ''}
     ${sales}
     ${d.buildings && d.buildings !== d.name ? `<p class="meta">Buildings: ${esc(d.buildings)}</p>` : ''}
     ${d.address && d.address !== d.name ? `<p class="meta">${esc(d.address)}</p>` : ''}

@@ -78,6 +78,23 @@ def hub(box):
     return [h["_source"] for h in res["hits"]["hits"]]
 
 
+PAST_USE = (r"\b(car park|depot|industrial estate|trading estate|business (park|centre)|works|garage|warehouse|"
+            r"retail park|shopping centre|hospital|nursing home|civic centre|police station|library|public house|"
+            r"recycling|sorting office|bus garage|petrol station|timber yard|yard)\b")
+
+
+# Not homes you can buy or rent normally. A scheme is dropped when its description says so, unless it also counts
+# ordinary homes ("280 residential units (Use Class C3)").
+NOT_HOMES = (r"student|co-?living|shared living|communal living|care home|extra care|nursing home for|hostel|"
+             r"temporary accommodation|emergency (family )?accommodation|supported (living|housing)")
+C3_HOMES = r"\b\d+\s*(no\.?\s*)?(x\s*)?(new\s+)?(residential units|dwellings|homes|flats|apartments|self-contained)[^.;]{0,25}(class )?C3"
+
+
+def ordinary_homes(desc):
+    return (not re.search(NOT_HOMES, desc, re.I) or bool(re.search(C3_HOMES, desc, re.I))
+            or bool(re.search(r"\b\d+\s*self-contained (units|flats|homes|apartments)", desc, re.I)))
+
+
 def address(s):
     parts = [title(s.get(k) or "") for k in ("site_name", "site_number", "street_name", "locality")]
     out = []
@@ -103,6 +120,9 @@ def site_label(s):
         num = (s.get("site_number") or "") if re.match(r"^[\d\-–a-zA-Z ]{1,10}$", s.get("site_number") or "") else ""
         name = f"{num} {street}".strip() if num else (street if not name or len(name) > 45 else f"{name}, {street}"[:60])
     name = re.sub(r"[ ,]+(London\b.*|[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2})$", "", name, flags=re.I).strip(" ,")
+    # Planning names describe the land as it was ("Lodge Lane Car Park"): say it is the site of the new homes.
+    if re.search(PAST_USE, name, re.I) and not re.match(r"(former|site|land)\b", name, re.I):
+        name = f"{name[:55]} site"
     return name[:60]
 
 
@@ -127,7 +147,7 @@ def scheme(s):
     if st == "Approved" and not (d(s.get("decision_date")) and d(s.get("decision_date")) >= d(SINCE_APPROVED)):
         return None
     c = s.get("centroid") or {}
-    if not c:
+    if not c or not ordinary_homes(s.get("description") or ""):
         return None
     poly = s.get("wgs84_polygon") or None
     return {"ref": s.get("lpa_app_no") or "", "council": s.get("lpa_name") or "",
