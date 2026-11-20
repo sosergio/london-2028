@@ -34,6 +34,9 @@ DATAHUB = "https://planningdata.london.gov.uk/api-guest/applications/_search"
 HUB_HEADERS = {"Content-Type": "application/json", "X-API-AllowRequest": "be2rmRnt&"}
 MIN_HOMES, MIN_SALES, MATCH_M, SELLING_DAYS, SHARED_MAX = 20, 5, 150, 180, 250_000
 SINCE, SINCE_APPROVED, SINCE_STARTED = "2023-01-01", "2022-01-01", "2020-01-01"
+# Flats in a scheme usually sell (complete) before the council records the scheme as finished, often years
+# before: Blackhorse Lane's sold 2020-22 and the scheme "finished" in 2023. So sales are searched from here.
+SALES_SINCE = "2020-01-01"
 OUT_CSV, OUT_GEO = Path("data/developments.csv"), Path("data/geo/developments.json")
 TENURE = {"market_for_sale": "sale", "market_rent": "rent", "build_to_rent": "rent", "london_shared_ownership": "shared",
           "shared_ownership": "shared", "discount_market_sale": "shared", "london_affordable_rent": "affordable rent",
@@ -190,7 +193,7 @@ SELECT ?pc ?paon ?saon ?street ?price ?date ?type WHERE {{
   OPTIONAL {{ ?addr lrcommon:paon ?paon }} OPTIONAL {{ ?addr lrcommon:saon ?saon }} OPTIONAL {{ ?addr lrcommon:street ?street }}
   ?tx lrppi:propertyAddress ?addr ; lrppi:pricePaid ?price ; lrppi:transactionDate ?date ; lrppi:propertyType ?type ;
       lrppi:newBuild true ; lrppi:transactionCategory lrppi:standardPricePaidTransaction .
-  FILTER(?date >= "{SINCE}"^^<http://www.w3.org/2001/XMLSchema#date>)
+  FILTER(?date >= "{SALES_SINCE}"^^<http://www.w3.org/2001/XMLSchema#date>)
 }}"""
         import io, urllib.parse
         text = http(SPARQL, data=urllib.parse.urlencode({"query": q}).encode(), headers={"Accept": "text/csv"})
@@ -232,14 +235,26 @@ def main():
         box = (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))
         schemes = dedupe([s for s in (scheme(x) for x in hub(box)) if s and in_area(aid, s["ll"])])
 
-        # Land Registry new-build sales in the area's sectors, grouped into buildings.
+        # Land Registry new-build sales, grouped into buildings. Searched in the districts of the area's
+        # sectors and of its schemes' postcodes (a scheme can sit in a sector the area's prices don't use, like E20),
+        # and kept when inside the area's box; a building far from every scheme must also be inside the area.
         sectors = [x.strip() for x in (areas[aid].get("postcode_sectors") or "").split(",") if x.strip()]
-        rows = [r for dist in districts_for(sectors) for r in new_build_rows(dist)
-                if any(r["pc"].startswith(sec + " ") or r["pc"][:-2].strip() == sec for sec in sectors)]
+        scheme_sectors = [m.group(1) for sc in schemes
+                          for m in [re.fullmatch(r"([A-Z]{1,2}\d[A-Z\d]? \d)[A-Z]{2}", sc["postcode"].upper().strip())] if m]
+        pad = 0.003
+        in_box = lambda ll: box[0] - pad <= ll[0] <= box[2] + pad and box[1] - pad <= ll[1] <= box[3] + pad
+        dists = set()
+        for sec in sorted(set(sectors + scheme_sectors)):
+            try:
+                dists.update(districts_for([sec]))
+            except Exception as e:                 # an outcode postcodes.io doesn't know: skip it
+                print(f"  (no district for {sec}: {e})", file=sys.stderr)
+        rows = [r for dist in sorted(dists) for r in new_build_rows(dist)]
+        rows = [r for r in rows if r["pc"].split()[0] in {x.split()[0] for x in sectors + scheme_sectors}]
         where = locate(sorted({r["pc"] for r in rows}))
         groups = defaultdict(list)
         for r in rows:
-            if r["pc"] in where and in_area(aid, where[r["pc"]][:2]):
+            if r["pc"] in where and in_box(where[r["pc"]][:2]):
                 groups[building_key(r)].append(r)
         latest = max((d(r["date"]) for rs in groups.values() for r in rs), default=date.today())
         loose = []
@@ -249,7 +264,8 @@ def main():
             label = name or street.split("|")[0]
             if near and metres(ll, near["ll"]) <= MATCH_M:
                 near["buildings"][label] += rs
-            elif len(rs) >= MIN_SALES:
+            elif (len(rs) >= MIN_SALES and in_area(aid, ll) and max(r["date"] for r in rs) >= SINCE
+                  and any(r["pc"].startswith(sec + " ") or r["pc"][:-2].strip() == sec for r in rs[:1] for sec in sectors)):
                 loose.append({"ref": "", "council": "", "site": f"{label}, {rs[0]['pc'][:-2].strip()}" if street else label,
                               "postcode": rs[0]["pc"], "address": f"{label}, {rs[0]['pc']}", "desc": "", "homes": 0, "tenure": {}, "beds": {}, "planning_status": "",
                               "started": "", "finished": "", "approved": "", "url": "", "ll": ll, "poly": None,

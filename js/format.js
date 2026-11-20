@@ -118,7 +118,8 @@ export function crimeSubHtml(p, kind, typical, period) {
 // New development hover / click text. d: a row of data/developments.csv.
 const DEV_NOTE = {
   'Selling': 'new-build sales in the last 6 months', 'Sold': 'new-build sales, none in the last 6 months',
-  'Being built': 'started, no sales recorded yet', 'Finished': 'finished, no sales: usually rented or affordable homes',
+  'Being built': 'started, no sales recorded yet',
+  'Finished': 'finished, but no new-build sales found: built to rent, affordable homes, or sales not registered yet',
   'Approved': 'approved, not started',
 };
 // About 250 m each way around a point, as a closed [lon, lat] ring.
