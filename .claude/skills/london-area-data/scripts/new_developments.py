@@ -268,6 +268,15 @@ def main():
             print(f"  {o['status']:11} {str(o['homes'] or '?'):>4} homes, {o['sold']:3} sold "
                   f"{('£' + format(o['price_median'], ',')) if o['price_median'] else '':>10}  {o['name'][:42]:42} {o['buildings'][:40]}")
 
+    # "Selling" is judged against the newest new-build sale anywhere (the Land Registry's real cut-off), not per area.
+    newest = max((o["last_sale"] for o in out if o["last_sale"]), default="")
+    if newest:
+        cut = (d(newest) - timedelta(days=SELLING_DAYS)).isoformat()
+        for o in out:
+            if o["sold"]:
+                o["status"] = "Selling" if o["last_sale"] >= cut else "Sold"
+        print(f"\nSelling = a new-build sale since {cut} (newest sale in the data {newest}): "
+              f"{sum(o['status'] == 'Selling' for o in out)} developments")
     if not a.write:
         return
     for i, o in enumerate(out):
