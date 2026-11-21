@@ -1197,3 +1197,296 @@ bo,Lidl,disc,supermarket,51.51431,-0.02863
 bo,The Yard Theatre,cult,theatre,51.54265,-0.02331
 bo,Re-Core Pilates,gym,fitness centre,51.53197,-0.0423
 bo,Mulla's,bake,butcher,51.53722,-0.05711
+tp,Tarn Bakery,bake,bakery,51.57196,-0.12972
+tp,H&A Pattisserie Francaise,bake,bakery,51.54854,-0.12811
+tp,Cramers Butchers,bake,butcher,51.54844,-0.12791
+tp,Bumblebee Natural Foods,up,organic,51.54979,-0.13042
+tp,M&S Food,up,supermarket,51.56517,-0.13547
+tp,Forbidden Planet Camden,cult,books,51.53955,-0.14422
+tp,Holland & Barrett,up,organic,51.53931,-0.14318
+tp,Wenzel's,bake,bakery,51.56576,-0.13429
+tp,Hello Yoga Studio & Fair-Well Shop,gym,fitness centre,51.56325,-0.11798
+tp,Fit Shape Studio,gym,fitness centre,51.55867,-0.14842
+tp,Lion and Unicorn,cult,theatre,51.54805,-0.13902
+tp,Rehana Supermarket,bake,butcher,51.55923,-0.11655
+tp,BodyJunkies,gym,fitness centre,51.55172,-0.11142
+tp,Holloway Meat,bake,butcher,51.55846,-0.11799
+tp,Green and Flavour,bake,deli,51.54695,-0.11821
+tp,Cake Box,bake,pastry,51.55529,-0.1154
+tp,Gregs,bake,bakery,51.56458,-0.13478
+tp,Holland & Barrett,up,organic,51.55721,-0.11805
+tp,Lidl,disc,supermarket,51.55738,-0.11825
+tp,Bandar Supermarket,bake,butcher,51.55878,-0.12046
+tp,Upstairs at the Gatehouse,cult,theatre,51.57138,-0.14995
+tp,Akdeniz,bake,butcher,51.56245,-0.11068
+tp,Black Gull Books,cult,books,51.54117,-0.14667
+tp,Books Iconica,cult,books,51.54141,-0.146
+tp,Cookies & Scream,bake,bakery,51.54147,-0.14606
+tp,Café de Nata,bake,pastry,51.54149,-0.14555
+tp,Mode Personal Training,gym,fitness centre,51.56757,-0.1223
+tp,The Flour Station,bake,bakery,51.54249,-0.14843
+tp,Better Gym Holloway,gym,fitness centre,51.55207,-0.11345
+tp,Triyoga,gym,fitness centre,51.53972,-0.14704
+tp,Nojo,bake,bakery,51.54261,-0.14832
+tp,Cake Addicts Bakery,bake,bakery,51.55487,-0.11477
+tp,GAIL's,bake,bakery,51.56207,-0.14945
+tp,Silverberry,bake,deli,51.55399,-0.16502
+tp,More Yoga,gym,fitness centre,51.54866,-0.1178
+tp,Nora and Nama,bake,bakery,51.5415,-0.14648
+tp,D Bakery,bake,bakery,51.54958,-0.15251
+tp,Old Post Office Bakery,bake,bakery,51.54176,-0.13865
+tp,SesamMe,bake,bakery,51.54125,-0.1462
+tp,Spanish Delicatessen,bake,deli,51.55294,-0.11155
+tp,Bread By Bike Bakery,bake,bakery,51.54966,-0.13001
+tp,énergie Fitness,gym,fitness centre,51.56245,-0.12593
+tp,Down To Earth,gym,fitness centre,51.55633,-0.13813
+tp,The Tufnell Park Bakery,bake,bakery,51.55639,-0.13856
+tp,Jonathan Norris,bake,seafood,51.55629,-0.13864
+tp,Superette,bake,deli,51.56184,-0.15042
+tp,Anytime Fitness,gym,fitness centre,51.54424,-0.15243
+tp,Boston Music Room,cult,theatre,51.55733,-0.13838
+tp,Curzon Camden,cult,cinema,51.54223,-0.14347
+tp,F45 Holloway,gym,fitness centre,51.55367,-0.1132
+tp,The Gym,gym,fitness centre,51.5465,-0.11881
+tp,JC Walker Butchers,bake,butcher,51.55841,-0.14323
+tp,Athenian Bakery,bake,bakery,51.56105,-0.11317
+tp,Holloway Model Bakery,bake,bakery,51.55032,-0.11272
+tp,Aldi,disc,supermarket,51.55198,-0.11189
+tp,Aboxr,gym,fitness centre,51.54239,-0.15495
+tp,pomona,up,organic,51.5502,-0.16486
+tp,PureGym,gym,fitness centre,51.53907,-0.14296
+tp,Sol Studio,gym,fitness centre,51.56836,-0.1234
+tp,The Factory,gym,fitness centre,51.56621,-0.12193
+tp,Parliament Hill Lido,gym,leisure centre,51.55644,-0.15123
+tp,Sobell Leisure Centre,gym,leisure centre,51.5589,-0.11212
+tp,Kentish Town Sports Centre,gym,fitness centre,51.5471,-0.1441
+tp,Odeon Holloway,cult,cinema,51.55866,-0.1214
+tp,Waitrose,up,supermarket,51.55617,-0.11617
+tp,Islington Boxing Club,gym,fitness centre,51.56986,-0.12513
+tp,GAIL's,bake,bakery,51.55412,-0.16572
+tp,Daunt Books,cult,books,51.55539,-0.16669
+tp,Euphorium Bakery,bake,bakery,51.55522,-0.16656
+tp,Karma Bread,bake,bakery,51.55438,-0.16591
+tp,Archway Leisure Centre,gym,leisure centre,51.56523,-0.13648
+tp,Stagnells,bake,bakery,51.56386,-0.13517
+tp,Aldi,disc,supermarket,51.56511,-0.13397
+tp,Tahir Halal Meat,bake,butcher,51.56516,-0.13444
+tp,Crave & Co,up,organic,51.56919,-0.12411
+tp,Thirty Eleven,gym,fitness centre,51.56852,-0.12369
+tp,Fresh Meat Market,bake,butcher,51.55919,-0.11718
+tp,Sutton and Sons,bake,seafood,51.55898,-0.11689
+tp,PureGym,gym,fitness centre,51.55958,-0.12335
+tp,Pleasance,cult,theatre,51.54873,-0.12139
+tp,24 Karat,bake,deli,51.5596,-0.12183
+tp,GAIL's,bake,bakery,51.54811,-0.14096
+tp,Kilo,up,organic,51.55926,-0.12122
+tp,Owl Bookshop,cult,books,51.54719,-0.14183
+tp,Kosoffs Bakery,bake,bakery,51.54858,-0.14142
+tp,Wenzel's,bake,bakery,51.55064,-0.14101
+tp,Luminary Bakery,bake,bakery,51.54306,-0.14881
+tp,Yasar Halim Patisserie & Cafe,bake,bakery,51.56837,-0.12388
+tp,Acropolis Bakery,bake,bakery,51.5582,-0.11948
+tp,Highgate Bookshop,cult,books,51.57031,-0.14632
+tp,Greenland Butchers,bake,butcher,51.53927,-0.14081
+tp,Chango Empanadas,bake,bakery,51.57105,-0.14861
+tp,GAIL's,bake,bakery,51.57117,-0.14889
+tp,Highgate Butchers,bake,butcher,51.57101,-0.14839
+tp,Highgate Wholefoods,up,organic,51.57083,-0.14876
+tp,Oxfam,cult,books,51.57079,-0.14857
+tp,Fairfax Meadow,bake,butcher,51.55042,-0.14636
+tp,Oxfam Bookshop,cult,books,51.54698,-0.14137
+tp,Aldi,disc,supermarket,51.54658,-0.14138
+tp,Lo Sfizio,bake,deli,51.5444,-0.1418
+tp,Earth Natural Foods,up,organic,51.54789,-0.14097
+tp,Salvino,bake,deli,51.55024,-0.13076
+tp,The Form Room,gym,fitness centre,51.54916,-0.14076
+tp,Holland & Barrett,up,organic,51.54922,-0.14075
+tp,Walden Books,cult,books,51.54404,-0.14693
+tp,The Fitness Mosaic,gym,fitness centre,51.54396,-0.15156
+tp,Pannus,bake,bakery,51.54128,-0.14474
+tp,The Amnesty Bookshop,cult,books,51.55143,-0.14058
+tp,GAIL's,bake,bakery,51.54988,-0.16453
+tp,Roundhouse,cult,theatre,51.54325,-0.15197
+tp,M&S Foodhall,up,supermarket,51.55381,-0.16511
+tp,Lakis Meat Products,bake,butcher,51.55423,-0.1406
+tp,Hellenic Bookservice,cult,books,51.55475,-0.14023
+tp,Meat NW5,bake,butcher,51.55639,-0.13909
+tp,Reformer Pilates,gym,fitness centre,51.56221,-0.12623
+br,PureGym,gym,fitness centre,51.46271,-0.00976
+br,Blackwell's Bookshop,cult,books,51.47439,-0.03586
+br,Goldsmiths Cinema,cult,cinema,51.47419,-0.03612
+br,New Cross Butchers,bake,butcher,51.47577,-0.03728
+br,George Wood Theatre,cult,theatre,51.47415,-0.03676
+br,Soper's,bake,seafood,51.4658,-0.05739
+br,Ayres,bake,bakery,51.46599,-0.05692
+br,H Hirst & Sons,bake,bakery,51.45523,-0.01606
+br,Brockley Jack Theatre,cult,theatre,51.45349,-0.03839
+br,Via d'Oro,bake,deli,51.45518,-0.01608
+br,Rumbles,bake,bakery,51.45673,-0.0196
+br,Silkworks Gym,gym,fitness centre,51.46776,-0.01476
+br,Crofton Bookshop (Library),cult,books,51.45547,-0.03642
+br,The Gym,gym,fitness centre,51.46618,-0.01717
+br,Meat Jon,bake,butcher,51.45657,-0.02143
+br,Green Onions,up,organic,51.47612,-0.03678
+br,Greggs,bake,bakery,51.46213,-0.01048
+br,Crofton Books,cult,books,51.45956,-0.03372
+br,The Word Bookshop,cult,books,51.4755,-0.03714
+br,The Larder,bake,deli,51.4567,-0.0201
+br,Commando Temple,gym,fitness centre,51.47858,-0.02467
+br,Kindred Yoga,gym,fitness centre,51.4737,-0.02391
+br,M.M Butchers,bake,butcher,51.46222,-0.01045
+br,Antonio Delicatessen,bake,deli,51.46173,-0.00957
+br,Anytime Fitness,gym,fitness centre,51.46471,-0.01691
+br,BALDR CrossFit,gym,fitness centre,51.48211,-0.03444
+br,Bilal Fish & Meat Centre,bake,butcher,51.46011,-0.01142
+br,Piehouse Co-op,cult,theatre,51.48071,-0.03141
+br,Kłos Deli,bake,deli,51.46145,-0.00968
+br,Tony's Daily,bake,deli,51.47916,-0.02599
+br,Tiêm Vhit,bake,seafood,51.47518,-0.02584
+br,Doorstep Bakery,bake,bakery,51.46487,-0.03638
+br,Al-Aqsa Fish Market,bake,seafood,51.4617,-0.0101
+br,Shades Snooker & Pool Club,gym,leisure centre,51.48055,-0.02639
+br,Crown Halal Meat,bake,butcher,51.48098,-0.02623
+br,Deptford Sea Food Centre,bake,seafood,51.47788,-0.02585
+br,Halal Butcher,bake,butcher,51.47751,-0.02605
+br,Honey's,bake,bakery,51.477,-0.02599
+br,Butcher & African Food Centre,bake,butcher,51.47631,-0.02602
+br,Christine's Pork,bake,butcher,51.47681,-0.02573
+br,Lobo Fresh Halal,bake,butcher,51.47677,-0.02573
+br,Lobo Seafood Stores,bake,seafood,51.47673,-0.02573
+br,My Fishmonger,bake,seafood,51.47646,-0.02572
+br,Agege Bread,bake,bakery,51.47584,-0.02578
+br,Halal Butchers,bake,butcher,51.47573,-0.02608
+br,Iyengar Yoga Institute South London,gym,fitness centre,51.47509,-0.02814
+br,Halal Meat Centre,bake,butcher,51.47116,-0.02967
+br,CRANK Lewisham,gym,fitness centre,51.46485,-0.01405
+br,Gather,up,organic,51.46543,-0.05807
+br,Après London,gym,fitness centre,51.47861,-0.02489
+br,Arch Bakery,bake,bakery,51.48154,-0.034
+br,Believer's Bookshop,cult,books,51.47569,-0.04696
+br,The Baker's Art,bake,bakery,51.47652,-0.0224
+br,J.C. Smith & Son,bake,butcher,51.4765,-0.02601
+br,Top Butcher & Grocer,bake,butcher,51.47618,-0.02575
+br,MoreYoga,gym,fitness centre,51.47411,-0.0572
+br,MoreYoga,gym,fitness centre,51.46912,-0.06135
+br,Toad Bakery,bake,bakery,51.47807,-0.02625
+br,Rinds & Vines,bake,cheese,51.44822,-0.04072
+br,Grape Tree,up,organic,51.46234,-0.01197
+br,Ash Meat & Fish,bake,butcher,51.47547,-0.02584
+br,Gym,gym,fitness centre,51.47786,-0.02317
+br,Leisure Pool,gym,swimming pool,51.47812,-0.02353
+br,Renaissance yoga & well being,gym,fitness centre,51.46376,-0.03897
+br,Glass Mill Leisure Centre,gym,leisure centre,51.46403,-0.01384
+br,Fitness (Main) Pool,gym,swimming pool,51.4778,-0.02369
+br,Proud Sow,bake,butcher,51.45173,-0.03304
+br,Wavelengths Leisure Centre,gym,leisure centre,51.47803,-0.02349
+ac,The Tabard Theatre,cult,theatre,51.49563,-0.25487
+ac,Boulangerie Jade,bake,bakery,51.49611,-0.26287
+ac,Greggs,bake,bakery,51.51467,-0.24954
+ac,Performance Centre,cult,theatre,51.5096,-0.27748
+ac,Virgin Active,gym,fitness centre,51.49484,-0.2757
+ac,Little Waitrose,up,supermarket,51.51639,-0.29098
+ac,Wyndhams,bake,butcher,51.49233,-0.25973
+ac,Vardar,bake,deli,51.50429,-0.24345
+ac,Happy Sky,bake,bakery,51.50328,-0.24347
+ac,Ikhwan Butcher and Minimarket,bake,butcher,51.5064,-0.25659
+ac,Kiss Gyms,gym,fitness centre,51.50636,-0.25801
+ac,Lidl,disc,supermarket,51.50739,-0.26999
+ac,Act One Cinema,cult,cinema,51.5066,-0.26841
+ac,Pure Gym,gym,fitness centre,51.49313,-0.27017
+ac,Hack & Veldt,bake,deli,51.49479,-0.25516
+ac,Alrayes Butcher,bake,butcher,51.50686,-0.26809
+ac,Damas Gardens Market,bake,deli,51.50651,-0.266
+ac,AD Oriental Food,bake,deli,51.50662,-0.26862
+ac,Blue Ocean,bake,seafood,51.50663,-0.26877
+ac,Mayar,bake,seafood,51.50816,-0.27096
+ac,Market Place Health Foods,up,organic,51.50785,-0.27102
+ac,Holland & Barrett,up,organic,51.50697,-0.2696
+ac,Churchfield Food Store,bake,deli,51.50893,-0.26414
+ac,Chaiiwala,bake,bakery,51.50822,-0.27528
+ac,Sanabel,bake,bakery,51.50854,-0.28284
+ac,Covent Garden Fishmongers,bake,seafood,51.49372,-0.25545
+ac,Anytime Fitness,gym,fitness centre,51.50735,-0.27212
+ac,Cake Box,bake,pastry,51.50797,-0.27397
+ac,Lidl,disc,supermarket,51.51354,-0.24945
+ac,żabka,bake,deli,51.51922,-0.26558
+ac,By Max,bake,deli,51.51673,-0.26652
+ac,Rolling Oats,bake,deli,51.5169,-0.29062
+ac,PureGym,gym,fitness centre,51.50826,-0.27705
+ac,Energies Fitness,gym,fitness centre,51.50191,-0.27221
+ac,Anytime Fitness,gym,fitness centre,51.4944,-0.26993
+ac,WHSmith,cult,books,51.4927,-0.26357
+ac,Holland & Barrett,up,organic,51.49265,-0.26283
+ac,Waitrose,up,supermarket,51.49277,-0.26308
+ac,GAIL's,bake,bakery,51.49263,-0.25993
+ac,Ole & Steen,bake,bakery,51.49268,-0.25903
+ac,Bookcase London,cult,books,51.49266,-0.25931
+ac,Waterstones,cult,books,51.49282,-0.25762
+ac,Planet Organic,up,supermarket,51.49228,-0.25767
+ac,Foster Books,cult,books,51.49234,-0.25692
+ac,Nikki's Bakery,bake,bakery,51.49285,-0.25562
+ac,Macken Brothers Ltd,bake,butcher,51.49372,-0.25511
+ac,Laurents,bake,deli,51.49351,-0.25505
+ac,Oxfam Bookshop,cult,books,51.49458,-0.2551
+ac,Acton Centre,gym,leisure centre,51.50631,-0.26688
+ac,M&S Food,up,convenience,51.50101,-0.28609
+ac,M&S Foodhall,up,supermarket,51.49294,-0.25796
+we,Planet Organic,up,supermarket,51.51185,-0.30473
+we,Heavenly Desserts,bake,pastry,51.51284,-0.30597
+we,WA,bake,pastry,51.5159,-0.30204
+we,Holland & Barrett,up,organic,51.51338,-0.30352
+we,The Bakers,bake,bakery,51.51286,-0.3059
+we,Oxfam Bookshop,cult,books,51.51159,-0.30486
+we,Lidl,disc,supermarket,51.50812,-0.33625
+we,Waterstones,cult,books,51.51253,-0.30312
+we,Nuffield Health,gym,fitness centre,51.51206,-0.30299
+we,Lola's Cupcakes,bake,pastry,51.51223,-0.30287
+we,The Abu Halima Centre,gym,fitness centre,51.50782,-0.33753
+we,Greggs,bake,bakery,51.51371,-0.3035
+we,GAIL's,bake,bakery,51.51324,-0.30574
+we,Anytime Fitness,gym,fitness centre,51.50968,-0.32506
+we,Lidl,disc,supermarket,51.5102,-0.32478
+we,The Meat House,bake,butcher,51.51059,-0.32236
+we,The Gym,gym,fitness centre,51.51153,-0.31615
+we,Gym135 Fitness Centre,gym,fitness centre,51.49682,-0.31258
+we,Pitshanger Bakery,bake,bakery,51.51477,-0.33721
+we,Triyoga,gym,fitness centre,51.51391,-0.30779
+we,Gymbox,gym,fitness centre,51.51411,-0.30601
+we,Tri Yoga,gym,fitness centre,51.51364,-0.30566
+we,Pitshanger Village Bakery,bake,bakery,51.52571,-0.315
+we,Hook and Cleaver,bake,butcher,51.52585,-0.31434
+we,Blue Ocean,bake,seafood,51.52598,-0.31368
+we,London Sangaki Traditional Persian Bread,bake,bakery,51.50984,-0.32326
+we,Pogrebok,bake,deli,51.50865,-0.33992
+we,Jetts Fitness,gym,fitness centre,51.51128,-0.31784
+we,Big Ben Fisheries,bake,seafood,51.51032,-0.32251
+we,Cake Box,bake,pastry,51.50973,-0.32592
+we,Delizia,bake,deli,51.50369,-0.31749
+we,Frank's Deli,bake,cheese,51.50293,-0.31697
+we,Wenzel's,bake,bakery,51.51413,-0.30206
+we,Gold's Gym,gym,fitness centre,51.50859,-0.33507
+we,Ealing Exchange,bake,seafood,51.50892,-0.33622
+we,Hanwell Halal Meat,bake,butcher,51.50893,-0.33761
+we,Patisserie Kova,bake,pastry,51.51354,-0.30628
+we,Pan's Cake Shop,bake,bakery,51.51451,-0.33714
+we,Hook and Cleaver,bake,butcher,51.49925,-0.30634
+we,Energym,gym,fitness centre,51.51003,-0.3256
+we,Oscar's,bake,pastry,51.50626,-0.30535
+we,Ealing Picturehouse,cult,cinema,51.51199,-0.30688
+we,The Works,cult,books,51.51394,-0.30281
+we,Meat Land,bake,butcher,51.51023,-0.3231
+we,Tavazo,up,organic,51.51094,-0.31831
+we,Pitshanger Bakery,bake,bakery,51.50263,-0.31627
+we,BSPK Bespoke Fitness,gym,fitness centre,51.51106,-0.31935
+we,Deli Polonia,bake,deli,51.51382,-0.30321
+we,Polka,bake,pastry,51.51358,-0.30706
+we,PureGym,gym,fitness centre,51.51221,-0.30293
+we,M&S Food,up,supermarket,51.51478,-0.30195
+we,Strong Pilates,gym,fitness centre,51.51216,-0.30668
+we,Pitshanger Health and Fitness,gym,fitness centre,51.52569,-0.31512
+we,Pitshanger Bookshop,cult,books,51.52591,-0.31402
+we,Wenzels,bake,bakery,51.52239,-0.33999
+we,Eden Fitness,gym,fitness centre,51.51225,-0.31251
+we,Questors Theatre,cult,theatre,51.51156,-0.30947
+we,pulp,bake,bakery,51.50725,-0.30549
+we,Waitrose,up,supermarket,51.51301,-0.3214

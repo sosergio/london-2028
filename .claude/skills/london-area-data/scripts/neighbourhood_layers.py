@@ -23,7 +23,7 @@ Sources (all Open Government Licence):
     OAs    ONS OA_2021_EW_BGC_V2_RUC (generalised, clipped; has LSOA21CD)
 Standard library only. Downloads are cached in --cache.
 """
-import argparse, csv, io, json, sys, time, urllib.parse, urllib.request
+import argparse, csv, hashlib, io, json, sys, time, urllib.parse, urllib.request
 from collections import defaultdict
 from pathlib import Path
 
@@ -51,6 +51,11 @@ def cached(cache, name, fetch):
     if not f.exists():
         f.write_bytes(fetch())
     return f.read_bytes()
+
+
+def key(items):
+    # Cache name from the batch's contents, so a longer list of neighbourhoods never reuses an old batch.
+    return hashlib.md5(",".join(items).encode()).hexdigest()[:12]
 
 
 def col(row, start):
@@ -96,7 +101,7 @@ def main():
         q = urllib.parse.urlencode({"where": "LSOA21CD IN (" + ",".join(f"'{l}'" for l in batch) + ")",
                                     "outFields": "OA21CD,LSOA21CD", "outSR": 4326, "geometryPrecision": 5,
                                     "f": "geojson"})
-        gj = json.loads(cached(a.cache, f"oa_{i}.json", lambda: get(OA_LAYER, q.encode())))
+        gj = json.loads(cached(a.cache, f"oa_{key(batch)}.json", lambda: get(OA_LAYER, q.encode())))
         feats += gj["features"]
     oas = [f["properties"]["OA21CD"] for f in feats]
     print(len(feats), "output areas in", len(lsoas), "neighbourhoods")
@@ -107,7 +112,7 @@ def main():
         q = urllib.parse.urlencode({"date": "latest", "geography": ",".join(oas[i:i + 400]),
                                     "c2021_tenure_9": ",".join(TENURE), "measures": 20100,
                                     "select": "geography_code,c2021_tenure_9,obs_value"})
-        body = cached(a.cache, f"ts054_{i}.csv", lambda: get(NOMIS + "?" + q)).decode("utf-8")
+        body = cached(a.cache, f"ts054_{key(oas[i:i + 400])}.csv", lambda: get(NOMIS + "?" + q)).decode("utf-8")
         for r in csv.DictReader(io.StringIO(body)):
             ten[r["GEOGRAPHY_CODE"]][TENURE[r["C2021_TENURE_9"]]] = int(r["OBS_VALUE"])
 
