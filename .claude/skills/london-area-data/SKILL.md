@@ -23,6 +23,7 @@ All paths below are relative to the repo root. Scripts use only the Python stand
 | 7b | Conservation areas: outlines, count and share of sold homes inside | `geo/conservation_region.json` (kept source), `geo/conservation.json`, `areas.csv` (`conservation_count`, `conservation_sales_pct`) | planning.data.gov.uk, `scripts/conservation_areas.py --write` (after prices) |
 | 7c | New developments: schemes being built, selling or just sold | `developments.csv`, `geo/developments.json` | GLA Planning London Datahub + Land Registry new builds, `scripts/new_developments.py --write` (after prices) |
 | 8 | Rents for 2 and 3 bedrooms | `areas.csv` (`rent_2bed`, `rent_3bed`, `rent_source`) | ONS + asking-rent spot check |
+| 7c | Deprivation and social housing: IoD 2025 per neighbourhood, Census tenure per Output Area | `subareas.csv` (`imd_decile`, `income_decile`, `idaci_decile`, `income_pct`, `idaci_pct`), `geo/tenure.json`, `areas.csv` (`social_rent_pct`, `idaci_pct`) | `scripts/neighbourhood_layers.py --write` (after `price_subareas.py`) |
 | 9 | Estimates: rent band, commute, time to family, lifestyle, green | `areas.csv` (`rent`, `commute`, `family`, `lifestyle`, `green`) | judgement, written as ranges |
 
 `references/sources.md` has the exact endpoints, queries and pitfalls for each one. Read the section for a dimension before collecting it; don't work from memory, because the APIs have quirks (coordinate order, rate limits, timeouts) that cost time when rediscovered.

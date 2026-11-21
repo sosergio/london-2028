@@ -36,6 +36,8 @@ function areaRows(DATA) {
       flat: +a.price.flat || NaN, terraced: +a.price.terraced || NaN, semi: +a.price.semi || NaN,
       rent: a.rent, rentN: mid(a.rent),
       crime: +a.crimeRate.all || NaN, violent: +a.crimeRate.violent || NaN, burglary: +a.crimeRate.burglary || NaN,
+      social: a.socialPct === null || a.socialPct === '' ? NaN : +a.socialPct,
+      idaci: a.idaciPct === null || a.idaciPct === '' ? NaN : +a.idaciPct,
       cons: a.consPct === null || a.consPct === '' ? NaN : +a.consPct,
       density: a.dens,
       green: a.green, greenN: RATING[a.green] ?? NaN,
@@ -68,6 +70,8 @@ const GROUPS = [
     { key: 'rentN', label: 'Rent, 3-bed', better: 'low', show: r => esc(r.rent), title: 'Estimate, per month' },
   ]],
   ['Neighbourhood', [
+    { key: 'social', label: 'Social housing', better: null, show: r => isNaN(r.social) ? '–' : r.social + '%', title: 'Share of households in social rented homes (council or housing association), Census 2021. London 23%' },
+    { key: 'idaci', label: 'Child poverty', better: 'low', show: r => isNaN(r.idaci) ? '–' : r.idaci + '%', title: 'Share of children in income-deprived families, IoD 2025. Typical in England 30%' },
     { key: 'crime', label: 'Crime /1k', better: 'low', show: r => isNaN(r.crime) ? '–' : Math.round(r.crime), title: 'Crimes a year per 1,000 residents across the area, shoplifting left out (police.uk)' },
     { key: 'violent', label: 'Violence /1k', better: 'low', show: r => isNaN(r.violent) ? '–' : Math.round(r.violent), title: 'Violent crime and robbery a year per 1,000 residents' },
     { key: 'burglary', label: 'Burglary /1k', better: 'low', show: r => isNaN(r.burglary) ? '–' : r.burglary.toFixed(1), title: 'Burglaries a year per 1,000 residents' },

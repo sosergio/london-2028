@@ -22,6 +22,8 @@
   /* Crime level: one hue, fewer → more crimes per resident (OKLab lightness in even steps) */
   --cons:#93640f; --cons-fill:#e9c77a;
   --dev-0:#1f6fd1; --dev-1:#c8650a; --dev-2:#6b7680; --dev-3:#a9b2ba; --dev-4:#1f6fd1;
+  /* Deprivation and social housing: one hue, less → more */
+  --hood-0:#c3cdf0; --hood-1:#98a8e3; --hood-2:#7083d0; --hood-3:#4f61b6; --hood-4:#374394; --hood-5:#232a6c;
   --crime-0:#f4b39e; --crime-1:#e8866b; --crime-2:#d45f45; --crime-3:#b5412d; --crime-4:#8e2c1f; --crime-5:#641a14;
   --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
@@ -34,7 +36,7 @@
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
   --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
   --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de;
-  --cons:#e3ad4c; --cons-fill:#a9781c; --dev-0:#4f95f0; --dev-1:#d07a28; --dev-2:#8a949c; --dev-3:#5f686f; --dev-4:#4f95f0; --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}}
+  --cons:#e3ad4c; --cons-fill:#a9781c; --dev-0:#4f95f0; --dev-1:#d07a28; --dev-2:#8a949c; --dev-3:#5f686f; --dev-4:#4f95f0; --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; --hood-0:#20275f; --hood-1:#2f3a86; --hood-2:#4352ab; --hood-3:#5f73cc; --hood-4:#889ce3; --hood-5:#b6c4f3; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141917; --panel:#1b211e; --fg:#e6ece8; --muted:#9aa8a0; --line:#2c3530;
   --land:#1e2622; --land-london:#25302a; --border:#3e4b44;
@@ -43,13 +45,20 @@
   --of-o:#3fcf7a; --of-g:#7cc3ec; --of-w:#f0a83a; --of-n:#7d8783;
   --poi-up:#40c99a; --poi-bake:#e39a55; --poi-cult:#d27fd2; --poi-gym:#7ea6f0; --poi-disc:#f07a7a;
   --price-0:#7a3368; --price-1:#953f80; --price-2:#b25299; --price-3:#cb6db2; --price-4:#e08fc9; --price-5:#f2b6de;
-  --cons:#e3ad4c; --cons-fill:#a9781c; --dev-0:#4f95f0; --dev-1:#d07a28; --dev-2:#8a949c; --dev-3:#5f686f; --dev-4:#4f95f0; --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; color-scheme:dark}
+  --cons:#e3ad4c; --cons-fill:#a9781c; --dev-0:#4f95f0; --dev-1:#d07a28; --dev-2:#8a949c; --dev-3:#5f686f; --dev-4:#4f95f0; --crime-0:#5e1e19; --crime-1:#83291f; --crime-2:#ab3a2a; --crime-3:#d0553e; --crime-4:#ea8064; --crime-5:#f8ae95; --hood-0:#20275f; --hood-1:#2f3a86; --hood-2:#4352ab; --hood-3:#5f73cc; --hood-4:#889ce3; --hood-5:#b6c4f3; color-scheme:dark}
 [hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.45}
 .app{display:grid;grid-template-columns:minmax(0,1fr) 400px;height:100%}
 .mapbox{position:relative;min-width:0;height:100%}
+.app.collapsed{grid-template-columns:minmax(0,1fr) 0}
+.app.collapsed .panel{visibility:hidden;padding:0;border:0}
+.panel-toggle{position:absolute;top:50%;right:0;z-index:3;transform:translateY(-50%);width:22px;height:56px;padding:0;
+  border:1px solid var(--line);border-right:0;border-radius:8px 0 0 8px;background:var(--panel);color:var(--muted);cursor:pointer;
+  box-shadow:-2px 0 8px rgb(0 0 0 / .1);font-size:16px;line-height:1}
+.panel-toggle:hover{color:var(--fg)}
+.panel-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #map{height:100%;background:var(--bg);min-height:320px}
 .floating{position:absolute;top:10px;right:10px;z-index:2;width:min(310px, calc(100% - 64px));max-height:calc(100% - 44px);overflow:auto;
   background:color-mix(in srgb, var(--panel) 94%, transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
@@ -231,6 +240,10 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 .maplibregl-popup-close-button{color:var(--muted);font-size:18px;padding:0 6px}
 .hover-tip .maplibregl-popup-content{padding:5px 8px;font-size:12px}
 .tip span{color:var(--muted)}
+.tip p{margin:2px 0}.tip p.hl{font-weight:600}
+.noise-key{display:grid;grid-template-columns:repeat(9,1fr);gap:2px}.noise-key i{display:block;height:10px}
+.noise-key i:first-child{border-radius:4px 0 0 4px}.noise-key i:last-child{border-radius:0 4px 4px 0}
+.noise-ticks{grid-template-columns:repeat(9,1fr)}
 .pop h3{font-family:var(--font-display);font-size:15px;margin:0 22px 4px 0}
 .pop .meta{color:var(--muted);margin:0 0 6px}
 .pop .big{font-variant-numeric:tabular-nums;font-weight:700;font-size:18px}
@@ -246,6 +259,9 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
   .app{grid-template-columns:1fr;grid-template-rows:55vh auto;height:auto}
   .mapbox,#map{height:55vh}
   .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  .panel-toggle{display:none}
+  .app.collapsed{grid-template-columns:1fr}
+  .app.collapsed .panel{visibility:visible;padding-block:18px 28px;padding-left:max(18px, env(safe-area-inset-left,0px));padding-right:max(18px, env(safe-area-inset-right,0px));border-top:1px solid var(--line)}
 }
 </style>
 </head>
@@ -254,6 +270,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 <div class="app">
   <div class="mapbox">
     <div id="map" role="region" aria-label="Map of areas and schools"></div>
+    <button type="button" class="panel-toggle" id="panel-toggle" aria-controls="side-panel" aria-expanded="true" title="Hide the side panel">›</button>
     <details class="floating" id="filters" open>
       <summary>Filters <span class="chev" aria-hidden="true"></span></summary>
       <div class="filters">
@@ -360,10 +377,40 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
             <p class="hint">Crimes a year per 1,000 residents in each neighbourhood, from police.uk (<span id="crime-period"></span>). "All" leaves out shoplifting. Town centres and stations look worst because few people live there. Zoom in to see the streets where crimes were reported.</p>
           </div>
         </section>
+        <section class="fsec">
+          <div class="fhead"><span class="label">Deprivation</span><label class="switch"><input type="checkbox" id="showdep" aria-label="Show deprivation by neighbourhood"><span aria-hidden="true"></span></label></div>
+          <div class="fbody" id="dep-legend" hidden>
+            <div class="seg" id="depseg" role="group" aria-label="Kind of deprivation">
+              <button type="button" data-k="imd">Overall</button><button type="button" data-k="income">Income</button><button type="button" data-k="idaci">Children</button>
+            </div>
+            <div class="ramp" aria-hidden="true"><i style="background:var(--hood-0)"></i><i style="background:var(--hood-1)"></i><i style="background:var(--hood-2)"></i><i style="background:var(--hood-3)"></i><i style="background:var(--hood-4)"></i><i style="background:var(--hood-5)"></i></div>
+            <div class="ticks"><span>9–10</span><span>7–8</span><span>5–6</span><span>3–4</span><span>2</span><span>1</span></div>
+            <div class="ends"><span>least deprived</span><span>decile in England</span><span>most</span></div>
+            <p class="hint">English Indices of Deprivation 2025, by neighbourhood. Decile 1 = the most deprived 10% of neighbourhoods in England. "Income" is people in low-income households; "Children" is children in low-income families. Hover for the percentages.</p>
+          </div>
+        </section>
+        <section class="fsec">
+          <div class="fhead"><span class="label">Social housing</span><label class="switch"><input type="checkbox" id="showsocial" aria-label="Show social housing share"><span aria-hidden="true"></span></label></div>
+          <div class="fbody" id="social-legend" hidden>
+            <div class="ramp" aria-hidden="true"><i style="background:var(--hood-0)"></i><i style="background:var(--hood-1)"></i><i style="background:var(--hood-2)"></i><i style="background:var(--hood-3)"></i><i style="background:var(--hood-4)"></i><i style="background:var(--hood-5)"></i></div>
+            <div class="ticks"><span>&lt;10</span><span>10–20</span><span>20–30</span><span>30–45</span><span>45–60</span><span>60+</span></div>
+            <div class="ends"><span>fewer</span><span>% of households social rented</span><span>more</span></div>
+            <p class="hint">Census 2021, by Output Area (about 130 households, often a single estate or a few streets). Council and housing association homes together; London 23%, England 17%. Hover for the split and private renting.</p>
+          </div>
+        </section>
+        <section class="fsec">
+          <div class="fhead"><span class="label">Road noise</span><label class="switch"><input type="checkbox" id="shownoise" aria-label="Show road noise"><span aria-hidden="true"></span></label></div>
+          <div class="fbody" id="noise-legend" hidden>
+            <div class="noise-key" aria-hidden="true"><i style="background:#cde2df"></i><i style="background:#ddecdb"></i><i style="background:#ebf6d2"></i><i style="background:#f7d7a8"></i><i style="background:#efa482"></i><i style="background:#dc7d78"></i><i style="background:#bd5e82"></i><i style="background:#9e528d"></i><i style="background:#7b5380"></i></div>
+            <div class="ticks noise-ticks"><span>40</span><span>45</span><span>50</span><span>55</span><span>60</span><span>65</span><span>70</span><span>75</span><span>80+</span></div>
+            <div class="ends"><span>quieter</span><span>dB, daytime average</span><span>louder</span></div>
+            <p class="hint">Defra strategic noise maps (2022): modelled road traffic noise 7am–11pm (LAeq,16h), 4 m above ground, on a 10 m grid. Uncoloured = under 40 dB. Quiet back streets are usually under 55 dB; main roads 65+. Drawn live by the Environment Agency, so it can be slow to appear.</p>
+          </div>
+        </section>
       </div>
     </details>
   </div>
-  <aside class="panel">
+  <aside class="panel" id="side-panel">
     <header>
       <h1>London School Map</h1>
       <p class="lede">Shortlisted areas and all their mixed state schools for September 2028. Pin size shows the number of pupils; zoom in to see school names.</p>
@@ -393,6 +440,8 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
       <p><strong>Conservation areas</strong>: planning.data.gov.uk (each council's designations, Nov 2026). Inside one, the look of the street is protected, which usually supports prices, but extensions, loft dormers, new windows, cladding and front gardens need more permission, and trees need 6 weeks' notice before work. Some also have an Article 4 direction, which takes away more permitted development: the council's appraisal says. The card's share counts the area's sold homes from the last two years that are inside one, a rough stand-in for the share of homes.</p>
       <p><strong>Crime</strong>: police.uk street-level crime for 12 months. The card's 1-mile count is the same radius everywhere, so it is not per person; the rates per 1,000 residents count every crime inside the area's neighbourhoods (the same Census LSOAs as the prices) and divide by their 2021 population. police.uk moves each crime to the nearest of a fixed set of points (usually the middle of a street), so a point means "on or near this street", never an address. Fraud and some sensitive offences are not published. Shoplifting is left out of "all", as it piles onto shopping streets.</p>
       <p><strong>Free school meals</strong>: the share of a school's pupils eligible for free school meals, the usual measure of how many come from low-income families (DfE Get Information about Schools, January 2026 school census; England 25%). It describes the intake, not the teaching; the filter hides schools at or above the limit, and the compare table shows each area's median.</p>
+      <p><strong>Deprivation</strong>: English Indices of Deprivation 2025 (Ministry of Housing, Communities and Local Government) for each neighbourhood (2021 LSOA, about 1,500 people). The 2025 index counts low income more widely than the 2019 one, so its percentages are higher: in a typical neighbourhood in England 18% of people and 30% of children are income-deprived.</p>
+      <p><strong>Social housing</strong>: Census 2021 table TS054 (tenure) by Output Area, via Nomis; it counts households on census day, so estates built or sold off since are not reflected. <strong>Road noise</strong>: Defra strategic noise mapping round 4 (2022), served by the Environment Agency; it is modelled, not measured, and leaves out rail and aircraft.</p>
       <p>Pupil numbers: DfE Get Information about Schools, SchoolDash and WhatSchool (Nov 2026). Rents and journey times are estimates. Rightmove links open the map view with 3+ bedrooms, houses only, garden, up to £4,500 a month. "This view on Rightmove" (bottom left of the map) searches exactly the part of the map you can see, slightly enlarged, to rent or for sale, with the same filters (no price limit for sale). Ofsted: since Sept 2024 there are no new single-word grades; we show the last one and whether a later short visit kept it, or the new report card.</p>
     </section>
   </aside>
@@ -423,7 +472,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-
 // on each deploy), via an import map for the modules that main.js imports.
 (function () {
   const v = Date.parse(document.lastModified) || Date.now();
-  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare', 'guide', 'sweet'];
+  const mods = ['data', 'state', 'format', 'map', 'panel', 'compare', 'guide', 'sweet', 'hood'];
   const map = document.createElement('script');
   map.type = 'importmap';
   map.textContent = JSON.stringify({ imports: Object.fromEntries(mods.map(m => [new URL('js/' + m + '.js', location.href).href, './js/' + m + '.js?v=' + v])) });

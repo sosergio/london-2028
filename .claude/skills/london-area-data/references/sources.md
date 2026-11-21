@@ -48,6 +48,14 @@ Contents: 1 Wards · 2 Census · 3 Crime · 4 Schools · 5 Shops · 6 Sale price
 - Council names: `https://www.planning.data.gov.uk/entity.json?dataset=local-authority&limit=500&field=entity&field=name`, matched on `organisation-entity`.
 - Quirks: some councils (Bromley, Bexley, Sutton) also send unnamed pieces, mostly inside a named area: the script drops those and calls the rest "Unnamed conservation area". Some names are ALL CAPS (Enfield) or end in "Conservation Area": tidied. Coverage depends on each council's upload; the site notes say the council's appraisal is the authority, including for Article 4 directions (a separate dataset, `article-4-direction-area`, not used yet).
 
+### Deprivation and social housing → `subareas.csv` (`imd_*`, `income_*`, `idaci_*`), `geo/tenure.json`, `social_rent_pct`, `idaci_pct`
+- Script: `scripts/neighbourhood_layers.py [--write]`, on the LSOAs already in `subareas.csv`.
+- IoD 2025: File 7 CSV ("All ranks, scores, deciles and population denominators") from `https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025`; 2021 LSOA codes. Scores are rates (0-1). The 2025 income measure is wider than 2019's, so percentages are much higher (England median: income 18%, children 30%); never compare them with 2019 figures.
+- Output Areas: ONS `OA_2021_EW_BGC_V2_RUC` feature service (has `LSOA21CD`); the `Output_Areas_2021_EW_BGC_V2` service needs a token.
+- Tenure: Nomis `NM_2072_1` (TS054) at OA level; `c2021_tenure_9` 0 = households, 1001 owned, 1003 social rented (4 council + 5 other social), 1004 private rented. 400 OA codes per request is fine.
+- Road noise needs no download: the site draws Defra round 4 tiles live from `https://environment.data.gov.uk/spatialdata/road-noise-all-metrics-england-round-4/wms` (layer `Road_Noise_LAeq16hr_England_Round_4_All`, EPSG:3857, CORS open).
+- Price per m² (as on socialhousingmap.co.uk) needs EPC floor areas, which now need a GOV.UK One Login account to download (get-energy-performance-data.communities.gov.uk): not collected.
+
 ## 4. Schools → `schools.csv`, `excluded.json`
 
 Scope: state-funded **mixed** primaries, secondaries and all-through schools in or very near the area's wards (the audit flags anything over 3.5 km from the centre). Independent schools are out. Single-sex schools go in `excluded.json` with "(boys)" / "(girls)" when the name does not say.

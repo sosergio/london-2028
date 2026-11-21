@@ -32,6 +32,7 @@ export async function loadData() {
       crimePeriod: r.crime_rate_period || '',
       // Conservation areas touching the area's neighbourhoods, and the share of its sold homes inside one.
       consCount: r.conservation_count ?? null, consPct: r.conservation_sales_pct ?? null,
+      socialPct: r.social_rent_pct ?? null, idaciPct: r.idaci_pct ?? null,
     };
   });
 
@@ -151,6 +152,19 @@ let shapes = null;
 export const subareaShapes = () => (shapes ||= getJSON('data/geo/subareas.json'));
 
 // The map layer: outlines (shared with the price layer) and the "on or near" points. Loaded on first use.
+// Deprivation (IoD 2025) on the neighbourhood outlines; social housing (Census 2021) by Output Area.
+export async function loadDeprivation() {
+  const [geo, subCsv] = await Promise.all([subareaShapes(), getCSV('data/subareas.csv')]);
+  const byId = Object.fromEntries(subCsv.map(r => [r.id, r]));
+  return geo.features.filter(f => byId[f.properties.id]).map(f => {
+    const r = byId[f.properties.id];
+    return { ...f, properties: { id: r.id, area: r.area_id, name: r.name, imd: r.imd_decile, income: r.income_decile,
+      idaci: r.idaci_decile, incomePct: r.income_pct, idaciPct: r.idaci_pct } };
+  });
+}
+let tenureP = null;
+export const loadTenure = () => tenureP || (tenureP = getJSON('data/geo/tenure.json').catch(e => { tenureP = null; throw e; }));
+
 export async function loadCrime(subs) {
   const [geo, pts] = await Promise.all([subareaShapes(), getCSV('data/crime_points.csv')]);
   const byId = Object.fromEntries(subs.rows.map(r => [r.id, r]));

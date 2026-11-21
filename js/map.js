@@ -49,6 +49,9 @@ async function poiImage(g, fill, edge) {
   return { image: ctx.getImageData(0, 0, size, size), opts: { pixelRatio: px } };
 }
 
+const NOISE_WMS = 'https://environment.data.gov.uk/spatialdata/road-noise-all-metrics-england-round-4/wms?SERVICE=WMS&VERSION=1.3.0'
+  + '&REQUEST=GetMap&LAYERS=Road_Noise_LAeq16hr_England_Round_4_All&STYLES=&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&FORMAT=image/png&TRANSPARENT=true';
+
 export function createMap(container, DATA, { onReady, onGuide } = {}) {
   const { schools, shops, areas, areaById, geo } = DATA;
   const map = new maplibregl.Map({
@@ -89,7 +92,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   map.touchPitch.disable(); map.dragRotate.disable(); map.touchZoomRotate.disableRotation();
 
   // What is currently shown; kept so the layers can be rebuilt after a style change.
-  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, crime: null, sweet: null, lines: true, guides: true };
+  let view = { shown: [], area: null, cat: true, poiOn: {}, prices: null, crime: null, sweet: null, shade: null, noise: false, lines: true, guides: true };
   let ready = false, styleGen = 0;
   const popup = new maplibregl.Popup({ maxWidth: '290px', focusAfterOpen: false });
   const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'hover-tip' });
@@ -172,6 +175,10 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
       emph: f.properties.n === 'Northern' || f.properties.n === 'Central' } })));
     const stations = fc(geo.stations.map(([n, lat, lon]) => point([lat, lon], { label: n === 'Moorgate' ? 'Moorgate (office)' : n, big: n === 'Moorgate' })));
 
+    // Road noise: Defra strategic noise maps (round 4, 2022), drawn live by the Environment Agency's map service.
+    map.addSource('noise', { type: 'raster', tileSize: 256, attribution: 'Road noise © Defra / Environment Agency (OGL)',
+      tiles: [NOISE_WMS + '&BBOX={bbox-epsg-3857}'] });
+    map.addSource('shade', { type: 'geojson', data: view.shade?.geo || fc([]) });
     map.addSource('subareas', { type: 'geojson', data: view.prices?.subareas || fc([]) });
     map.addSource('sales', { type: 'geojson', data: view.prices?.sales || fc([]) });
     const crime = crimeFeatures();
@@ -192,6 +199,14 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.addSource('guide', { type: 'geojson', data: guideFeatures() });
 
     // Below the basemap labels. Sold-price sub-areas go lowest, so wards and catchments draw over them.
+    map.addLayer({ id: 'noise', type: 'raster', source: 'noise', layout: { visibility: view.noise ? 'visible' : 'none' },
+      paint: { 'raster-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.8, 16, 0.6] } }, firstLabel);
+    // Deprivation or social housing: each feature carries its band (0-5) in `b`, -1 for no data.
+    const hramp = [0, 1, 2, 3, 4, 5].flatMap(b => [b, css('--hood-' + b)]);
+    map.addLayer({ id: 'shade-fill', type: 'fill', source: 'shade', filter: ['>=', ['get', 'b'], 0],
+      paint: { 'fill-color': ['match', ['get', 'b'], ...hramp, 'rgba(0,0,0,0)'],
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.68, 14, 0.5, 16, 0.3] } }, firstLabel);
+    map.addLayer({ id: 'shade-line', type: 'line', source: 'shade', paint: { 'line-color': panel, 'line-width': 0.5, 'line-opacity': 0.8 } }, firstLabel);
     const ramp = [0, 1, 2, 3, 4, 5].flatMap(b => [b, css('--price-' + b)]);
     map.addLayer({ id: 'price-fill', type: 'fill', source: 'subareas', filter: ['>=', ['get', 'band'], 0],
       paint: { 'fill-color': ['match', ['get', 'band'], ...ramp, 'rgba(0,0,0,0)'],
@@ -299,6 +314,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     map.getSource('catchments').setData(catchmentFeatures());
     map.getSource('schools').setData(schoolFeatures());
     map.getSource('shops').setData(shopFeatures());
+    map.getSource('shade').setData(view.shade?.geo || fc([]));
     map.getSource('subareas').setData(view.prices?.subareas || fc([]));
     map.getSource('sales').setData(view.prices?.sales || fc([]));
     const crime = crimeFeatures();
@@ -322,7 +338,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
   // ---------- interaction ----------
   const schoolByI = new Map(schools.map(s => [s.i, s]));
   const shopByI = new Map(shops.map(p => [p.i, p]));
-  const hitLayers = () => ['guide-dot', 'dev-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line', 'cons-fill', 'cons-line']
+  const hitLayers = () => ['guide-dot', 'dev-dot', 'schools', 'school-ring', 'shops', 'sales', 'crime-points', 'tube', 'price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line', 'shade-fill', 'cons-fill', 'cons-line']
     .filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
   const SCHOOL_LAYERS = new Set(['schools', 'school-ring']);
   // Most specific thing under the pointer: school, then shop, then a single sale, then the sub-area.
@@ -335,6 +351,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
       || hits.find(f => f.layer.id === 'price-fill' || f.layer.id === 'price-line')
       || hits.find(f => f.layer.id === 'crime-fill' || f.layer.id === 'crime-line')
       || hits.find(f => f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line')
+      || hits.find(f => f.layer.id === 'shade-fill')
       || hits.find(f => CONS.has(f.layer.id));
   }
   const CONS = new Set(['cons-fill', 'cons-line']);
@@ -344,7 +361,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     return map.queryRenderedFeatures([point.x, point.y], { layers: ['cons-fill'] })[0] || null;
   }
 
-  const CRIME_SUB = new Set(['crime-fill', 'crime-line']), SUB = new Set(['price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line']);
+  const CRIME_SUB = new Set(['crime-fill', 'crime-line']), SUB = new Set(['price-fill', 'price-line', 'crime-fill', 'crime-line', 'sweet-fill', 'sweet-line', 'shade-fill']);
   // Popup or hover text for anything that is not a school, shop or guide dot.
   function otherHtml(f, e) {
     const c = view.crime;
@@ -353,6 +370,7 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
     if (f.layer.id === 'dev-dot') return view.devs.html(f.properties.id);
     if (CONS.has(f.layer.id)) return consHtml(f.properties);
     if (f.layer.id === 'sweet-fill' || f.layer.id === 'sweet-line') return withCons(view.sweet.html(f.properties), e);
+    if (f.layer.id === 'shade-fill') return withCons(view.shade.html(f.properties), e);
     if (CRIME_SUB.has(f.layer.id)) return withCons(crimeSubHtml(f.properties, c.kind, c.typical[c.kind], c.period), e);
     return withCons(subareaHtml(f.properties), e);
   }
@@ -417,6 +435,9 @@ export function createMap(container, DATA, { onReady, onGuide } = {}) {
         <h3>${it.n}. ${it.name}</h3><button type="button" class="linkbtn" data-guide="${area}" data-item="${it.id}">Back to the guide</button></div>`).addTo(map);
     },
     setLines(on) { view = { ...view, lines: on }; if (!on) tip.remove(); if (ready) applyLines(); },
+    // shade: null, or { geo: FeatureCollection with properties.b (band 0-5, -1 none), html(properties) }
+    setShade(shade) { view = { ...view, shade }; tip.remove(); if (ready) map.getSource('shade').setData(shade?.geo || fc([])); },
+    setNoise(on) { view = { ...view, noise: on }; if (ready) map.setLayoutProperty('noise', 'visibility', on ? 'visible' : 'none'); },
     setPrices(prices) { view = { ...view, prices }; if (!prices) tip.remove(); refresh(); },
     // crime: null, or { data: loadCrime() result, kind, typical, period }
     setCrime(crime) { view = { ...view, crime }; tip.remove(); refresh(); },
