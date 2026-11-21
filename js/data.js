@@ -42,7 +42,16 @@ export async function loadData() {
     ll: [r.lat, r.lon], cat: (r.catchment_miles === null || r.catchment_miles === '') ? null : r.catchment_miles,
     catText: r.catchment_text || '', src: r.source_url || '', note: r.note || '',
     fsm: r.fsm_pct === null || r.fsm_pct === '' || r.fsm_pct === undefined ? null : +r.fsm_pct,
+    urn: r.urn ? String(r.urn) : '', views: null,
   }));
+
+  // What parents say (optional): Ofsted Parent View figures for every school, plus a researched summary
+  // of review sites and forums where one has been written (data/school_views.csv, by URN).
+  try {
+    const rows = await getCSV('data/school_views.csv');
+    const byUrn = Object.fromEntries(rows.map(r => [String(r.urn), r]));
+    for (const s of schools) if (byUrn[s.urn]) s.views = byUrn[s.urn];
+  } catch (e) { console.warn('No school views loaded', e); }
 
   const shops = shopsCsv.map((r, i) => ({ i, a: r.area_id, n: String(r.name), g: r.group, kind: r.type || '', ll: [r.lat, r.lon] }));
 

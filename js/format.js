@@ -49,12 +49,39 @@ const ext = (href, text) => href ? `<a href="${esc(href)}" target="_blank" rel="
 export const FSM_ENGLAND = 25;
 export const fsmText = v => v.toFixed(1).replace(/\.0$/, '') + '%';
 
+// What parents say: Parent View figures (agree + strongly agree) and, where researched, the summary of
+// review sites and forums. Small samples are flagged rather than hidden.
+export const SENTIMENT = { positive: 'Mostly positive', mixed: 'Mixed', negative: 'Mostly negative', thin: 'Too little to judge' };
+const has = v => v !== null && v !== undefined && v !== '';
+function viewsHtml(v) {
+  if (!v) return '';
+  const few = n => +n < 20 ? ', few answers' : '';
+  const bits = [];
+  if (has(v.pv_recommend)) bits.push(`<strong>${v.pv_recommend}%</strong> would recommend`);
+  if (has(v.pv_behave)) bits.push(`behaviour ${v.pv_behave}%`);
+  if (has(v.pv_safe)) bits.push(`feel safe ${v.pv_safe}%`);
+  if (has(v.pv_bully_ok)) bits.push(`bullying dealt with ${v.pv_bully_ok}% <span class="meta">(${v.pv_bully_n}${few(v.pv_bully_n)})</span>`);
+  if (has(v.pv_send_ok)) bits.push(`SEND support ${v.pv_send_ok}% <span class="meta">(${v.pv_send_n}${few(v.pv_send_n)})</span>`);
+  const date = has(v.pv_date) ? new Date(v.pv_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  const pv = has(v.pv_n) && +v.pv_n > 0
+    ? `<p><strong>Ofsted Parent View</strong> <span class="meta">(${v.pv_n} answers${few(v.pv_n)}, to ${date})</span>: ${bits.join(' · ')}</p>`
+    : '<p><strong>Ofsted Parent View:</strong> <span class="meta">no answers published</span></p>';
+  if (!has(v.sentiment)) return pv;
+  const src = String(v.sources || '').split(/\s+/).filter(Boolean).map((u, i) => ext(u, String(i + 1))).join(' ');
+  const more = [has(v.reviews) && `<p><strong>Reviews:</strong> ${esc(v.reviews)}</p>`, has(v.forums) && `<p><strong>Forums:</strong> ${esc(v.forums)}</p>`,
+    has(v.ask) && `<p><strong>Ask at the open evening:</strong> ${esc(v.ask)}</p>`,
+    `<p class="meta">Checked ${esc(v.checked)}. Few, self-selected reviews: read as questions, not a verdict.${src ? ' Sources: ' + src : ''}</p>`].filter(Boolean).join('');
+  return `<p><strong>Parents say:</strong> ${esc(SENTIMENT[v.sentiment] || v.sentiment)}. ${esc(v.summary)}</p>${pv}
+    <details class="views"><summary>Reviews and forums</summary>${more}</details>`;
+}
+
 export function schoolPopup(s, area) {
   return `<div class="pop"><h3>${esc(s.n)}</h3>
     <p class="meta">${phaseName(s.p)} · ${esc(faithName(s.f))} · ${esc(s.ages)}</p>
     <p><span class="big">${fmt(s.pu)}</span> pupils${s.note ? ` · ${esc(s.note)}` : ''}</p>
     <p><strong>Ofsted:</strong> <span class="of of-${ofKey(s.of)}">${esc(s.of)}</span> <span class="meta">${esc(s.ofd)}</span>${s.ofu ? ' · ' + ext(s.ofu, 'Report') : ''}</p>
     ${s.fsm === null ? '' : `<p><strong>Free school meals:</strong> ${fsmText(s.fsm)} of pupils <span class="meta">(England ${FSM_ENGLAND}%)</span></p>`}
+    ${viewsHtml(s.views)}
     <p><strong>Catchment:</strong> ${esc(s.catText)}</p>
     <p>${esc(area.name)}${s.src ? ' · ' + ext(s.src, 'Source') : ''}</p>
     <p>${ext(gmUrl(s.n + ', ' + area.sub.split(' · ')[0]), 'Google Maps ↗')} · ${ext(svUrl(s.ll), 'Street View ↗')}</p></div>`;
