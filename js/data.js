@@ -40,6 +40,7 @@ export async function loadData() {
     pu: r.pupils, of: r.ofsted, ok: r.ofsted_colour, ofd: r.ofsted_detail || '', ofu: r.ofsted_url || '',
     ll: [r.lat, r.lon], cat: (r.catchment_miles === null || r.catchment_miles === '') ? null : r.catchment_miles,
     catText: r.catchment_text || '', src: r.source_url || '', note: r.note || '',
+    fsm: r.fsm_pct === null || r.fsm_pct === '' || r.fsm_pct === undefined ? null : +r.fsm_pct,
   }));
 
   const shops = shopsCsv.map((r, i) => ({ i, a: r.area_id, n: String(r.name), g: r.group, kind: r.type || '', ll: [r.lat, r.lon] }));

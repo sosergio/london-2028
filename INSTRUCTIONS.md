@@ -27,6 +27,7 @@ The site must stay static: plain HTML, CSS and JS, data in CSV and JSON files, n
   - Phase: All, Primary or Secondary. All-through schools always show.
   - Faith: All, Catholic, CofE or None.
   - Ofsted: four independent toggles, Outstanding (O), Good (G), Below good (W), Not rated (N), all on by default.
+  - Free school meals: All, under 15%, under 25% or under 35% of pupils eligible (shown in each school's popup and list row; the compare table has each area's median).
   - Show catchment circles.
   - Filter settings are remembered in `localStorage`, wrapped in try/catch.
 - **School markers:**
@@ -90,7 +91,7 @@ All CSV files have a header row and are UTF-8. Ids must match across files.
 | File | Rows | Key columns |
 |---|---|---|
 | `data/areas.csv` | 24 | `id` (ef, ro, ce, bl, fb, wa, wt, be, bh, ed, wk, sa, fg, ly, hp, pg, ap, sn, gp, bw, hg, le, cl, bo), `rank`, `name`, `sub`, `lat`, `lon`, `rent`, `commute`, `family`, `lifestyle`, `green`, `rightmove_id` (e.g. `REGION^1474`), `why`, `msoas`, `residents`, `people_per_km2`, `density_min`, `density_max`, `pct_whiteBritish`…`pct_other`, `crime_total`, `crime_<category>` |
-| `data/schools.csv` | ~242 | `area_id`, `name`, `short_name`, `phase` (P / S / A), `faith` (Catholic / CofE / None), `ages`, `pupils`, `ofsted`, `ofsted_colour` (O / G / W / N), `ofsted_detail`, `ofsted_url`, `lat`, `lon`, `catchment_miles` (blank if unknown), `catchment_text`, `source_url`, `note` |
+| `data/schools.csv` | ~242 | `area_id`, `name`, `short_name`, `phase` (P / S / A), `faith` (Catholic / CofE / None), `ages`, `pupils`, `ofsted`, `ofsted_colour` (O / G / W / N), `ofsted_detail`, `ofsted_url`, `lat`, `lon`, `catchment_miles` (blank if unknown), `catchment_text`, `source_url`, `note`, `urn`, `fsm_pct` (% of pupils eligible for free school meals, GIAS) |
 | `data/shops.csv` | ~380 | `area_id`, `name`, `group` (up / bake / cult / gym / disc), `type` (OSM tag), `lat`, `lon` |
 | `data/excluded.json` | | `{ "excluded": [names of single-sex schools left out] }` |
 | `data/sales.csv` | ~14,000 | `area_id`, `date`, `price`, `type` (flat / terraced / semi / detached), `street`, `postcode`, `lat`, `lon`, `lsoa` (HM Land Registry, standard sales, 2 years; no house numbers) |

@@ -3,7 +3,7 @@
 
 import { state, poiOn, saveState, savePoi, isVisible } from './state.js';
 import { ETH_KEYS, loadPrices, PRICE_BANDS, loadCrime, CRIME_KINDS, loadConservation, DEV_STATUS, loadDevelopmentShapes } from './data.js';
-import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money, crimePeriod, devHtml } from './format.js';
+import { fmt, esc, css, ofKey, ofVar, phaseName, faithName, rightmoveUrl, commuteUrl, POI_VAR, poiSvg, money, crimePeriod, devHtml, fsmText } from './format.js';
 
 const ETH = { whiteBritish: ['White British', '#7f9c8f'], whiteOther: ['Other White', '#b9cbbf'], asian: ['Asian', '#d6a84a'],
   black: ['Black', '#8a6bb8'], mixed: ['Mixed', '#e08aa0'], other: ['Other', '#9aa3a0'] };
@@ -331,11 +331,11 @@ export function createPanel(DATA, map, { openGuide } = {}) {
 
     document.getElementById('list-title').textContent =
       (state.area ? areaById[state.area].name + ': ' : '') + shown.length + ' schools, smallest first' + (state.schools ? '' : ' (hidden on the map)');
-    listEl.innerHTML = shown.length ? '' : '<p class="empty">No school matches these filters. Turn on more Ofsted ratings or pick "All".</p>';
+    listEl.innerHTML = shown.length ? '' : '<p class="empty">No school matches these filters. Turn on more Ofsted ratings, raise the free school meals limit or pick "All".</p>';
     shown.forEach(s => {
       const r = document.createElement('div');
       r.className = 'row'; r.tabIndex = 0; r.setAttribute('role', 'button');
-      r.innerHTML = `<i class="dot" style="background:var(${ofVar(s.ok)})"></i><div>${esc(s.n)}<small>${s.p === 'A' ? 'All-through 4–16' : phaseName(s.p)} · ${esc(faithName(s.f))} · ${esc(areaById[s.a].name)}${s.cat ? ` · catchment ${s.cat.toFixed(2)} mi` : ''}</small></div><span class="of of-${ofKey(s.of)}">${esc(s.of)}</span><span class="pu">${fmt(s.pu)}</span>`;
+      r.innerHTML = `<i class="dot" style="background:var(${ofVar(s.ok)})"></i><div>${esc(s.n)}<small>${s.p === 'A' ? 'All-through 4–16' : phaseName(s.p)} · ${esc(faithName(s.f))} · ${esc(areaById[s.a].name)}${s.fsm === null ? '' : ` · ${fsmText(s.fsm)} free meals`}${s.cat ? ` · catchment ${s.cat.toFixed(2)} mi` : ''}</small></div><span class="of of-${ofKey(s.of)}">${esc(s.of)}</span><span class="pu">${fmt(s.pu)}</span>`;
       onActivate(r, () => map.focusSchool(s));
       listEl.appendChild(r);
     });

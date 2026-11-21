@@ -12,6 +12,8 @@ const mid = s => {
 };
 const RATING = { Excellent: 4, 'Very good': 3, Good: 2, Fair: 1, Poor: 0 };
 
+const median = v => { if (!v.length) return NaN; const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+
 function areaRows(DATA) {
   const { areas, schools, shops } = DATA;
   return areas.map(a => {
@@ -25,6 +27,7 @@ function areaRows(DATA) {
       goodPct: rated.length ? Math.round(100 * rated.filter(s => s.ok === 'O' || s.ok === 'G').length / rated.length) : NaN,
       outstanding: ss.filter(s => s.ok === 'O').length,
       below: ss.filter(s => s.ok === 'W').length,
+      fsm: median(ss.map(s => s.fsm).filter(v => v !== null)),
       small: ss.filter(s => s.pu < 400).length,
       smallestSec: secs.length ? Math.min(...secs) : NaN,
       commute: a.commute, commuteN: mid(a.commute),
@@ -49,6 +52,7 @@ const GROUPS = [
     { key: 'goodPct', label: 'Good or better', better: 'high', show: r => isNaN(r.goodPct) ? '–' : r.goodPct + '%', title: 'Share of rated schools that are Outstanding/Exceptional or Good' },
     { key: 'outstanding', label: 'Outstanding', better: 'high' },
     { key: 'below', label: 'Below good', better: 'low' },
+    { key: 'fsm', label: 'Free school meals', better: 'low', show: r => isNaN(r.fsm) ? '–' : Math.round(r.fsm) + '%', title: 'Median share of pupils eligible for free school meals (low-income families) across the area\'s schools. England: 25%' },
     { key: 'small', label: 'Under 400 pupils', better: 'high' },
     { key: 'smallestSec', label: 'Smallest secondary', better: 'low', show: r => isNaN(r.smallestSec) ? '–' : fmt(r.smallestSec) },
   ]],

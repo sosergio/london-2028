@@ -45,11 +45,16 @@ export function rightmoveAreaUrl(ring, rent) {
 
 const ext = (href, text) => href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${text}</a>` : '';
 
+// Share of pupils eligible for free school meals (low-income families), January 2026 school census.
+export const FSM_ENGLAND = 25;
+export const fsmText = v => v.toFixed(1).replace(/\.0$/, '') + '%';
+
 export function schoolPopup(s, area) {
   return `<div class="pop"><h3>${esc(s.n)}</h3>
     <p class="meta">${phaseName(s.p)} · ${esc(faithName(s.f))} · ${esc(s.ages)}</p>
     <p><span class="big">${fmt(s.pu)}</span> pupils${s.note ? ` · ${esc(s.note)}` : ''}</p>
     <p><strong>Ofsted:</strong> <span class="of of-${ofKey(s.of)}">${esc(s.of)}</span> <span class="meta">${esc(s.ofd)}</span>${s.ofu ? ' · ' + ext(s.ofu, 'Report') : ''}</p>
+    ${s.fsm === null ? '' : `<p><strong>Free school meals:</strong> ${fsmText(s.fsm)} of pupils <span class="meta">(England ${FSM_ENGLAND}%)</span></p>`}
     <p><strong>Catchment:</strong> ${esc(s.catText)}</p>
     <p>${esc(area.name)}${s.src ? ' · ' + ext(s.src, 'Source') : ''}</p>
     <p>${ext(gmUrl(s.n + ', ' + area.sub.split(' · ')[0]), 'Google Maps ↗')} · ${ext(svUrl(s.ll), 'Street View ↗')}</p></div>`;

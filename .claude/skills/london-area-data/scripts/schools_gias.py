@@ -18,6 +18,8 @@ What it does:
   * Ofsted rating: a report card (Nov 2025 onwards) is summarised by its most common grade; an older graded
     inspection gives Outstanding / Good / Requires improvement / Inadequate. Colours: O, G, W (anything below
     good, any "needs attention" or "urgent improvement", or a category of concern), N (not inspected).
+  * Fills fsm_pct for every row: the share of pupils eligible for free school meals (the low-income
+    measure) from the latest January school census in GIAS (PercentageFSM).
   * Prints, per area, schools missing from data/schools.csv and single-sex schools missing from
     excluded.json. With --write, appends them (catchment left blank for a human to fill) and adds a `urn`
     column, filled for existing rows whose URLs contain the URN.
@@ -171,9 +173,10 @@ def main():
     with open(a.ofsted, newline="", encoding="utf-8-sig", errors="replace") as f:
         ofsted = {r["URN"]: r for r in csv.DictReader(f)}
 
-    cands = []
+    cands, fsm = [], {}
     with open(a.gias, newline="", encoding="latin-1") as f:
         for r in csv.DictReader(f):
+            fsm[r["URN"]] = r.get("PercentageFSM", "")
             if r["EstablishmentStatus (name)"] != "Open" or r["EstablishmentTypeGroup (name)"] not in STATE_GROUPS:
                 continue
             t = r["TypeOfEstablishment (name)"]
@@ -226,9 +229,15 @@ def main():
             print(f"  x {label}")
             new_excl.append(label)
 
-    if a.write and (new_rows or new_excl):
-        if "urn" not in fields:
-            fields.append("urn")
+    for r in existing + new_rows:
+        r["fsm_pct"] = fsm.get(r.get("urn", ""), "") or ""
+    blank = [r["name"] for r in existing + new_rows if not r["fsm_pct"]]
+    print(f"\nfree school meals: {len(existing) + len(new_rows) - len(blank)} schools filled" + (f", none for {', '.join(blank)}" if blank else ""))
+
+    if a.write:
+        for c in ("urn", "fsm_pct"):
+            if c not in fields:
+                fields.append(c)
         with open(DATA / "schools.csv", "w", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=fields, lineterminator="\n", extrasaction="ignore")
             w.writeheader()
